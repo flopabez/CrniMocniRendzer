@@ -34,7 +34,7 @@ struct Tank {
 	int xPos, yPos, width;
 	char direction, speed;
 	char upgrade, lives, hitPoints, bulletSpeed, bulletPower, inAir, score;
-	char team, bot;
+	char team, bot, frame;
 };
 
 struct movementWrapper {
