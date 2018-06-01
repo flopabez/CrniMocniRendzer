@@ -1,5 +1,5 @@
 #define FPS 60
-#define MAP_SCALE 10 //pixels per tile length
+#define MAP_SCALE 12 //pixels per tile length
 
 
 #include <stdlib.h>
