@@ -54,6 +54,7 @@ void doRender(struct gameState *gameState)
         SDL_Rect dest = {0 + player->frame*16 + player->direction*16*2, 0 + (playerNum*128) + player->upgrade*16, 16, 16};
         SDL_RenderCopy(gameState->renderer, gameState->sprites, &dest, &rect);
         playerNum++;
+        tank_wrapper=tank_wrapper->next;
     }
     //Draw map
     for (int i =0;i<13*4;i++){
