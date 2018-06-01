@@ -1,3 +1,7 @@
+#include "strukture.h"
+#include <SDL.h>
+#include <SDL_image.h>
+
 int processEvents(SDL_Window *window, struct movementWrapper *wrap) {
 
   SDL_Event event;
