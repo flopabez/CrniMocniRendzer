@@ -5,30 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 struct listNode {
 	void* data;
 	struct listNode* next;
 };
-
-struct listNode* newNode(void* data) {
-	struct listNode* new = (struct listNode*)malloc(sizeof(struct listNode));
-	(*new).next = 0;
-	(*new).data = data;
-	return new;
-}
-
-void insertBefore(struct listNode** stack, void* data) {
-	struct listNode* new = newNode(data);
-	(*new).next = *stack;
-	*stack = new;
-}
-
-void removeNode(struct listNode** stack) {
-	struct listNode* discard = (*stack);
-	*stack = (**stack).next;
-	free(discard);
-}
 
 struct Tank {
 	int xPos, yPos, width;
@@ -65,6 +45,27 @@ struct Level {
 	struct gameState* state;
 	struct listNode* enemies;
 };
+
+
+struct listNode* newNode(void* data) {
+	struct listNode* new = (struct listNode*)malloc(sizeof(struct listNode));
+	(*new).next = 0;
+	(*new).data = data;
+	return new;
+}
+
+void insertBefore(struct listNode** stack, void* data) {
+	struct listNode* new = newNode(data);
+	(*new).next = *stack;
+	*stack = new;
+}
+
+void removeNode(struct listNode** stack) {
+	struct listNode* discard = (*stack);
+	*stack = (**stack).next;
+	free(discard);
+}
+
 
 char squareCollision(int Ax, int Ay, int Awidth, int Bx, int By, int Bwidth) {
 	return !(Ax + Awidth - 1<Bx || Ax>Bx + Bwidth - 1 || Ay + Awidth - 1<By || Ay>By + Bwidth - 1);
