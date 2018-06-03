@@ -4,47 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-struct listNode {
-	void* data;
-	struct listNode* next;
-};
-
-struct Tank {
-	int xPos, yPos, width;
-	char direction, speed;
-	char upgrade, lives, hitPoints, bulletSpeed, bulletPower, inAir, score;
-	char team, bot, frame;
-};
-
-struct movementWrapper {
-	char up, left, down, right;
-	struct Tank* tenkic;
-};
-
-struct Bullet {
-	struct Tank* source;
-	int xPos, yPos, width;
-	char direction, speed, power;
-};
-
-struct gameState {
-	struct listNode *playerTanks, *enemyTanks;
-	struct listNode *playerBullets, *enemyBullets;
-	char **terrain;
-	char height, width;
-	char timeStop; //clock pickup timer
-
-	void* renderer;
-	void* sprites;
-	int time;
-
-};
-
-struct Level {
-	struct gameState* state;
-	struct listNode* enemies;
-};
+#include "strukture.h"
 
 
 struct listNode* newNode(void* data) {
