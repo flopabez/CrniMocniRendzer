@@ -24,12 +24,12 @@ void read_map(char** map,int* map_h,int* map_w)
 	FILE* fmap = fopen("\\Maps\\bmap.bin", "r");
 	if (fmap == NULL)
 		return;
-	map_h = fscanf(fopen, "%d ", &map_h);
-	map_w = fscanf(fopen, "%d ", &map_w);
+	map_h = fscanf(fmap, "%d ", &map_h);
+	map_w = fscanf(fmap, "%d ", &map_w);
 	for (int i = 0;i < map_h;i++)
 		for (int j = 0;j < map_w;j++)
-			fscanf(fopen, "%d ", map[i][j]);
-	fclose(fopen);
+			fscanf(fmap, "%d ", map[i][j]);
+	fclose(fmap);
 	return;
 }
 
