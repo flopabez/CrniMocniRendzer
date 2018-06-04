@@ -15,7 +15,7 @@
 #define EMPTY 0
 #define BLOCK_X 48
 
-void generate_tiles(char** map, int map_h, int map_w, int amount, int type);
+void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int big);
 void create_base(char** map, int map_h, int map_w);
 
@@ -24,11 +24,11 @@ void read_map(char** map,int* map_h,int* map_w)
 	FILE* fmap = fopen("\\Maps\\bmap.bin", "r");
 	if (fmap == NULL)
 		return;
-	map_h = fscanf(fmap, "%d ", map_h);
-	map_w = fscanf(fmap, "%d ", map_w);
-	for (int i = 0;i < map_h;i++)
-		for (int j = 0;j < map_w;j++)
-			fscanf(fmap, "%d ", map[i][j]);
+ fscanf(fmap, "%d ", map_h);
+ fscanf(fmap, "%d ", map_w);
+	for (int i = 0;i < *map_h;i++)
+		for (int j = 0;j <* map_w;j++)
+			fscanf(fmap, "%d ", &map[i][j]);
 	fclose(fmap);
 	return;
 }
@@ -38,7 +38,7 @@ void reset_map(char** map, int map_h, int map_w)//funkcija za resetovanje matric
 	for (int i = 0;i < map_h;i++)
 		for (int j = 0;j < map_w;j++)
 			map[i][j] = 0;
-	create_base(map, map_h, map_w);
+
 	return;
 }
 
@@ -153,9 +153,7 @@ void create_base(char** map,int map_h, int map_w)
 	set_map_area(map, map_h - 2, map_w / 2 + 2, map_h, map_w, BRICK, 0);
 	set_map_area(map, map_h - 4, map_w / 2 - 4, map_h, map_w, BRICK, 0);
 	set_map_area(map, map_h - 2, map_w / 2 - 4, map_h, map_w, BRICK, 0);
-	set_map_area(map, 0,0, map_h, map_w, 7, 1);
-	set_map_area(map, 0, map_w  - 4, map_h, map_w, 7, 1);
-	set_map_area(map, map_h-10, map_w/2 - 2, map_h, map_w, 11, 1);
+
 }
 
 
@@ -173,7 +171,7 @@ int build_map(int map_height, int map_width)
 	window = SDL_CreateWindow("Map Builder",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,BLOCK_X/4*map_w, BLOCK_X/4*map_h,0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
 	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
-	surface = IMG_Load("C:\\Users\\Nikola\\Desktop\\sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
+	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
 	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
 	SDL_FreeSurface(surface);
 	if (surface == NULL)
@@ -203,7 +201,9 @@ int build_map(int map_height, int map_width)
 	int type = 0;;
 	reset_map(map,map_h,map_w);
 	create_base(map, map_h, map_w);
-	
+	set_map_area(map, 0, 0, map_h, map_w, 7, 1);
+	set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
 	while (done!=1)//petlja za input
 	{
 		time = (time + 1) % 1000;
@@ -258,6 +258,10 @@ int build_map(int map_height, int map_width)
 					break;
 				case SDLK_r:
 					reset_map(map, map_h, map_w);
+					create_base(map, map_h, map_w);
+					set_map_area(map, 0, 0, map_h, map_w, 7, 1);
+					set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
+					set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
 					break;
 				case SDLK_1:
 					type = BRICK;
@@ -318,7 +322,6 @@ int build_map(int map_height, int map_width)
 }
 
 
-
 int random(int max)//random broj >=0 a <max
 {
 	int res;
@@ -326,8 +329,10 @@ int random(int max)//random broj >=0 a <max
 	return res;
 }
 
-int generate_random_map(int map_h, int map_w,int brick_wall_amount,int metal_wall_amount,int water_amount)
+int generate_random_map(int map_height, int map_width)
 {	//amount su vrednosti koje bira korisnik od 0-4 kao nema do mnogo npr
+	int map_h = 4 * map_height;
+	int map_w = 4 * map_width;
 	srand(time(NULL));
 	FILE* fmap = fopen("Maps\\random_map.bin", "wb");
 	if (fmap == NULL)
@@ -335,22 +340,38 @@ int generate_random_map(int map_h, int map_w,int brick_wall_amount,int metal_wal
 		printf("Error creating file!\n");
 		return 0;
 	}
-	int surface = map_h * map_w;//povrsina mape
-	int brick, metal, water;
 	char** map;
 	map = allocate_map(map_h, map_w);
 	if (map == NULL)
+	{
+		printf("Error allocating memory for map!\n");
 		return 0;
+	}
+	int tiles;
+	tiles = (map_height + map_width) * 2;
 	reset_map(map, map_h, map_w);
-	brick = surface * 0.01*brick_wall_amount;
-	water= surface * 0.01*water_amount;
-	metal = surface * 0.01*metal_wall_amount;//broj polja odredjenog tipa(bice pomnozeno sa 4)
-	generate_tiles(map, map_h, map_w, water, WATER);
-	generate_tiles(map, map_h, map_w, brick, BRICK);
-	generate_tiles(map, map_h, map_w, metal, METAL);
+	int tile_counter = 0;
+	int xr,yr ;
+	xr = yr = 0;
+	int type = 0;
+	while (tile_counter < tiles)
+	{
+		xr = random(map_height);
+		yr = random(map_width);
+			xr =xr* 4;
+			yr =yr* 4;
+			type =1+random(6);
+			if (type > 5) type = 1;
+			generate_tiles(map,map_h, map_w, xr, yr, type);
+			tile_counter++;
+
+	}
+	create_base(map, map_h, map_w);
+	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
+	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);
 	print_map_file(map, map_h, map_w, fmap);
 	deallocate_map(map, map_h);
-	
 	return 1;
 }
 
@@ -376,19 +397,41 @@ void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int b
 	return;
 }
 
-void generate_tiles(char** map, int map_h, int map_w, int amount, int type)
-{//fja za generisanje zadatog broja polja odredjenog tipa
-	int counter = 0;
-	int x, y;
-	while (counter < amount)
-	{
-		x = random(map_h);
-		y = random(map_w);
-		if (map[x][y] == 0)
+void generate_tiles(char** map, int map_h, int map_w, int x, int y, int type)
+{
+	int u,d, l,r;//up down i left right
+	int val = 0;
+	set_map_area(map, x, y, map_h, map_w, type, 1);
+		u = random(2);
+		l = random(2);
+		r = random(2);
+		d = random(2);
+		val =1+ random((int)(map_h/8));
+		if (u==1 && x>0)
 		{
-			set_map_area(map, x, y, map_h, map_w, type,1);
-			counter++;
+			for (int i = 1;i<val;i++)
+				if(x-4*i>=0)
+			set_map_area(map, x-4*i, y, map_h, map_w, type,1);
 		}
-	}
+		val = 1 + random((int)(map_h / 8));
+		if(d==1)
+		{
+			for (int i = 1;i<val;i++)
+			set_map_area(map, x+4*i, y, map_h, map_w, type, 1);
+		}
+		val =1+ random((int)(map_w/8));
+		if (l==1 && y>0)
+		{
+			for(int i=1;i<val;i++)
+				if (y - 4 * i >= 0)
+			set_map_area(map, x , y-4*i, map_h, map_w, type, 1);
+		}
+		val = 1 + random((int)(map_w / 8));
+		if(r==1)
+		{
+			for (int i = 1;i<val;i++)
+			set_map_area(map, x, y+4*i, map_h, map_w, type, 1);
+		}
 	return;
 }
+

@@ -5,7 +5,7 @@
 #include<SDL.h>
 
 void read_map(char** map, int* map_h, int* map_w);
-void generate_tiles(char** map, int map_h, int map_w, int amount, int type);
+void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type, int big);
 void create_base(char** map, int map_h, int map_w);
 void reset_map(char** map, int map_h, int map_w);
@@ -16,7 +16,7 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 void create_base(char** map, int map_h, int map_w);
 int build_map(int map_height, int map_width);
 int random(int max);
-int generate_random_map(int map_h, int map_w, int brick_wall_amount, int metal_wall_amount, int water_amount);
+int generate_random_map(int map_height, int map_width);
 
 
 
