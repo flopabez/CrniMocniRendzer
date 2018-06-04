@@ -22,14 +22,16 @@ void create_base(char** map, int map_h, int map_w);
 void read_map(char** map,int* map_h,int* map_w)
 {
 	FILE* fmap = fopen("\\Maps\\bmap.bin", "r");
+	if (fmap == NULL)
+		return;
 	map_h = fscanf(fopen, "%d ", &map_h);
 	map_w = fscanf(fopen, "%d ", &map_w);
 	for (int i = 0;i < map_h;i++)
 		for (int j = 0;j < map_w;j++)
 			fscanf(fopen, "%d ", map[i][j]);
+	fclose(fopen);
 	return;
 }
-
 
 void reset_map(char** map, int map_h, int map_w)//funkcija za resetovanje matrice na 0
 {
@@ -48,6 +50,7 @@ void print_map(char** map, int map_h, int map_w)//funkcija za ispis matrice na s
 			printf("%d ", map[i][j]);
 		printf("\n");
 	}
+	return;
 }
 
 void print_map_file(char** map, int map_h, int map_w,FILE* fmap)//funkcija za ispis matrice u binarnu datoteku
@@ -88,7 +91,7 @@ char** allocate_map(int map_h, int map_w)//funkcija za alokaciju memorije za map
 	return map;
 }
 
-void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time)
+void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
@@ -96,15 +99,45 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 	for (int i = 0;i<map_h;i++) {
 		for (int j = 0;j<map_w;j++) {
 			if (!map[i][j]) continue;//nista za prazan blok
-			SDL_Rect location = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X / 4, BLOCK_X / 4 };
-			SDL_Rect block = { 256 + ((j % 4) * 16 / 4)+ (map[i][j] == 3)*((time % 90) / 15) * 16 , (map[i][j] - 1) * 16 + ((i % 4) * 16 / 4), 16 / 4, 16 / 4 };
-			SDL_RenderCopy(renderer, sprites, &block, &location);//dodavanje bloka na lokaciju u rendereru
+			if (map[i][j] == 6)
+			{
+				if ((i == map_h - 4) && (map[i][j + 3] == 6))
+				{
+					SDL_Rect brect = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X, BLOCK_X };
+					SDL_Rect bdest = { 256, 80, 16, 16 };
+					SDL_RenderCopy(renderer, sprites, &bdest, &brect);//dodavanje brusha u renderer
+				}
+			}
+			else
+				if (map[i][j]==11)
+				{
+					if ((i == map_h - 10) && (map[i][j + 3] == 11))
+					{
+						SDL_Rect brect = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X, BLOCK_X };
+						SDL_Rect bdest = { 144, 0, 16, 16 };
+						SDL_RenderCopy(renderer, sprites, &bdest, &brect);//dodavanje brusha u renderer
+					}
+				}
+				else
+			{
+					SDL_Rect location = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X / 4, BLOCK_X / 4 };
+					SDL_Rect block = { 256 + ((j % 4) * 16 / 4) + (map[i][j] == 3)*((time % 90) / 15) * 16 , (map[i][j] - 1) * 16 + ((i % 4) * 16 / 4), 16 / 4, 16 / 4 };
+					SDL_RenderCopy(renderer, sprites, &block, &location);//dodavanje bloka na lokaciju u rendereru
+				}
 		}
 	}
-
-	SDL_Rect rect = { y_brush*BLOCK_X / 4, x_brush*BLOCK_X / 4, BLOCK_X, BLOCK_X };
-	SDL_Rect dest = { 272, 208, 16, 16 };
-	SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje brusha u renderer
+	if (big)
+	{
+		SDL_Rect rect = { y_brush*BLOCK_X / 4, x_brush*BLOCK_X / 4, BLOCK_X, BLOCK_X };
+		SDL_Rect dest = { 272, 208, 16, 16 };
+		SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje brusha u renderer
+	}
+	else
+	{
+		SDL_Rect rect = { y_brush*BLOCK_X / 4, x_brush*BLOCK_X / 4, BLOCK_X/2, BLOCK_X/2 };
+		SDL_Rect dest = { 272, 208, 16, 16 };
+		SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje brusha u renderer
+	}
 
 	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
 }
@@ -150,7 +183,7 @@ int build_map(int map_height, int map_width)
 		SDL_DestroyRenderer(renderer);
 		SDL_Quit();
 		exit(1);
-		return;
+		return 0;
 	}
 	FILE* fmap = fopen("Maps\\bmap.bin", "wb");
 	int x = 0;//pozicije "brusha"
@@ -175,7 +208,7 @@ int build_map(int map_height, int map_width)
 	{
 		time = (time + 1) % 1000;
 		SDL_Delay(15);//delay za normalnu animaciju vode
-		render_map(renderer, sprites, map, map_h, map_w, x, y,time);
+		render_map(renderer, sprites, map, map_h, map_w, x, y,time,big);
 		while (SDL_PollEvent(&event)) //petlja koja se aktivira tek kada naidje komanda
 		{
 			switch (event.type) //tip komande, ovde nam treba pritisnuto dugme
@@ -275,6 +308,9 @@ int build_map(int map_height, int map_width)
 	}
 	SDL_DestroyWindow(window);//gasenje prozora
 	SDL_Quit();
+	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
+	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);
 	print_map_file(map, map_h, map_w, fmap);
 	deallocate_map(map, map_h);
 	fclose(fmap);
@@ -355,11 +391,4 @@ void generate_tiles(char** map, int map_h, int map_w, int amount, int type)
 		}
 	}
 	return;
-}
-
-int main()
-{
-	build_map(14, 14);
-	//generate_random_map(52, 52, 3, 1, 2);
-
 }
