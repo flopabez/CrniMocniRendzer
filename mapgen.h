@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include<SDL.h>
 
-void read_map(char** map, int* map_h, int* map_w,char* file_name);
+int read_map(char** map, int* map_h, int* map_w,char* file_name);
 void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type, int big);
 void create_base(char** map, int map_h, int map_w);
