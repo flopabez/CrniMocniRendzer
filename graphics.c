@@ -6,7 +6,7 @@
 #define BLOCK_X 48
 
 #include "graphics.h"
-#include "strukture.c"
+#include "strukture.h"
 
 
 void loadGame(struct gameState *gameState)
