@@ -19,6 +19,18 @@ void generate_tiles(char** map, int map_h, int map_w, int amount, int type);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int big);
 void create_base(char** map, int map_h, int map_w);
 
+void read_map(char** map,int* map_h,int* map_w)
+{
+	FILE* fmap = fopen("\\Maps\\bmap.bin", "r");
+	map_h = fscanf(fopen, "%d ", &map_h);
+	map_w = fscanf(fopen, "%d ", &map_w);
+	for (int i = 0;i < map_h;i++)
+		for (int j = 0;j < map_w;j++)
+			fscanf(fopen, "%d ", map[i][j]);
+	return;
+}
+
+
 void reset_map(char** map, int map_h, int map_w)//funkcija za resetovanje matrice na 0
 {
 	for (int i = 0;i < map_h;i++)
