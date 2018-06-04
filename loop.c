@@ -29,6 +29,7 @@ int main() {
 	player->xPos = 0;
 	player->yPos = 0;
 	player->speed = 48;
+	player->width = 48;
 	//Create an application window with the following settings:
 	window = SDL_CreateWindow("Battle City",                     // window title
 		SDL_WINDOWPOS_UNDEFINED,           // initial x position
@@ -49,7 +50,7 @@ int main() {
 	(*wrap).left = 0;
 	(*wrap).right = 0;
 	(*wrap).tenkic = player;
-	
+	char pause = 0;
 	while (ggez == 0) {
 
 		doRender(state);
@@ -58,9 +59,14 @@ int main() {
 		if (wrap->up) Move(state, wrap->tenkic, 0);
 		if (wrap->left) Move(state, wrap->tenkic, 1);
 		if (wrap->right) Move(state, wrap->tenkic, 3);
-		printf("x:%d\ny:%d", wrap->tenkic->xPos, wrap->tenkic->yPos);
-		printf("up %d left %d\ndown %d right %d", wrap->up, wrap->left, wrap->down, wrap->right);
-		system("cls");
+
+		if (pause) pause--;
+		else {
+			system("cls");
+			printf("x:%d\ny:%d", wrap->tenkic->xPos, wrap->tenkic->yPos);
+			printf("up %d left %d\ndown %d right %d", wrap->up, wrap->left, wrap->down, wrap->right);
+			pause = 10;
+		}
 		SDL_Delay(20);
 	}
 	return 0;
