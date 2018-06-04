@@ -6,12 +6,12 @@
 #define BLOCK_X 48
 
 #include "graphics.h"
-#include "strukture.h"
 
 
-void loadGame(struct gameState *gameState)
-{
-    SDL_Surface *surface = NULL;
+ 
+ void loadGame(struct gameState *gameState)
+ {
+ SDL_Surface *surface = NULL;
     
     //Load images and create ndering textures from them
     surface = IMG_Load("/Users/mac/Documents/Programiranje/Tenkici/sdl2_testing/resursi/sprites.png");
