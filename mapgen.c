@@ -21,24 +21,24 @@ void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int b
 void create_base(char** map, int map_h, int map_w);
 void clear_base(char **map,int map_h,int map_w);
 
-int read_map(char** map,int* map_h,int* map_w,char* file_name)//fja za ucitavanje mape iz fajla u matricu
+char** read_map(int* map_h, int* map_w, char* file_name)//fja za ucitavanje mape iz fajla u matricu
 {
+	char** map=NULL;
 	char* extension = ".bin";
-	char* folder = "\\Maps\\";
-	char* filename=(char*)malloc(sizeof(char)*40);
-	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name,extension);
+	char* folder = "Maps\\";
+	char* filename[50];
+	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
 	FILE* fmap = fopen(filename, "rb");
 	if (fmap == NULL)
 		return 0;
- fscanf(fmap, "%d ", map_h);
- fscanf(fmap, "%d ", map_w);
-	map=allocate_map(*map_h,*map_w);
+	fscanf(fmap, "%d", map_h);
+	fscanf(fmap, "%d", map_w);
+	map = allocate_map(*map_h, *map_w);
 	for (int i = 0;i < (*map_h);i++)
 		for (int j = 0;j <(*map_w);j++)
-			fscanf(fmap, "%d ", &map[i][j]);
-	free(filename);
+			fscanf(fmap, "%d",(int)&map[i][j]);
 	fclose(fmap);
-	return 1;
+	return map;
 }
 
 void reset_map(char** map, int map_h, int map_w)//funkcija za resetovanje matrice na 0
@@ -178,7 +178,7 @@ void clear_base(char **map, int map_h, int map_w)
 
 
 
-int build_map(int map_height, int map_width,char** mapx)
+int build_map(int map_height, int map_width/*,char** mapx*/)
 {
 	int map_h = 4 * map_height;
 	int map_w = 4 * map_width;//sirina i duzina se salju u blokovima od 4x4
@@ -227,8 +227,11 @@ int build_map(int map_height, int map_width,char** mapx)
 	while (done!=1)//petlja za input
 	{
 		time = (time + 1) % 1000;
+		set_map_area(map, 0, 0, map_h, map_w, 7, 1);
+		set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
+		set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
 		SDL_Delay(15);//delay za normalnu animaciju vode
-		render_map(renderer, sprites, mapx, map_h, map_w, x, y,time,big);
+		render_map(renderer, sprites, map, map_h, map_w, x, y,time,big);
 		while (SDL_PollEvent(&event)) //petlja koja se aktivira tek kada naidje komanda
 		{
 			switch (event.type) //tip komande, ovde nam treba pritisnuto dugme
@@ -392,8 +395,9 @@ int generate_random_map(int map_height, int map_width)
 	create_base(map, map_h, map_w);
 	clear_base(map, map_h, map_w);
 	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//oslobadjanje spawn pointova
-	build_map(map_height, map_width,map);
+	//build_map(map_height, map_width,map);
 	print_map_file(map, map_h, map_w, fmap);
+	fclose(fmap);
 	deallocate_map(map, map_h);
 	return 1;
 }
@@ -402,13 +406,13 @@ void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int b
 {//fja za postavljanje datog polja na dati tip, kao i susedna polja, da bi se formirao 2x2 kvadrat ili 4x4 ako je velika cetkica
 	if (x < map_h - 1 && y < map_w - 1)
 	{
-		if(map[x][y]<BASE)
+		if(map[x][y]!=BASE)
 		map[x][y] = type;
-		if (x + 1 < map_h && map[x+1][y] < BASE)
+		if (x + 1 < map_h && map[x+1][y] != BASE)
 			map[x + 1][y] = type;
-		if (y + 1 < map_w && map[x ][y+1] < BASE)
+		if (y + 1 < map_w && map[x ][y+1] != BASE)
 			map[x][y + 1] = type;
-		if ((y + 1 < map_w) && (x + 1 < map_h) && map[x + 1][y+1] < BASE)
+		if ((y + 1 < map_w) && (x + 1 < map_h) && map[x + 1][y+1] != BASE)
 			map[x + 1][y + 1] = type;
 	}
 	if (big == 1 && (x<map_h - 1 && y<map_w - 1))
