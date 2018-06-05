@@ -23,12 +23,12 @@ void clear_base(char **map,int map_h,int map_w);
 
 int read_map(char** map,int* map_h,int* map_w,char* file_name)//fja za ucitavanje mape iz fajla u matricu
 {
-	char* filename = (char*)malloc(sizeof(char) * 20);
-	if (filename == NULL)
-		return 0;
-	filename = strcat("\\Maps\\", file_name);
-	filename = strcat(filename, ".bin");//dodavanje zbog path-a
-	FILE* fmap = fopen(filename, "r");
+	char* extension = ".bin";
+	char* folder = "\\Maps\\";
+	char* filename=(char*)malloc(sizeof(char)*30);
+	snprintf(filename, sizeof(filename), "%s%s", folder, file_name);
+	snprintf(filename, sizeof(filename), "%s%s", filename, extension);
+	FILE* fmap = fopen(filename, "rb");
 	if (fmap == NULL)
 		return 0;
  fscanf(fmap, "%d ", map_h);
