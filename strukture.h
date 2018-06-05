@@ -1,7 +1,7 @@
 #ifndef STRUKTURE_H
 #define STRUKTURE_H
 #include<SDL.h>
-#define FPS 60
+#define FPS 24
 #define MAP_SCALE 12
 
 struct listNode {
