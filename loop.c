@@ -75,13 +75,13 @@ int main() {
 	player->hitPoints = 1;
 	player->lives = 1;
 	player->inAir = 1;
-	player->speed = 24;
+	player->speed = 24*5;
 	player->team = 0;
 	player->score = 0;
 	player->upgrade = 0;
 	player->xPos = 10;
 	player->yPos = 10;
-	player->width = 48;
+	player->width = 42;
 
 	insertBefore(&(state->playerTanks), player);
 	//state->playerTanks = player;
@@ -135,7 +135,7 @@ int main() {
 		if (wrap->down && player->direction == 2) Move(state, player, 2);
 		if (wrap->right && player->direction == 3) Move(state, player, 3);
 		
-		SDL_Delay(1/FPS * 1000);
+		SDL_Delay(1./FPS * 1000);
 	}
 	return 0;
 }
