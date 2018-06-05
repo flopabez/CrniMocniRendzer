@@ -21,10 +21,11 @@ void create_base(char** map, int map_h, int map_w);
 
 int read_map(char** map,int* map_h,int* map_w,char* file_name)
 {
-	char* filename = (char*)malloc(sizeof(char) * 20);
+	char* filename = (char*)malloc(sizeof(char) * 30);
 	if (filename == NULL)
 		return 0;
-	filename = strcat("\\Maps\\", file_name);
+	filename="\\Maps\\";
+	filename = strcat(filename, file_name);
 	filename = strcat(filename, ".bin");
 	FILE* fmap = fopen(filename, "r");
 	if (fmap == NULL)
