@@ -1,7 +1,3 @@
-#define FPS 60
-#define MAP_SCALE 12 //pixels per tile length
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "strukture.h"
@@ -66,12 +62,12 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
 				int newY = (*tenkic).yPos - (*tenkic).speed / FPS;
 				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[newY / MAP_SCALE][i] == 1) {
+					if ((*state).terrain[newY / MAP_SCALE][i] && (*state).terrain[newY / MAP_SCALE][i] < 4) {
 						flag = 0;
 						break;
 					}
 				if (flag) (*tenkic).yPos = newY;
-				else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;
+				//else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;
 			}
 		}
 		break;
@@ -86,12 +82,12 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
 				int newX = (*tenkic).xPos - (*tenkic).speed / FPS;
 				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[i][newX / MAP_SCALE] == 1) {
+					if ((*state).terrain[i][newX / MAP_SCALE] && (*state).terrain[i][newX / MAP_SCALE] < 4) {
 						flag = 0;
 						break;
 					}
 				if (flag) (*tenkic).xPos = newX;
-				else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+				//else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
 			}
 		}
 		break;
@@ -106,12 +102,12 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
 				int newY = (*tenkic).yPos + (*tenkic).speed / FPS;//isto kao case 0, samo drugi smer
 				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)//isto kao case 0
-					if ((*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] == 1) {//za razliku od case 0, gledamo donju a ne gornju ivicu
+					if ((*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] && (*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] < 4) {//za razliku od case 0, gledamo donju a ne gornju ivicu
 						flag = 0;
 						break;
 					}
 				if (flag) (*tenkic).yPos = newY;
-				else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;//ovo se mozda razlikuje od case 0
+				//else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;//ovo se mozda razlikuje od case 0
 			}
 		}
 		break;
@@ -126,12 +122,12 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
 				int newX = (*tenkic).xPos + (*tenkic).speed / FPS;
 				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] == 1) {
+					if ((*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] && (*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] < 4) {
 						flag = 0;
 						break;
 					}
 				if (flag) (*tenkic).xPos = newX;
-				else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+				//else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
 			}
 		}
 		break;
