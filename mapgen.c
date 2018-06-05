@@ -25,9 +25,8 @@ int read_map(char** map,int* map_h,int* map_w,char* file_name)//fja za ucitavanj
 {
 	char* extension = ".bin";
 	char* folder = "\\Maps\\";
-	char* filename=(char*)malloc(sizeof(char)*30);
-	snprintf(filename, sizeof(filename), "%s%s", folder, file_name);
-	snprintf(filename, sizeof(filename), "%s%s", filename, extension);
+	char* filename=(char*)malloc(sizeof(char)*40);
+	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name,extension);
 	FILE* fmap = fopen(filename, "rb");
 	if (fmap == NULL)
 		return 0;
