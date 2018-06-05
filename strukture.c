@@ -58,74 +58,85 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 
 	switch (direction) {
 	case 0: {
-		struct Tank* temp = tankCollision(state, tenkic);
-		if (temp) (*tenkic).yPos = (*temp).yPos + (*temp).width;
+		if ((*tenkic).yPos - (*tenkic).speed / FPS < 0) (*tenkic).yPos = 0;
 		else {
-			int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
-			int newY = (*tenkic).yPos - (*tenkic).speed / FPS;
-			for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)
-				if ((*state).terrain[newY / MAP_SCALE][i] == 1) {
-					flag = 0;
-					break;
-				}
-			if (flag) (*tenkic).yPos = newY;
-			else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE;
-			break;
+			struct Tank* temp = tankCollision(state, tenkic);
+			if (temp) (*tenkic).yPos = (*temp).yPos + (*temp).width;
+			else {
+				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
+				int newY = (*tenkic).yPos - (*tenkic).speed / FPS;
+				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)
+					if ((*state).terrain[newY / MAP_SCALE][i] == 1) {
+						flag = 0;
+						break;
+					}
+				if (flag) (*tenkic).yPos = newY;
+				else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;
+			}
 		}
+		break;
 	}
 
 	case 1: {
-		struct Tank* temp = tankCollision(state, tenkic);
-		if (temp) (*tenkic).xPos = (*temp).xPos + (*temp).width;
+		if ((*tenkic).xPos - (*tenkic).speed / FPS < 0) (*tenkic).xPos = 0;
 		else {
-			int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
-			int newX = (*tenkic).xPos - (*tenkic).speed / FPS;
-			for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-				if ((*state).terrain[i][newX / MAP_SCALE] == 1) {
-					flag = 0;
-					break;
-				}
-			if (flag) (*tenkic).xPos = newX;
-			else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE;
-			break;
+			struct Tank* temp = tankCollision(state, tenkic);
+			if (temp) (*tenkic).xPos = (*temp).xPos + (*temp).width;
+			else {
+				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
+				int newX = (*tenkic).xPos - (*tenkic).speed / FPS;
+				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
+					if ((*state).terrain[i][newX / MAP_SCALE] == 1) {
+						flag = 0;
+						break;
+					}
+				if (flag) (*tenkic).xPos = newX;
+				else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+			}
 		}
+		break;
 	}
 
 	case 2: {
-		struct Tank* temp = tankCollision(state, tenkic);
-		if (temp) (*tenkic).yPos = (*temp).yPos - (*temp).width;
+		if ((*tenkic).yPos + (*tenkic).speed / FPS > (*state).height*MAP_SCALE - (*tenkic).width) (*tenkic).yPos = (*state).height*MAP_SCALE - (*tenkic).width;
 		else {
-			int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
-			int newY = (*tenkic).yPos + (*tenkic).speed / FPS;//isto kao case 0, samo drugi smer
-			for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)//isto kao case 0
-				if ((*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] == 1) {//za razliku od case 0, gledamo donju a ne gornju ivicu
-					flag = 0;
-					break;
-				}
-			if (flag) (*tenkic).yPos = newY;
-			else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE;//ovo se mozda razlikuje od case 0
-			break;
+			struct Tank* temp = tankCollision(state, tenkic);
+			if (temp) (*tenkic).yPos = (*temp).yPos - (*temp).width;
+			else {
+				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
+				int newY = (*tenkic).yPos + (*tenkic).speed / FPS;//isto kao case 0, samo drugi smer
+				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)//isto kao case 0
+					if ((*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] == 1) {//za razliku od case 0, gledamo donju a ne gornju ivicu
+						flag = 0;
+						break;
+					}
+				if (flag) (*tenkic).yPos = newY;
+				else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;//ovo se mozda razlikuje od case 0
+			}
 		}
+		break;
 	}
 
 	case 3: {
-		struct Tank* temp = tankCollision(state, tenkic);
-		if (temp) (*tenkic).xPos = (*temp).xPos - (*temp).width;
+		if ((*tenkic).xPos + (*tenkic).speed / FPS > (*state).width*MAP_SCALE - (*tenkic).width) (*tenkic).xPos = (*state).width*MAP_SCALE - (*tenkic).width;
 		else {
-			int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
-			int newX = (*tenkic).xPos + (*tenkic).speed / FPS;
-			for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-				if ((*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] == 1) {
-					flag = 0;
-					break;
-				}
-			if (flag) (*tenkic).xPos = newX;
-			else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE;
-			break;
+			struct Tank* temp = tankCollision(state, tenkic);
+			if (temp) (*tenkic).xPos = (*temp).xPos - (*temp).width;
+			else {
+				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
+				int newX = (*tenkic).xPos + (*tenkic).speed / FPS;
+				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
+					if ((*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] == 1) {
+						flag = 0;
+						break;
+					}
+				if (flag) (*tenkic).xPos = newX;
+				else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+			}
 		}
+		break;
 	}
 	}
-
 }
 
 void updateBullets(struct gameState* state, struct listNode* bulletlist) {
@@ -133,38 +144,59 @@ void updateBullets(struct gameState* state, struct listNode* bulletlist) {
 	while (bulletlist) {
 		struct Bullet* bullet = (*bulletlist).data;
 		char clip = (
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] ||
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE]);
+			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
+			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
+			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 ||
+			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2 ||
+			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
+			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
+			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 || 
+			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2);
+
 		if (clip) {
 			switch ((*bullet).direction) {
 			case 0: {
-				int limit = (*bullet).xPos + (*bullet).width - 1 + ((*bullet).xPos%MAP_SCALE != 0);
+				int limit = ((*bullet).xPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
 				for (int y = (*bullet).yPos / MAP_SCALE; y < (*bullet).yPos / MAP_SCALE + (*bullet).power; y++)
-					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++)
-						(*state).terrain[y][x] = 0;
+					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++) {
+						if ((*state).terrain[y][x] == 2) {
+							if ((*bullet).power == 2) (*state).terrain[y][x] = 0;
+						}
+						else (*state).terrain[y][x] = 0;
+					}
 				break;
 			}
 			case 1: {
-				int limit = (*bullet).yPos + (*bullet).width - 1 + ((*bullet).yPos%MAP_SCALE != 0);
+				int limit = ((*bullet).yPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
 				for (int x = (*bullet).xPos / MAP_SCALE; x < (*bullet).xPos / MAP_SCALE + (*bullet).power; x++)
-					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++)
-						(*state).terrain[y][x] = 0;
+					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++) {
+						if ((*state).terrain[y][x] == 2) {
+							if ((*bullet).power == 2) (*state).terrain[y][x] = 0;
+						}
+						else (*state).terrain[y][x] = 0;
+					}
 				break;
 			}
 			case 2: {
-				int limit = (*bullet).xPos + (*bullet).width - 1 + ((*bullet).xPos%MAP_SCALE != 0);
+				int limit = ((*bullet).xPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
 				for (int y = (*bullet).yPos / MAP_SCALE; y < (*bullet).yPos / MAP_SCALE + (*bullet).power; y++)
-					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++)
-						(*state).terrain[y + ((*bullet).width - 1) / MAP_SCALE][x] = 0; //ovo mozda ne valja
+					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++) {
+						if ((*state).terrain[y][x] == 2) {
+							if ((*bullet).power == 2) (*state).terrain[y + ((*bullet).width - 1) / MAP_SCALE][x] = 0; //ovo mozda ne valja
+						}
+						else (*state).terrain[y + ((*bullet).width - 1) / MAP_SCALE][x] = 0; //ovo mozda ne valja
+					}
 				break;
 			}
 			case 3: {
-				int limit = (*bullet).yPos + (*bullet).width - 1 + ((*bullet).yPos%MAP_SCALE != 0);
+				int limit = ((*bullet).yPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
 				for (int x = (*bullet).xPos / MAP_SCALE; x < (*bullet).xPos / MAP_SCALE + (*bullet).power; x++)
-					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++)
-						(*state).terrain[y][x + ((*bullet).width - 1) / MAP_SCALE] = 0; //ovo isto
+					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++) {
+						if ((*state).terrain[y][x] == 2) {
+							if ((*bullet).power == 2) (*state).terrain[y][x + ((*bullet).width - 1) / MAP_SCALE] = 0; //ovo isto
+						}
+						else (*state).terrain[y][x + ((*bullet).width - 1) / MAP_SCALE] = 0; //ovo isto
+					}
 				break;
 			}
 			}
