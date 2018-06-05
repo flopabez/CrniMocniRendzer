@@ -10,13 +10,13 @@
 #define BLOCK_X 48
 
 
-void render_map2(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, struct Tank* player, int time, struct Bullet* metak)
+void render_map2(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, struct Tank* player, int time)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	for (int i = 0; i < map_h; i++) {
-		for (int j = 0; j < map_w; j++) {
+	for (int i = 0; i<map_h; i++) {
+		for (int j = 0; j<map_w; j++) {
 			if (!map[i][j]) continue;//nista za prazan blok
 			if (map[i][j] == 6)
 			{
@@ -39,15 +39,9 @@ void render_map2(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int 
 	SDL_Rect rect = { player->xPos, player->yPos, BLOCK_X, BLOCK_X };
 	SDL_Rect dest = { 144 + 32 * player->direction, 0, 16, 16 };
 	SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje tenka u renderer
-	if (player->inAir)
-	{
-		SDL_Rect rect = { metak->xPos*BLOCK_X / 4, metak->yPos*BLOCK_X / 4, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 310 + 16 * metak->direction, 96, 16, 16 };
-		SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje tenka u renderer
-	}
 
-	for (int i = 0; i < map_h; i++) {
-		for (int j = 0; j < map_w; j++) {
+	for (int i = 0; i<map_h; i++) {
+		for (int j = 0; j<map_w; j++) {
 			if (map[i][j] == FOREST)
 			{
 				SDL_Rect location = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X / 4, BLOCK_X / 4 };
@@ -57,6 +51,9 @@ void render_map2(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int 
 			}
 		}
 	}
+
+
+	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
 }
 
 int main() {
@@ -77,7 +74,7 @@ int main() {
 	player->frame = 0;
 	player->hitPoints = 1;
 	player->lives = 1;
-	player->inAir = 0;
+	player->inAir = 1;
 	player->speed = 24;
 	player->team = 0;
 	player->score = 0;
@@ -113,11 +110,22 @@ int main() {
 	wrap->left = 0;
 	wrap->right = 0;
 	wrap->tenkic = player;
+	
+	struct Bullet* temp = (struct Bullet*)malloc(sizeof(struct Bullet));
+	temp->direction = 3;
+	temp->power = 1;
+	temp->source = player;
+	temp->speed = 60;
+	temp->width = 12;
+	temp->xPos = 20;
+	temp->yPos = 100;
 
 	char ggez = 0;
 	while (ggez == 0) {
 
-		render_map2(renderer, sprites, state->terrain, state->height, state->width, player, state->time, state->playerBullets->data);
+
+		render_map2(renderer, sprites, state->terrain, state->height, state->width, player, state->time);
+
 		//state->time++;
 		//doRender(state);
 		ggez = processEvents(window, wrap);
