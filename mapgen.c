@@ -16,17 +16,18 @@
 #define BLOCK_X 48
 
 void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
+void generate_path(char** map, int map_h, int map_w);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int big);
 void create_base(char** map, int map_h, int map_w);
+void clear_base(char **map,int map_h,int map_w);
 
-int read_map(char** map,int* map_h,int* map_w,char* file_name)
+int read_map(char** map,int* map_h,int* map_w,char* file_name)//fja za ucitavanje mape iz fajla u matricu
 {
-	char* filename = (char*)malloc(sizeof(char) * 30);
+	char* filename = (char*)malloc(sizeof(char) * 20);
 	if (filename == NULL)
 		return 0;
-	filename="\\Maps\\";
-	filename = strcat(filename, file_name);
-	filename = strcat(filename, ".bin");
+	filename = strcat("\\Maps\\", file_name);
+	filename = strcat(filename, ".bin");//dodavanje zbog path-a
 	FILE* fmap = fopen(filename, "r");
 	if (fmap == NULL)
 		return 0;
@@ -149,7 +150,7 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
 }
 
-void create_base(char** map,int map_h, int map_w)
+void create_base(char** map,int map_h, int map_w)//fja za pravljenje baze
 {
 	set_map_area(map, map_h - 4, map_w / 2 - 2, map_h, map_w, BASE, 1);
 	set_map_area(map, map_h - 6, map_w / 2 - 4, map_h, map_w, BRICK, 0);
@@ -163,17 +164,29 @@ void create_base(char** map,int map_h, int map_w)
 
 }
 
+void clear_base(char **map, int map_h, int map_w)
+{
+	set_map_area(map, map_h - 10, map_w / 2 +4, map_h, map_w, FOREST* (map[map_h - 10][map_w / 2 + 4]==FOREST)+ICE* (map[map_h - 10][map_w / 2 + 4]==ICE), 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 8, map_h, map_w, FOREST * (map[map_h - 10][map_w / 2 -8] == FOREST) + ICE * (map[map_h - 10][map_w / 2 - 8] == ICE), 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 4, map_h, map_w, FOREST * (map[map_h - 10][map_w / 2 -4] == FOREST) + ICE * (map[map_h - 10][map_w / 2 - 4] == ICE), 1);
+	set_map_area(map, map_h - 10, map_w / 2, map_h, map_w, FOREST * (map[map_h - 10][map_w / 2 ] == FOREST) + ICE * (map[map_h - 10][map_w / 2] == ICE), 1);
+	set_map_area(map, map_h - 6, map_w / 2 + 4, map_h, map_w, FOREST * (map[map_h - 6][map_w / 2 + 4] == FOREST) + ICE * (map[map_h - 6][map_w / 2 + 4] == ICE), 1);
+	set_map_area(map, map_h - 6, map_w / 2 - 8, map_h, map_w, FOREST * (map[map_h - 6][map_w / 2 -8] == FOREST) + ICE * (map[map_h - 6][map_w / 2 - 8] == ICE), 1);
+	set_map_area(map, map_h - 4, map_w / 2 + 4, map_h, map_w, FOREST * (map[map_h - 4][map_w / 2 +4] == FOREST) + ICE * (map[map_h - 4][map_w / 2 + 4] == ICE), 1);
+	set_map_area(map, map_h - 4, map_w / 2 - 8, map_h, map_w,  FOREST * (map[map_h - 4][map_w / 2 -8] == FOREST) + ICE * (map[map_h - 4][map_w / 2 - 8] == ICE), 1);
+}
 
 
-int build_map(int map_height, int map_width)
+
+int build_map(int map_height, int map_width,char** mapx)
 {
 	int map_h = 4 * map_height;
-	int map_w = 4 * map_width;
+	int map_w = 4 * map_width;//sirina i duzina se salju u blokovima od 4x4
 	SDL_Event event;
 	SDL_Window *window;    
 	SDL_Texture* sprites = NULL;
 	SDL_Renderer* renderer=NULL;//inicijalizacija rendera i tekstura za crtanje
-	int time = 0;
+	int time = 0;//vreme sluzi za animaciju vode
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("Map Builder",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,BLOCK_X/4*map_w, BLOCK_X/4*map_h,0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
@@ -210,12 +223,12 @@ int build_map(int map_height, int map_width)
 	create_base(map, map_h, map_w);
 	set_map_area(map, 0, 0, map_h, map_w, 7, 1);
 	set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
-	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);//postavljanje vrednosti za spawn pointove neprijateljskih i igracevog tenka
 	while (done!=1)//petlja za input
 	{
 		time = (time + 1) % 1000;
 		SDL_Delay(15);//delay za normalnu animaciju vode
-		render_map(renderer, sprites, map, map_h, map_w, x, y,time,big);
+		render_map(renderer, sprites, mapx, map_h, map_w, x, y,time,big);
 		while (SDL_PollEvent(&event)) //petlja koja se aktivira tek kada naidje komanda
 		{
 			switch (event.type) //tip komande, ovde nam treba pritisnuto dugme
@@ -295,7 +308,7 @@ int build_map(int map_height, int map_width)
 					if (draw)
 						set_map_area(map, x, y, map_h, map_w, type, big);
 					break;
-				case SDLK_f:if (big==1) big = 0;
+				case SDLK_f:if (big==1) big = 0;//menjanje velicine cetkice
 							else {
 								if (y > (map_w - 4))
 									y = map_w - 4;
@@ -321,7 +334,7 @@ int build_map(int map_height, int map_width)
 	SDL_Quit();
 	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
 	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
-	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//skidanje vrednosti spawna jer su to realno prazna polja
 	print_map_file(map, map_h, map_w, fmap);
 	deallocate_map(map, map_h);
 	fclose(fmap);
@@ -337,7 +350,7 @@ int random(int max)//random broj >=0 a <max
 }
 
 int generate_random_map(int map_height, int map_width)
-{	//amount su vrednosti koje bira korisnik od 0-4 kao nema do mnogo npr
+{	
 	int map_h = 4 * map_height;
 	int map_w = 4 * map_width;
 	srand(time(NULL));
@@ -355,7 +368,7 @@ int generate_random_map(int map_height, int map_width)
 		return 0;
 	}
 	int tiles;
-	tiles = (map_height + map_width) * 2;
+	tiles = (map_height + map_width) * 2;//koliko polja ce da izabere
 	reset_map(map, map_h, map_w);
 	int tile_counter = 0;
 	int xr,yr ;
@@ -364,26 +377,29 @@ int generate_random_map(int map_height, int map_width)
 	while (tile_counter < tiles)
 	{
 		xr = random(map_height);
-		yr = random(map_width);
+		yr = random(map_width);//biraju se blokovi 4x4 da mapa ne bi izgledala uzasno
 			xr =xr* 4;
 			yr =yr* 4;
 			type =1+random(6);
-			if (type > 5) type = 1;
+			if (type > 5) type = 1;//da bi bila malo veca sansa za cigle
 			generate_tiles(map,map_h, map_w, xr, yr, type);
 			tile_counter++;
 
 	}
-	create_base(map, map_h, map_w);
 	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
 	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
-	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);
+	generate_path(map, map_h, map_w);
+	create_base(map, map_h, map_w);
+	clear_base(map, map_h, map_w);
+	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//oslobadjanje spawn pointova
+	build_map(map_height, map_width,map);
 	print_map_file(map, map_h, map_w, fmap);
 	deallocate_map(map, map_h);
 	return 1;
 }
 
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int big)
-{//fja za postavljanje datog polja na dati tip, kao i susedna polja, da bi se formirao 4x4 kvadrat
+{//fja za postavljanje datog polja na dati tip, kao i susedna polja, da bi se formirao 2x2 kvadrat ili 4x4 ako je velika cetkica
 	if (x < map_h - 1 && y < map_w - 1)
 	{
 		if(map[x][y]<BASE)
@@ -404,6 +420,57 @@ void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int b
 	return;
 }
 
+void generate_path(char** map, int map_h, int map_w)
+{
+	int x, y;
+	x = 0, y = 0;
+	int xpath, ypath;
+	int direction;
+	xpath = map_h-10 ;
+	ypath = (int)map_w / 2 - 2;
+	while (x < xpath || y < ypath)
+	{
+		direction = random(3);
+		if (direction && x <xpath)
+		{
+			if (map[x][y] == FOREST) set_map_area(map, x, y, map_h, map_w, FOREST, 1);
+			else if (map[x][y] == ICE) set_map_area(map, x, y, map_h, map_w, ICE, 1);
+			else set_map_area(map, x, y, map_h, map_w, EMPTY, 1);
+			x += 4;
+		}
+		else if (y < ypath)
+		{
+			if (map[x][y] == FOREST) set_map_area(map, x, y, map_h, map_w, FOREST, 1);
+			else if (map[x][y] == ICE) set_map_area(map, x, y, map_h, map_w, ICE, 1);
+			else set_map_area(map, x, y, map_h, map_w, EMPTY, 1);
+			y += 4;
+		}
+	}
+	x = 0;
+	y = map_w - 4;
+	xpath = map_h - 12;
+	ypath = (int)map_w / 2 - 2;
+	while (x < xpath || y > ypath)
+	{
+		direction = random(3);
+		if (direction && x <xpath)
+		{
+			if (map[x][y] == FOREST) set_map_area(map, x, y, map_h, map_w, FOREST, 1);
+			else if (map[x][y] == ICE) set_map_area(map, x, y, map_h, map_w, ICE, 1);
+			else set_map_area(map, x, y, map_h, map_w, EMPTY, 1);
+			x += 4;
+		}
+		else if (y > ypath)
+		{
+			if (map[x][y] == FOREST) set_map_area(map, x, y, map_h, map_w, FOREST, 1);
+			else if (map[x][y] == ICE) set_map_area(map, x, y, map_h, map_w, ICE, 1);
+			else set_map_area(map, x, y, map_h, map_w, EMPTY, 1);
+			y -= 4;
+		}
+	}
+	return;
+}
+
 void generate_tiles(char** map, int map_h, int map_w, int x, int y, int type)
 {
 	int u,d, l,r;//up down i left right
@@ -412,31 +479,31 @@ void generate_tiles(char** map, int map_h, int map_w, int x, int y, int type)
 		u = random(2);
 		l = random(2);
 		r = random(2);
-		d = random(2);
-		val =1+ random((int)(map_h/8));
+		d = random(2);//flegovi da li ce ici gore desno levo i dole
+		val =1+ random((int)(map_h/8));//koliko polja ce ici gore dole levo ili desno
 		if (u==1 && x>0)
 		{
-			for (int i = 1;i<val;i++)
+			for (int i = 1;i<=val;i++)
 				if(x-4*i>=0)
 			set_map_area(map, x-4*i, y, map_h, map_w, type,1);
 		}
 		val = 1 + random((int)(map_h / 8));
 		if(d==1)
 		{
-			for (int i = 1;i<val;i++)
+			for (int i = 1;i<=val;i++)
 			set_map_area(map, x+4*i, y, map_h, map_w, type, 1);
 		}
 		val =1+ random((int)(map_w/8));
 		if (l==1 && y>0)
 		{
-			for(int i=1;i<val;i++)
+			for(int i=1;i<=val;i++)
 				if (y - 4 * i >= 0)
 			set_map_area(map, x , y-4*i, map_h, map_w, type, 1);
 		}
 		val = 1 + random((int)(map_w / 8));
 		if(r==1)
 		{
-			for (int i = 1;i<val;i++)
+			for (int i = 1;i<=val;i++)
 			set_map_area(map, x, y+4*i, map_h, map_w, type, 1);
 		}
 	return;
