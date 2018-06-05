@@ -67,7 +67,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).yPos = newY;
-				//else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;
+				else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE;
 			}
 		}
 		break;
@@ -87,7 +87,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).xPos = newX;
-				//else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+				else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE;
 			}
 		}
 		break;
@@ -107,7 +107,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).yPos = newY;
-				//else (*tenkic).yPos = (*tenkic).yPos % MAP_SCALE;//ovo se mozda razlikuje od case 0
+				//else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE +1; nije isto
 			}
 		}
 		break;
@@ -127,7 +127,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).xPos = newX;
-				//else (*tenkic).xPos = (*tenkic).xPos % MAP_SCALE;
+				//else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE +1; nije ovako
 			}
 		}
 		break;
