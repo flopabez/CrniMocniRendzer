@@ -29,7 +29,7 @@ char** read_map(int* map_h, int* map_w, char* file_name)//fja za ucitavanje mape
 	map = allocate_map(*map_h, *map_w);
 	for (int i = 0;i < (*map_h);i++)
 		for (int j = 0;j <(*map_w);j++)
-			fscanf(fmap, "%d",(int)&map[i][j]);
+			fscanf(fmap, "%d",(int*)&map[i][j]);
 	fclose(fmap);
 	return map;
 }
@@ -349,7 +349,7 @@ int generate_random_map(int map_height, int map_width)
 {	
 	int map_h = 4 * map_height;
 	int map_w = 4 * map_width;
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	FILE* fmap = fopen("Maps\\random_map.bin", "wb");
 	if (fmap == NULL)
 	{
