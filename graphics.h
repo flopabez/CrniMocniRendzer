@@ -12,7 +12,7 @@
 
 void loadGame(struct gameState *gameState);
 
-void doRender(struct gameState *gameState);
+void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites);
 
 
 #endif /* graphics_h */
