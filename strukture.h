@@ -1,6 +1,8 @@
 #ifndef STRUKTURE_H
 #define STRUKTURE_H
-
+#include<SDL.h>
+#define FPS 60
+#define MAP_SCALE 12
 
 struct listNode {
 	void* data;
@@ -32,8 +34,8 @@ struct gameState {
 	char height, width;
 	char timeStop; //clock pickup timer
 
-	void* renderer;
-	void* sprites;
+	SDL_Renderer** renderer;
+	SDL_Texture** sprites;
 	int time;
 
 };
