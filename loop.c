@@ -10,52 +10,6 @@
 #define BLOCK_X 48
 
 
-void render_map2(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, struct Tank* player, int time)
-{
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	for (int i = 0; i<map_h; i++) {
-		for (int j = 0; j<map_w; j++) {
-			if (!map[i][j]) continue;//nista za prazan blok
-			if (map[i][j] == 6)
-			{
-				if ((i == map_h - 4) && (map[i][j + 3] == 6))
-				{
-					SDL_Rect brect = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X, BLOCK_X };
-					SDL_Rect bdest = { 256, 80, 16, 16 };
-					SDL_RenderCopy(renderer, sprites, &bdest, &brect);//dodavanje brusha u renderer
-				}
-			}
-			else if (map[i][j] != FOREST)
-			{
-				SDL_Rect location = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X / 4, BLOCK_X / 4 };
-				SDL_Rect block = { 256 + ((j % 4) * 16 / 4) + (map[i][j] == 3)*((time % 90) / 15) * 16 , (map[i][j] - 1) * 16 + ((i % 4) * 16 / 4), 16 / 4, 16 / 4 };
-				SDL_RenderCopy(renderer, sprites, &block, &location);//dodavanje bloka na lokaciju u rendereru
-			}
-		}
-	}
-
-	SDL_Rect rect = { player->xPos, player->yPos, BLOCK_X, BLOCK_X };
-	SDL_Rect dest = { 144 + 32 * player->direction, 0, 16, 16 };
-	SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje tenka u renderer
-
-	for (int i = 0; i<map_h; i++) {
-		for (int j = 0; j<map_w; j++) {
-			if (map[i][j] == FOREST)
-			{
-				SDL_Rect location = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X / 4, BLOCK_X / 4 };
-				SDL_Rect block = { 256 + ((j % 4) * 16 / 4)  , (map[i][j] - 1) * 16 + ((i % 4) * 16 / 4), 16 / 4, 16 / 4 };
-				SDL_RenderCopy(renderer, sprites, &block, &location);//dodavanje bloka na lokaciju u rendereru
-
-			}
-		}
-	}
-
-
-	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
-}
-
 int main() {
 
 
