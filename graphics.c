@@ -38,15 +38,12 @@ void loadGame(struct gameState *gameState)
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
-	gameState->time++;
-	//set the drawing color to blue
+	
+	//set the drawing color to black
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
 	//Clear the screen (to blue)
 	SDL_RenderClear(renderer);
-
-	//set the drawing color to white
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	//Draw map
 	for (int i = 0; i<13 * 4; i++) {
