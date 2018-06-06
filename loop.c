@@ -11,9 +11,7 @@
 
 
 int main() {
-
-
-
+	
 	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
 	state->enemyBullets = 0;
 	state->enemyTanks = 0;
@@ -33,12 +31,11 @@ int main() {
 	player->team = 0;
 	player->score = 0;
 	player->upgrade = 0;
-	player->xPos = 10;
-	player->yPos = 10;
+	player->xPos = 0;
+	player->yPos = 0;
 	player->width = 42;
 
 	insertBefore(&(state->playerTanks), player);
-	//state->playerTanks = player;
 	SDL_Event event;
 	SDL_Window *window;
 	SDL_Texture* sprites = NULL;
