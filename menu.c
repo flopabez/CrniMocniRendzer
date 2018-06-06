@@ -22,12 +22,11 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	int ret = 0;
 	static int time = 0;
 	time++;
-	//set the drawing color to black
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	//set the drawing color to gray
+	SDL_SetRenderDrawColor(renderer, 54, 157, 216, 0);
 
-	//Clear the screen (to blue)
+	//Clear the screen (to gray)
 	SDL_RenderClear(renderer);
-
 
 	int mouse_x, mouse_y;
 	int mouse_press = SDL_GetMouseState(&mouse_x, &mouse_y);
@@ -47,6 +46,15 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 		}
 	}
 
+	//Draw Logo
+	SDL_Rect logo_loc = { (WINDOW_W- 170*4)/2, BLOCK_X, 170*4, 24*4 };
+	SDL_Rect logo_sloc = { 230, 265, 170, 24 };
+	SDL_RenderCopy(renderer, sprites, &logo_sloc, &logo_loc);
+
+	SDL_Rect pow_loc = { (WINDOW_W + 170*4 +16)/2, BLOCK_X, 16 * 3, 32 * 3 };
+	SDL_Rect pow_sloc = { 384, 302, 16, 32 };
+	SDL_RenderCopy(renderer, sprites, &pow_sloc, &pow_loc);
+
 	//Draw buttons
 	for (int i = 0; i<BUTTON_NUM; i++) {
 		SDL_Rect location = { buttons[i].xPos+ buttons[i].offset*(BUTTON_SCALE-1)- buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_W-2* buttons[i].offset)*BUTTON_SCALE + 2* buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
@@ -59,4 +67,3 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 
 	return ret;
 }
-
