@@ -38,7 +38,8 @@ void loadGame(struct gameState *gameState)
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
-	
+
+	//gameState->time++;
 	//set the drawing color to black
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
@@ -69,13 +70,12 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	//Draw enemys
 	struct listNode *etank_wrapper = gameState->enemyTanks;
-	char enemyNum = 0;
+
 	while (etank_wrapper) {
 		struct Tank *enemy = (struct Tank*)etank_wrapper->data;
 		SDL_Rect rect = { enemy->xPos, enemy->yPos, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 0 + enemy->frame * 16 + enemy->direction * 16 * 2, 0 + (enemyNum * 128) + enemy->upgrade * 16, 16, 16 };
+		SDL_Rect dest = { 0 + enemy->frame * 16 + enemy->direction * 16 * 2, 0 + enemy->upgrade * 16, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
-		enemyNum++;
 		etank_wrapper = etank_wrapper->next;
 	}
 
