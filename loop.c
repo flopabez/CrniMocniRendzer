@@ -123,13 +123,10 @@ int main() {
 	char ggez = 0;
 	while (ggez == 0) {
 
-
-		render_map2(renderer, sprites, state->terrain, state->height, state->width, player, state->time);
-
-		//state->time++;
-		//doRender(state);
+		state->time++;
+		doRender(state,renderer,sprites);
 		ggez = processEvents(window, wrap);
-		time++;
+
 		if (wrap->up && player->direction == 0) Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
 		if (wrap->down && player->direction == 2) Move(state, player, 2);
