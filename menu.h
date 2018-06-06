@@ -1,11 +1,13 @@
 #pragma once
 
+#include "graphics.h"
+
 #define BUTTON_NUM 6
 #define BUTTON_SCALE 4
 #define BUTTON_W 76
 #define BUTTON_H 13
-#define BUTTON_X ((48 / 4 * 52) - BUTTON_W*BUTTON_SCALE) / 2
-#define BUTTON_Y 64*3
+#define BUTTON_X (WINDOW_W - BUTTON_W*BUTTON_SCALE) / 2
+#define BUTTON_Y WINDOW_H - (BUTTON_NUM +1) * BUTTON_SPACEING
 #define BUTTON_SPACEING (BUTTON_H+3)*BUTTON_SCALE
 
 #define BLOCK_X 48
