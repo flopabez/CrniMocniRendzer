@@ -13,21 +13,21 @@
 int main() {
 
 	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
-	state->enemyBullets = 0;
-	state->enemyTanks = 0;
+	state->enemyBullets = newNode(0);
+	state->enemyTanks = newNode(0);
 	state->playerBullets = newNode(0);
-	state->playerTanks = 0;
+	state->playerTanks = newNode(0);
 
 	struct Tank* player = (struct Tank*)malloc(sizeof(struct Tank));
 	player->bot = 0;
-	player->bulletPower = 2;
-	player->bulletSpeed = 25*5;
+	player->bulletPower = 1;
+	player->bulletSpeed = 8;//sada se brzina ovako izrazava
 	player->direction = 2;
 	player->frame = 0;
 	player->hitPoints = 1;
 	player->lives = 1;
 	player->inAir = 0;
-	player->speed = 24 * 5;
+	player->speed = 5;
 	player->team = 0;
 	player->score = 0;
 	player->upgrade = 0;
@@ -66,7 +66,7 @@ int main() {
 
 		state->time++;
 		ggez = processEvents(window, wrap, state);
-		updateBullets(state, state->playerBullets);
+		updateBullets(state);
 		doRender(state, renderer, sprites);
 		if (wrap->up && player->direction == 0) Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
