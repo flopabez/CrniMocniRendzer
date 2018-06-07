@@ -1,7 +1,7 @@
 #ifndef STRUKTURE_H
 #define STRUKTURE_H
 #include<SDL.h>
-#include "AI.h"
+#include "AIstruct.h"
 #define FPS 24
 #define MAP_SCALE 12
 
