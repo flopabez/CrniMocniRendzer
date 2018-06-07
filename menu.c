@@ -98,6 +98,7 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
 			}
 		}
 		ret = MainMenu(renderer, sprites, buttons);
+		SDL_Delay(1. / FPS * 1000);
 	}
 	return ret;
 }
