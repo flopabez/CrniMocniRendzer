@@ -26,4 +26,4 @@ void LoadMenu(Button *buttons);
 
 int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons);
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons);
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
