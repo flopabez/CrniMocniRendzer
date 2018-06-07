@@ -430,7 +430,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		break;
 	}
 
-	if (team) insertBefore(&state->playerTanks, new);
-	else insertBefore(&state->enemyTanks, new);
+	if (team) insertBefore(&state->enemyTanks, new);
+	else insertBefore(&state->playerTanks, new);
 	return new;
 }
