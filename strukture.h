@@ -25,12 +25,14 @@ struct listNode {
 };
 
 struct Tank {
-	int xPos, yPos, width;
+	int xPos, yPos, width, score;
+	char earnedLives;
 	char direction, speed;
-	char upgrade, lives, hitPoints, bulletSpeed, bulletPower, inAir, score;
+	char upgrade, lives, hitPoints, bulletSpeed, inAir;
 	char team, bot, frame;
 	char move, moveDone, pathDone, kamikaze;
 	struct tankMovesStack* mList;
+	unsigned int shield;
 };
 
 struct movementWrapper {
@@ -45,6 +47,7 @@ struct Bullet {
 };
 
 struct gameState {
+	unsigned int shovel;
 	char killCount;
 	char stage;
 	struct Pickup* pickup;
@@ -64,6 +67,9 @@ struct Level {
 };
 
 
+void updatePowerUps(struct gameState* state);
+void powerUp(struct gameState* state);
+void setBase(struct gameState* state, char type);
 struct listNode* newNode(void* data);
 void insertBefore(struct listNode** stack, void* data);
 void removeNode(struct listNode** stack);
