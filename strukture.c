@@ -381,7 +381,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	new->upgrade = 0;
 	new->frame = 0;
 	new->direction = 0;
-	new->bot = 1;
+
 
 	new->kamikaze = 0;
 	new->mList = 0;
@@ -392,6 +392,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 
 	switch (tankType) {
 	case 0:
+		new->bot = 1;
 		new->speed = 2;
 		new->bulletSpeed = 4;
 		new->bulletPower = 1;
@@ -399,6 +400,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		new->score = 1;
 		break;
 	case 1:
+		new->bot = 2;
 		new->speed = 6;
 		new->bulletSpeed = 8;
 		new->bulletPower = 1;
@@ -406,6 +408,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		new->score = 2;
 		break;
 	case 2:
+		new->bot = 3;
 		new->speed = 3;
 		new->bulletSpeed = 12;
 		new->bulletPower = 1;
@@ -413,6 +416,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		new->score = 3;
 		break;
 	case 3:
+		new->bot = 4;
 		new->speed = 3;
 		new->bulletSpeed = 8;
 		new->bulletPower = 1;
