@@ -29,16 +29,17 @@ typedef struct tankMovesStack
     struct tankMovesStack *next;
 } tankMovesStack;
 
-typedef struct moveQueue
-{
-    struct moveQueue *next;
-    tankMoves *d;
-} moveQueue;
-
 typedef struct coPair
 {
     int x,y;
 } coPair;
+
+
+typedef struct moveQueue
+{
+    struct moveQueue *next;
+    struct coPair d;
+} moveQueue;
 
 typedef struct {
     int priority;
