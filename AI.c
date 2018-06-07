@@ -310,8 +310,8 @@ char chooseMove(Tank *T, gameState G)
     int py=((Tank*)(G.playerTanks->data))->yPos;
     int h=G.height;
     int w=G.width;
-    int bx=h-4;
-    int by=w/2-4;
+    int by=h-4;
+    int bx=w/2-2;
     char chosenMove=0,m,shootMod;
 
     //Check if there's a player or base in front of us. We ignore base walls since we're supposed to try to destroy them.
@@ -413,8 +413,8 @@ char chooseMoveDJ(Tank *T, gameState G)
     int py=((Tank*)(G.playerTanks->data))->yPos;
     int h=G.height;
     int w=G.width;
-    int bx=h-4;
-    int by=w/2-4;
+    int by=h-4;
+    int bx=w/2-2;
     char chosenMove=0,m;
 
     //Check if there's a player or base in front of us. We ignore base walls since we're supposed to try to destroy them. Same as previous.
