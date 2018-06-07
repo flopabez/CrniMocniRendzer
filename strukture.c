@@ -57,7 +57,9 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	case 0: {
 		if ((*tenkic).yPos - (*tenkic).speed < 0) (*tenkic).yPos = 0;
 		else {
+			tenkic->yPos -= tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
+			tenkic->yPos += tenkic->speed;
 			if (temp) (*tenkic).yPos = (*temp).yPos + (*temp).width;
 			else {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
@@ -77,7 +79,9 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	case 1: {
 		if ((*tenkic).xPos - (*tenkic).speed < 0) (*tenkic).xPos = 0;
 		else {
+			tenkic->xPos -= tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
+			tenkic->xPos += tenkic->speed;
 			if (temp) (*tenkic).xPos = (*temp).xPos + (*temp).width;
 			else {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
@@ -97,7 +101,9 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	case 2: {
 		if ((*tenkic).yPos + (*tenkic).speed > (*state).height*MAP_SCALE - (*tenkic).width) (*tenkic).yPos = (*state).height*MAP_SCALE - (*tenkic).width;
 		else {
+			tenkic->yPos += tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
+			tenkic->yPos -= tenkic->speed;
 			if (temp) (*tenkic).yPos = (*temp).yPos - (*temp).width;
 			else {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
@@ -117,7 +123,9 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	case 3: {
 		if ((*tenkic).xPos + (*tenkic).speed > (*state).width*MAP_SCALE - (*tenkic).width) (*tenkic).xPos = (*state).width*MAP_SCALE - (*tenkic).width;
 		else {
+			tenkic->xPos += tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
+			tenkic->xPos -= tenkic->speed;
 			if (temp) (*tenkic).xPos = (*temp).xPos - (*temp).width;
 			else {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
