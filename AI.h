@@ -18,45 +18,14 @@
 #define SHOOT 4
 #define SIT 5
 
+#include "AIstruct.h"
+#include "strukture.h"
 
 typedef struct Tank Tank;
-typedef struct listNode listNode;
 typedef struct gameState gameState;
 
-typedef struct tankMoves
-{
-    struct tankMoves *par;
-    char dir;
-    int x,y,len;
-} tankMoves;
 
-typedef struct tankMovesStack
-{
-    char stackMove;
-    struct tankMovesStack *next;
-} tankMovesStack;
 
-typedef struct moveQueue
-{
-    struct moveQueue *next;
-    tankMoves *d;
-} moveQueue;
-
-typedef struct coPair
-{
-    int x,y;
-} coPair;
-
-typedef struct {
-    int priority;
-    coPair data;
-} node_t;
-
-typedef struct {
-    node_t *nodes;
-    int len;
-    int size;
-} heap_t;
 
 tankMoves *newState(tankMoves *P, int x, int y, int len, char dir);
 void movePush(tankMovesStack **S, char m);
