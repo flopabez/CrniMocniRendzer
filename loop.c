@@ -5,6 +5,7 @@
 #include "hook.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include "menu.h"
 
 #undef main
 #define BLOCK_X 48
@@ -17,25 +18,11 @@ int main() {
 	state->enemyTanks = newNode(0);
 	state->playerBullets = newNode(0);
 	state->playerTanks = newNode(0);
+	state->timeStop = 0;
+	generate_random_map(13, 13);
+	state->terrain = read_map(&(state->height), &(state->width), "random_map");
+	state->time = 0;
 
-	struct Tank* player = (struct Tank*)malloc(sizeof(struct Tank));
-	player->bot = 0;
-	player->bulletPower = 1;
-	player->bulletSpeed = 8;//sada se brzina ovako izrazava
-	player->direction = 2;
-	player->frame = 0;
-	player->hitPoints = 1;
-	player->lives = 1;
-	player->inAir = 0;
-	player->speed = 5;
-	player->team = 0;
-	player->score = 0;
-	player->upgrade = 0;
-	player->xPos = 0;
-	player->yPos = 0;
-	player->width = 42;
-
-	insertBefore(&(state->playerTanks), player);
 	SDL_Event event;
 	SDL_Window *window;
 	SDL_Texture* sprites = NULL;
@@ -47,12 +34,8 @@ int main() {
 	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
 	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
 	SDL_FreeSurface(surface);
-	state->renderer = &renderer;
-	state->sprites = &sprites;
-	state->timeStop = 0;
-	generate_random_map(13, 13);
-	state->terrain = read_map(&(state->height), &(state->width), "random_map");
-	state->time = 0;
+	
+	struct Tank* player = spawnTank(state, 4, 2, 0);
 
 	struct movementWrapper* wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 	wrap->down = 0;
@@ -62,11 +45,13 @@ int main() {
 	wrap->tenkic = player;
 
 	char ggez = 0;
+
 	while (ggez == 0) {
 
-		state->time++;
+		state->time += 5;
 		ggez = processEvents(window, wrap, state);
 		updateBullets(state);
+		updateBots(state);
 		doRender(state, renderer, sprites);
 		if (wrap->up && player->direction == 0) Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
