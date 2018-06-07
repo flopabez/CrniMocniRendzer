@@ -76,7 +76,8 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	return ret;
 }
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
+	Button *buttons = malloc(6 * sizeof(Button));
 	LoadMenu(buttons);
 	SDL_Event event;
 	int ret = 0;
