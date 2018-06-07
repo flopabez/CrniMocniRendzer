@@ -52,7 +52,7 @@ void removeNode(struct listNode** stack);
 char squareCollision(int Ax, int Ay, int Awidth, int Bx, int By, int Bwidth);
 struct Tank* tankCollision(struct gameState* state, struct Tank* tenkic);
 void Move(struct gameState* state, struct Tank* tenkic, char direction);
-void updateBullets(struct gameState* state, struct listNode* bulletlist);
+void updateBullets(struct gameState* state);
 void fireBullet(struct gameState* state, struct Tank* tenkic);
 void respawn(struct Tank* tenkic);
 void hitDetection(struct gameState* state);
