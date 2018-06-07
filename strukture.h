@@ -5,11 +5,12 @@
 #define FPS 24
 #define MAP_SCALE 12
 
-
-struct torka {
-	int a;
-	int b;
-};
+typedef
+struct explosion {
+	char size;
+	int xPos, yPos;
+	unsigned int time;
+}Explosion;
 
 struct listNode {
 	void* data;
@@ -61,7 +62,7 @@ struct Tank* tankCollision(struct gameState* state, struct Tank* tenkic);
 void Move(struct gameState* state, struct Tank* tenkic, char direction);
 void updateBullets(struct gameState* state);
 void fireBullet(struct gameState* state, struct Tank* tenkic);
-void respawn(struct Tank* tenkic);
+void respawn(struct gameState* state, struct Tank* tenkic);
 void hitDetection(struct gameState* state);
 void updateBots(struct gameState* state);
 struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, char team);
