@@ -106,7 +106,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		struct Tank *enemy = (struct Tank*)etank_wrapper->data;
 		if (!(gameState->time % 2)) enemy->frame = (enemy->frame + 1) % 2;
 		SDL_Rect rect = { xofs + enemy->xPos, yofs + enemy->yPos, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 0 + enemy->frame * 16 + enemy->direction * 16 * 2, 0 + enemy->upgrade * 16, 16, 16 };
+		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2, 0 + enemy->upgrade * 16, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
 		etank_wrapper = etank_wrapper->next;
 	}
