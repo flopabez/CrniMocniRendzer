@@ -19,6 +19,9 @@ void LoadMenu(Button *buttons) {
 
 int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	
+	// Stavi ovo u main:
+	//		Button *buttons=malloc(BUTTON_NUM*sizeof(Button));
+
 	int ret = 0;
 	static int time = 0;
 	time++;
@@ -67,3 +70,4 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 
 	return ret;
 }
+

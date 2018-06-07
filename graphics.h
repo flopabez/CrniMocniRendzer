@@ -22,7 +22,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	int xPos, yPos;
 	char size;
 	int time;
-} Explosion;
+} Explosion; 
 
 
 void Boom(int xPos, int yPos, char size, struct listNode* lista_ekspolzija, struct gameState* gameState) {
