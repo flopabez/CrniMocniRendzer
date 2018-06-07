@@ -142,27 +142,14 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 			SDL_RenderCopy(renderer, sprites, &block, &location);
 		}
 	}
-	// Powerup moze da postoji samo jedan na ekranu tako da necu ni da vidim da ga stavljate
-	// u listu! Dajte ili struct ili samo stavite POW, POWX, i POWY u gameState
-	// meni je ovde pretpostavljen struct u kome je num br. powerupa (0 znaci nema ga)
-	// a xPos i yPos vec znate
-	/*/Draw upgrade
-	if (gameState->pow.num) {
-	SDL_Rect rect = { xofs+gameState->pow.xPos, yofs+gameState->pow.yPos, BLOCK_X, BLOCK_X };
-	SDL_Rect dest = { 256 + (gameState->pow.num-1)*16, 112, 16, 16};
+
+	//Draw pickup
+	if (gameState->pickup) {
+	SDL_Rect rect = { xofs+ gameState->pickup->xPos, yofs+ gameState->pickup->yPos, BLOCK_X, BLOCK_X };
+	SDL_Rect dest = { 256 + (gameState->pickup->type)*16, 112, 16, 16};
 	SDL_RenderCopy(renderer, sprites, &dest, &rect);
 	}
 	//*/
-
-	/* Pretpostavio sam da eksplozija izgleda ovako i da se nalaze u listi unutar gameState-a
-
-	typedef struct explosion {
-	int xPos, yPos;
-	char size;
-	int time;
-	} Explosion;
-
-	*/
 
 	//Draw explosions
 	struct listNode *booms = gameState->explosions;
