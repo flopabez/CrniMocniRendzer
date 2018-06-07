@@ -3,6 +3,20 @@
 #include "strukture.h"
 #include "graphics.h"
 
+
+void setBase(struct gameState* state, char type) {
+	for (int i = state->width / 2 - 4; i < state->width / 2 + 4; i++) {
+		state->terrain[state->height - 6][i] = type;
+		state->terrain[state->height - 5][i] = type;
+	}
+	for (int i = state->height - 6; i < state->height; i++) {
+		state->terrain[i][state->width / 2 - 4] = type;
+		state->terrain[i][state->width / 2 - 3] = type;
+		state->terrain[i][state->width / 2 + 2] = type;
+		state->terrain[i][state->width / 2 + 3] = type;
+	}
+}
+
 struct listNode* newNode(void* data) {
 	struct listNode* new = (struct listNode*)malloc(sizeof(struct listNode));
 	(*new).next = 0;
@@ -150,8 +164,8 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 		struct Bullet* new = (struct Bullet*)malloc(sizeof(struct Bullet));
 		(*new).source = tenkic;
 		(*new).direction = (*tenkic).direction;
-		(*new).speed = (*tenkic).bulletSpeed;
-		(*new).power = (*tenkic).bulletPower;
+		(*new).speed = (*tenkic).bulletSpeed + 4*(tenkic->upgrade > 0);
+		(*new).power = 1 + (tenkic->upgrade > 2);
 		(*new).width = MAP_SCALE;
 		switch ((*new).direction) {
 		case 0:
@@ -200,7 +214,7 @@ void hitDetection(struct gameState* state) {
 		}
 		if (tankshell->data) {
 			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
+			if (tenkic->shield == 0) (*tenkic).hitPoints--;
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 				if ((*tenkic).lives) respawn(state,tenkic);
@@ -254,7 +268,7 @@ void hitDetection(struct gameState* state) {
 		}
 		if (tankshell->data) {
 			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
+			if (tenkic->shield == 0) (*tenkic).hitPoints--;
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 				if ((*tenkic).lives) respawn(state,tenkic);
@@ -442,6 +456,8 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	new->frame = 0;
 	new->direction = 0;
 	new->bot = tankType;
+	new->shield = 0;
+	new->earnedLives = 0;
 
 	new->kamikaze = 0;
 	new->mList = 0;
@@ -452,39 +468,34 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 
 	switch (tankType) {
 	case 0:
-		new->bot = 0;
+		new->shield = 24 * 5;
 		new->lives = 3;
 		new->speed = 3;
 		new->bulletSpeed = 8;
-		new->bulletPower = 1;
 		new->hitPoints = 1;
 		new->score = 0;
 		break;
 	case 1:
 		new->speed = 2;
 		new->bulletSpeed = 4;
-		new->bulletPower = 1;
 		new->hitPoints = 1;
 		new->score = 1;
 		break;
 	case 2:
 		new->speed = 6;
 		new->bulletSpeed = 8;
-		new->bulletPower = 1;
 		new->hitPoints = 1;
 		new->score = 2;
 		break;
 	case 3:
 		new->speed = 3;
 		new->bulletSpeed = 12;
-		new->bulletPower = 1;
 		new->hitPoints = 1;
 		new->score = 3;
 		break;
 	case 4:
 		new->speed = 3;
 		new->bulletSpeed = 8;
-		new->bulletPower = 1;
 		new->hitPoints = 4;
 		new->score = 4;
 		break;
@@ -493,4 +504,96 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	if (team) insertBefore(&state->enemyTanks, new);
 	else insertBefore(&state->playerTanks, new);
 	return new;
+}
+
+void updatePowerUps(struct gameState* state) {
+	struct listNode* temp = state->playerTanks;
+	while (temp->data) {
+		struct Tank* tenkic = temp->data;
+		if (tenkic->bot == 0) {
+			if ((tenkic->earnedLives + 1) * 200 < tenkic->score) {
+				tenkic->earnedLives++;
+				tenkic->lives++;
+			}
+			if (tenkic->shield) tenkic->shield--;
+		}
+		temp = temp->next;
+	}
+	temp = state->enemyTanks;
+	while (temp->data) {
+		struct Tank* tenkic = temp->data;
+		if (tenkic->bot == 0) {
+			if ((tenkic->earnedLives + 1) * 200 < tenkic->score) {
+				tenkic->earnedLives++;
+				tenkic->lives++;
+			}
+			if (tenkic->shield) tenkic->shield--;
+		}
+		temp = temp->next;
+	}
+	if (state->timeStop) state->timeStop--;
+	if (state->shovel) {
+		state->shovel--;
+		if (state->shovel == 0) setBase(state, 1);
+	}
+}
+	
+void powerUp(struct gameState* state) {
+	if (state->pickup) {
+		struct listNode* temp = state->playerTanks;
+		while (temp->data) {
+			struct Tank* tenkic = temp->data;
+			if (tenkic->bot == 0 && state->pickup && squareCollision(state->pickup->yPos, state->pickup->xPos, MAP_SCALE * 4, tenkic->yPos, tenkic->xPos, tenkic->width)) {
+				switch (state->pickup->type) {
+				case 0: tenkic->shield = 24 * 10; break;
+				case 1: state->timeStop = 24 * 10; break;
+				case 2: 
+					state->shovel = 24 * 20;
+					setBase(state, 2);
+					break;
+				case 3: tenkic->upgrade += tenkic->upgrade == 3 ? 0 : 1; break;
+				case 4:
+					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
+					while (temp->data) {
+						free(temp->data);
+						temp->data = 0;
+						removeNode(temp);
+					}
+					break;
+				case 5: tenkic->lives++; break;
+				}
+				free(state->pickup);
+				state->pickup = 0;
+				return;
+			}
+		}
+
+		temp = state->enemyTanks;
+		while (temp->data) {
+			struct Tank* tenkic = temp->data;
+			if (tenkic->bot == 0 && state->pickup && squareCollision(state->pickup->yPos, state->pickup->xPos, MAP_SCALE * 4, tenkic->yPos, tenkic->xPos, tenkic->width)) {
+				switch (state->pickup->type) {
+				case 0: tenkic->shield = 24 * 10; break;
+				case 1: state->timeStop = 24 * 10; break;
+				case 2: 
+					state->shovel = 24 * 20;
+					setBase(state, 2);
+					break;
+				case 3: tenkic->upgrade += tenkic->upgrade == 3 ? 0 : 1; break;
+				case 4:
+					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
+					while (temp->data) {
+						free(temp->data);
+						temp->data = 0;
+						removeNode(temp);
+					}
+					break;
+				case 5: tenkic->lives++; break;
+				}
+				free(state->pickup);
+				state->pickup = 0;
+				return;
+			}
+		}
+	}
 }
