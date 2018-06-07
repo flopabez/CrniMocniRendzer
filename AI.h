@@ -47,7 +47,7 @@ char movePop(tankMovesStack **S);
 char moveLook(tankMovesStack *S);
 void enq(moveQueue **F, moveQueue **R, tankMoves *P);
 tankMoves* deq(moveQueue **F, moveQueue **R);
-int bulletExists(Tank *T, listNode* L);
+int bulletExists(Tank *T);
 int isBounded(int x, int y, int h, int w);
 int isBaseBrick(char c, int x, int y, int h, int w);
 int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty);
