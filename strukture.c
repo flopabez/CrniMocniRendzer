@@ -224,6 +224,18 @@ void hitDetection(struct gameState* state) {
 					break;
 				}
 			}
+			else {
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = metak->yPos;
+				boom->xPos = metak->xPos;
+
+				insertBefore(&state->explosions, boom);
+				free(metak);
+				removeNode(bulletshell);
+				break;
+			}
 		}
 		bulletshell = (*bulletshell).next;
 	}
@@ -430,7 +442,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	new->upgrade = 0;
 	new->frame = 0;
 	new->direction = 0;
-
+	new->bot = tankType;
 
 	new->kamikaze = 0;
 	new->mList = 0;
@@ -441,38 +453,6 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 
 	switch (tankType) {
 	case 0:
-		new->bot = 1;
-		new->speed = 2;
-		new->bulletSpeed = 4;
-		new->bulletPower = 1;
-		new->hitPoints = 1;
-		new->score = 1;
-		break;
-	case 1:
-		new->bot = 2;
-		new->speed = 6;
-		new->bulletSpeed = 8;
-		new->bulletPower = 1;
-		new->hitPoints = 1;
-		new->score = 2;
-		break;
-	case 2:
-		new->bot = 3;
-		new->speed = 3;
-		new->bulletSpeed = 12;
-		new->bulletPower = 1;
-		new->hitPoints = 1;
-		new->score = 3;
-		break;
-	case 3:
-		new->bot = 4;
-		new->speed = 3;
-		new->bulletSpeed = 8;
-		new->bulletPower = 1;
-		new->hitPoints = 4;
-		new->score = 4;
-		break;
-	case 4:
 		new->bot = 0;
 		new->lives = 3;
 		new->speed = 3;
@@ -480,6 +460,34 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		new->bulletPower = 1;
 		new->hitPoints = 1;
 		new->score = 0;
+		break;
+	case 1:
+		new->speed = 2;
+		new->bulletSpeed = 4;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 1;
+		break;
+	case 2:
+		new->speed = 6;
+		new->bulletSpeed = 8;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 2;
+		break;
+	case 3:
+		new->speed = 3;
+		new->bulletSpeed = 12;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 3;
+		break;
+	case 4:
+		new->speed = 3;
+		new->bulletSpeed = 8;
+		new->bulletPower = 1;
+		new->hitPoints = 4;
+		new->score = 4;
 		break;
 	}
 
