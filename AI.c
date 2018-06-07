@@ -29,7 +29,7 @@ char movePop(tankMovesStack **S)
 {
     tankMovesStack *tS=*S;
     char rC;
-    if (tS==NULL) return 255;
+    if (tS==NULL) return 25;
     (*S)=(*S)->next;
     rC=tS->stackMove;
     free(tS);
@@ -38,7 +38,7 @@ char movePop(tankMovesStack **S)
 
 char moveLook(tankMovesStack *S)
 {
-    if (S==NULL) return 255;
+    if (S==NULL) return 25;
     else return (S->stackMove);
 }
 
@@ -109,8 +109,10 @@ int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty)
 int seeObj(Tank *T, gameState G, char dir, int tx, int ty)
 {
     int x1,y1,x2,y2,h,w;
-    x1=x2=T->xPos;
-    y1=y2=T->yPos;
+    int xP=T->xPos/MAP_SCALE;
+    int yP=T->yPos/MAP_SCALE;
+    x1=x2=xP;
+    y1=y2=yP;
     h=G.height;
     w=G.width;
     switch(dir)
@@ -147,6 +149,7 @@ int tileFree(int x,int y,gameState G)
     int w=G.width;
     int r=1;
     if (isBounded(x,y,h,w)==0) return 3;
+    if (isBounded(x+3,y+3,h,w)==0) return 3;
     for (int i=0;i<4;i++)
         for (int j=0;j<4;j++)
         {
@@ -164,7 +167,7 @@ int tileFree(int x,int y,gameState G)
 //BFS
 tankMovesStack *genMoveList(Tank *T, gameState G)
 {
-    int h=G.height,w=G.width,x=T->xPos,y=T->yPos;
+    int h=G.height,w=G.width,x=(T->xPos)/MAP_SCALE,y=(T->yPos)/MAP_SCALE;
     int i,tempx,tempy;
     char **vis,notDone=1;
     moveQueue *frontQ,*rearQ,*tQ;
@@ -274,16 +277,30 @@ int brickInFront(int x,int y, gameState G,char orient)
 //Generates a random legal move.
 char randMove(Tank *T, gameState G)
 {
-    char mArr[4];
+    char mArr[4],cdir;
     int x,y;
-    int i,numChoices=0;
+    int i,numChoices=0,keepDirection;
+
+    cdir=T->direction;
+    if (cdir>=0&&cdir<4)
+    {
+        x=T->xPos/MAP_SCALE+dCoord[cdir][1];
+        y=T->yPos/MAP_SCALE+dCoord[cdir][0];
+        if (tileFree(x,y,G))
+        {
+            keepDirection=rand()%100;
+            if (keepDirection<80) return cdir;
+        }
+    }
+
     for (i=0;i<4;i++)
     {
-        x=T->xPos+dCoord[i][1];
-        y=T->yPos+dCoord[i][0];
+        x=T->xPos/MAP_SCALE+dCoord[i][1];
+        y=T->yPos/MAP_SCALE+dCoord[i][0];
         if (tileFree(x,y,G)==1) mArr[numChoices++]=UP+i;
     }
-    if (numChoices==0) return 255;
+    printf("Broj poteza: %d\n");
+    if (numChoices==0) return 25;
     return mArr[rand()%numChoices];
 }
 
@@ -305,9 +322,10 @@ Kamikaze tanks will only fire if their path requires it or they can destroy the 
 char chooseMove(Tank *T, gameState G)
 {
     srand(time(NULL));
+    printf("%d %d\n",T->xPos,T->yPos);
     //Init parameters
-    int px=((Tank*)(G.playerTanks->data))->xPos;
-    int py=((Tank*)(G.playerTanks->data))->yPos;
+    //int px=(((Tank*)(G.playerTanks->data))->xPos)/MAP_SCALE;
+    //int py=(((Tank*)(G.playerTanks->data))->yPos)/MAP_SCALE;
     int h=G.height;
     int w=G.width;
     int by=h-4;
@@ -316,7 +334,7 @@ char chooseMove(Tank *T, gameState G)
 
     //Check if there's a player or base in front of us. We ignore base walls since we're supposed to try to destroy them.
     if (bulletExists(T)==0)
-        if (seeObj(T,G,T->direction+UP,px,py)||seeObj(T,G,T->direction+UP,bx,by)) return SHOOT;
+        if (/*seeObj(T,G,T->direction+UP,px,py)||*/seeObj(T,G,T->direction+UP,bx,by)) return SHOOT;
 
     //Should our tank pathfind or move randomly? This function checks that and generates a movelist if needed.
     if (T->pathDone==0&&canPathfind(T,G,G.dif))
@@ -333,7 +351,7 @@ char chooseMove(Tank *T, gameState G)
 
 
     //Now we check if our tank is supposed to pathfind through brick walls, and if yes we attempt to shoot that wall down. For normal tanks, this usually means only base walls since BFS avoids all other walls.
-    if (brickInFront(T->xPos,T->yPos,G,m)==2&&chosenMove)
+    if (brickInFront(T->xPos/MAP_SCALE,T->yPos/MAP_SCALE,G,m)==2&&chosenMove)
     {
         T->direction=m-UP;
         if (bulletExists(T)==0) return SHOOT;
