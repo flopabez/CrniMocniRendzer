@@ -53,7 +53,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	SDL_Rect num_sloc = { 289 + 8 * (p1->lives), 200, 8, 8 };
 	SDL_RenderCopy(renderer, sprites, &num_sloc, &num_loc);
 
-	if (gameState->playerTanks->next) {
+	if (gameState->playerTanks->next->data) {
 		SDL_Rect P2_loc = { xGUI, yGUI + BLOCK_X * 7.5, BLOCK_X, BLOCK_X };
 		SDL_Rect P2_sloc = { 376, 160, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &P2_sloc, &P2_loc);
@@ -90,7 +90,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//Draw player
 	struct listNode *tank_wrapper = gameState->playerTanks;
 	char playerNum = 0;
-	while (tank_wrapper) {
+	while (tank_wrapper->data) {
 		struct Tank *player = (struct Tank*)tank_wrapper->data;
 		SDL_Rect rect = { xofs + player->xPos, yofs + player->yPos, BLOCK_X, BLOCK_X };
 		SDL_Rect dest = { 0 + player->frame * 16 + player->direction * 16 * 2, 0 + (playerNum * 128) + player->upgrade * 16, 16, 16 };
@@ -102,7 +102,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//Draw enemys
 	struct listNode *etank_wrapper = gameState->enemyTanks;
 
-	while (etank_wrapper) {
+	while (etank_wrapper->data) {
 		struct Tank *enemy = (struct Tank*)etank_wrapper->data;
 		SDL_Rect rect = { xofs + enemy->xPos, yofs + enemy->yPos, BLOCK_X, BLOCK_X };
 		SDL_Rect dest = { 0 + enemy->frame * 16 + enemy->direction * 16 * 2, 0 + enemy->upgrade * 16, 16, 16 };
@@ -112,7 +112,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	//Draw player bullets
 	struct listNode *pbullet_wrapper = gameState->playerBullets;
-	while (pbullet_wrapper) {
+	while (pbullet_wrapper->data) {
 		struct Bullet *bullet = (struct Bullet*)pbullet_wrapper->data;
 		SDL_Rect rect = { xofs + bullet->xPos, yofs + bullet->yPos, BLOCK_X / 4, BLOCK_X / 4 };
 		SDL_Rect dest = { 322 + bullet->direction * 5, 102, 5, 4 };
@@ -122,7 +122,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	}
 	//Draw enemy bullets
 	struct listNode *ebullet_wrapper = gameState->enemyBullets;
-	while (ebullet_wrapper) {
+	while (ebullet_wrapper->data) {
 		struct Bullet *bullet = (struct Bullet*)ebullet_wrapper->data;
 		SDL_Rect rect = { xofs + bullet->xPos, yofs + bullet->yPos, BLOCK_X / 4, BLOCK_X / 4 };
 		SDL_Rect dest = { 322 + bullet->direction * 5, 102, 5, 4 };
@@ -165,7 +165,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	/*/Draw explosions
 	struct listNode *booms = gameState->explosions;
-	while (booms) {
+	while (booms->data) {
 		struct Explosion *exp = (struct Bullet*)booms->data;
 		SDL_Rect rect = { xofs+exp->xPos - (BLOCK_X/2*(exp->size + 1)), yofs+exp->yPos - (BLOCK_X / 2 * (exp->size + 1)), BLOCK_X*(exp->size + 1), BLOCK_X*(exp->size + 1) };
 		SDL_Rect dest = { 256 + exp->size*48 + 16*(exp->time / 15)*(exp->size+1), 128, 16*(exp->size+1), 16*(exp->size + 1) };
