@@ -16,10 +16,11 @@ void insertBefore(struct listNode** stack, void* data) {
 	*stack = new;
 }
 
-void removeNode(struct listNode** stack) {
-	struct listNode* discard = (*stack);
-	*stack = (**stack).next;
-	free(discard);
+void removeNode(struct listNode* stack) {
+	struct listNode* temp = stack->next;
+	stack->next = stack->next->next;
+	stack->data = temp->data;
+	free(temp);
 }
 
 
@@ -135,10 +136,19 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	}
 }
 
-void updateBullets(struct gameState* state, struct listNode* bulletlist) {
+void updateBullets(struct gameState* state) {
 
-	while (bulletlist) {
+	struct listNode* bulletlist = state->playerBullets;
+
+	while (bulletlist->data) {
 		struct Bullet* bullet = (*bulletlist).data;
+
+		if (bullet->xPos < 0 || bullet->yPos < 0 || bullet->xPos > state->width*MAP_SCALE - bullet->width || bullet->yPos > state->height*MAP_SCALE - bullet->width) {
+			(*bullet).source->inAir--;
+			free((*bulletlist).data);
+			removeNode(bulletlist);
+			continue;
+		}
 		char clip = (
 			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
 			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
@@ -146,68 +156,61 @@ void updateBullets(struct gameState* state, struct listNode* bulletlist) {
 			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2 ||
 			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
 			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 || 
+			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 ||
 			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2);
 
 		if (clip) {
+			
 			switch ((*bullet).direction) {
-			case 0: {
-				int limit = ((*bullet).xPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
-				for (int y = (*bullet).yPos / MAP_SCALE; y < (*bullet).yPos / MAP_SCALE + (*bullet).power; y++)
-					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++) {
-						if ((*state).terrain[y][x] == 2) {
-							if ((*bullet).power == 2) (*state).terrain[y][x] = 0;
+				case 0: {
+					int limit = ((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
+					for (int y = (*bullet).yPos / MAP_SCALE - (*bullet).power + 1; y < (*bullet).yPos / MAP_SCALE + 1; y++)
+						for (int x = (*bullet).xPos / MAP_SCALE - 1; x < limit + 1; x++) {
+							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
+							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
 						}
-						else (*state).terrain[y][x] = 0;
-					}
-				break;
-			}
-			case 1: {
-				int limit = ((*bullet).yPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
-				for (int x = (*bullet).xPos / MAP_SCALE; x < (*bullet).xPos / MAP_SCALE + (*bullet).power; x++)
-					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++) {
-						if ((*state).terrain[y][x] == 2) {
-							if ((*bullet).power == 2) (*state).terrain[y][x] = 0;
+					break;
+				}
+				case 1: {
+					int limit = ((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
+					for (int x = (*bullet).xPos / MAP_SCALE - (*bullet).power + 1; x < (*bullet).xPos / MAP_SCALE + 1; x++)
+						for (int y = (*bullet).yPos / MAP_SCALE - 1; y < limit + 1; y++) {
+							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
+							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
 						}
-						else (*state).terrain[y][x] = 0;
-					}
-				break;
-			}
-			case 2: {
-				int limit = ((*bullet).xPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
-				for (int y = (*bullet).yPos / MAP_SCALE; y < (*bullet).yPos / MAP_SCALE + (*bullet).power; y++)
-					for (int x = (*bullet).xPos / MAP_SCALE; x < limit; x++) {
-						if ((*state).terrain[y][x] == 2) {
-							if ((*bullet).power == 2) (*state).terrain[y + ((*bullet).width - 1) / MAP_SCALE][x] = 0; //ovo mozda ne valja
+					break;
+				}
+				case 2: {
+					int limit = ((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
+					for (int y = (*bullet).yPos / MAP_SCALE + 1; y < (*bullet).yPos / MAP_SCALE + (*bullet).power + 1; y++)
+						for (int x = (*bullet).xPos / MAP_SCALE - 1; x < limit + 1; x++) {
+							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
+							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
 						}
-						else (*state).terrain[y + ((*bullet).width - 1) / MAP_SCALE][x] = 0; //ovo mozda ne valja
-					}
-				break;
-			}
-			case 3: {
-				int limit = ((*bullet).yPos + (*bullet).width - 1)/MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
-				for (int x = (*bullet).xPos / MAP_SCALE; x < (*bullet).xPos / MAP_SCALE + (*bullet).power; x++)
-					for (int y = (*bullet).yPos / MAP_SCALE; y < limit; x++) {
-						if ((*state).terrain[y][x] == 2) {
-							if ((*bullet).power == 2) (*state).terrain[y][x + ((*bullet).width - 1) / MAP_SCALE] = 0; //ovo isto
+					break;
+				}
+				case 3: {
+					int limit = ((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
+					for (int x = (*bullet).xPos / MAP_SCALE + 1; x < (*bullet).xPos / MAP_SCALE + (*bullet).power + 1; x++)
+						for (int y = (*bullet).yPos / MAP_SCALE - 1; y < limit + 1; y++) {
+							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
+							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
 						}
-						else (*state).terrain[y][x + ((*bullet).width - 1) / MAP_SCALE] = 0; //ovo isto
-					}
-				break;
+					break;
+				}
 			}
-			}
+			
 			(*bullet).source->inAir--;
-			free(bullet);
-			struct listNode* next = (*bulletlist).next;
-			removeNode(&bulletlist);
-			bulletlist = next;
+			free((*bulletlist).data);
+			removeNode(bulletlist);
+
 		}
 		else {
 			switch ((*bullet).direction) {
-			case 0: (*bullet).yPos -= (*bullet).speed; break;
-			case 1: (*bullet).xPos -= (*bullet).speed; break;
-			case 2: (*bullet).yPos += (*bullet).speed; break;
-			case 3: (*bullet).xPos += (*bullet).speed; break;
+			case 0: (*bullet).yPos -= (*bullet).speed / FPS; break;
+			case 1: (*bullet).xPos -= (*bullet).speed / FPS; break;
+			case 2: (*bullet).yPos += (*bullet).speed / FPS; break;
+			case 3: (*bullet).xPos += (*bullet).speed / FPS; break;
 			}
 			bulletlist = (*bulletlist).next;
 		}
@@ -227,12 +230,12 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 		(*new).width = MAP_SCALE;
 		switch ((*new).direction) {
 		case 0:
-			(*new).yPos = (*tenkic).yPos - (*new).width;
+			(*new).yPos = (*tenkic).yPos - (*new).width + MAP_SCALE / 2;
 			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
 			break;
 		case 1:
 			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos - (*new).width;
+			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
 			break;
 		case 2:
 			(*new).yPos = (*tenkic).yPos + (*tenkic).width;
