@@ -169,10 +169,10 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	while (booms->data) {
 		Explosion *exp = (struct Bullet*)booms->data;
 		SDL_Rect rect = { xofs+exp->xPos - (BLOCK_X/2*(exp->size + 1)), yofs+exp->yPos - (BLOCK_X / 2 * (exp->size + 1)), BLOCK_X*(exp->size + 1), BLOCK_X*(exp->size + 1) };
-		SDL_Rect dest = { 256 + exp->size*48 + 16*(exp->time / 15)*(exp->size+1), 128, 16*(exp->size+1), 16*(exp->size + 1) };
+		SDL_Rect dest = { 256 + exp->size*48 + 16*(exp->time / 2)*(exp->size+1), 128, 16*(exp->size+1), 16*(exp->size + 1) };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
 		exp->time++;
-		if ((exp->time == 45 && exp->size == 0) || (exp->time == 30 && exp->size == 1)) removeNode(&booms);
+		if ((exp->time == 6 && exp->size == 0) || (exp->time == 4 && exp->size == 1)) removeNode(booms);
 		else booms = booms->next;
 	}
 	//*/
@@ -181,5 +181,3 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
 }
-
-//*/
