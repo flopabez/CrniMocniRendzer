@@ -242,12 +242,12 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
 			break;
 		case 2:
-			(*new).yPos = (*tenkic).yPos + (*tenkic).width;
+			(*new).yPos = (*tenkic).yPos + (*tenkic).width   - MAP_SCALE;//
 			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
 			break;
 		case 3:
 			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos + (*tenkic).width;
+			(*new).xPos = (*tenkic).xPos + (*tenkic).width   - MAP_SCALE; //
 			break;
 		}
 		if ((*tenkic).team) insertBefore(&(*state).enemyBullets, new);
