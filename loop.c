@@ -47,11 +47,16 @@ int main() {
 	wrap->right = 0;
 	wrap->tenkic = player;
 
+	doMenu(window, renderer, sprites);
 	char ggez = 0;
 	spawnTank(state, 1, 0, 1);
+	
 	while (ggez == 0) {
 
-		state->time += 5;
+		char moving = wrap->up || wrap->down || wrap->left || wrap->right;
+
+		if (!(state->time % 2) && moving) player->frame = (player->frame + 1) % 2;
+		state->time++;
 		ggez = processEvents(window, wrap, state);
 		hitDetection(state);
 		updateBullets(state);
