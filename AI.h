@@ -1,5 +1,5 @@
-#ifndef AI2_H_INCLUDED
-#define AI2_H_INCLUDED
+#ifndef AI_H_INCLUDED
+#define AI_H_INCLUDED
 #include "strukture.h"
 
 typedef struct Tank Tank;
@@ -64,4 +64,4 @@ char chooseMoveDJ(Tank *T, gameState G);
 tankMovesStack *genMoveListDJ(Tank *T, gameState G);
 char pickMove(Tank *T, gameState G);
 
-#endif // AI2_H_INCLUDED
+#endif // AI_H_INCLUDED
