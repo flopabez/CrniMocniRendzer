@@ -11,23 +11,23 @@
 
 
 int main() {
-	
+
 	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
 	state->enemyBullets = 0;
 	state->enemyTanks = 0;
-	state->playerBullets = 0;
+	state->playerBullets = newNode(0);
 	state->playerTanks = 0;
 
 	struct Tank* player = (struct Tank*)malloc(sizeof(struct Tank));
 	player->bot = 0;
-	player->bulletPower = 1;
-	player->bulletSpeed = 0;
-	player->direction = 0;
+	player->bulletPower = 2;
+	player->bulletSpeed = 25*5;
+	player->direction = 2;
 	player->frame = 0;
 	player->hitPoints = 1;
 	player->lives = 1;
-	player->inAir = 1;
-	player->speed = 24*5;
+	player->inAir = 0;
+	player->speed = 24 * 5;
 	player->team = 0;
 	player->score = 0;
 	player->upgrade = 0;
@@ -40,7 +40,6 @@ int main() {
 	SDL_Window *window;
 	SDL_Texture* sprites = NULL;
 	SDL_Renderer* renderer = NULL;//inicijalizacija rendera i tekstura za crtanje
-	int time = 0;//vreme sluzi za animaciju vode
 	SDL_Init(SDL_INIT_VIDEO);
 	window = SDL_CreateWindow("Map Builder", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, BLOCK_X / 4 * 52, BLOCK_X / 4 * 52, 0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
@@ -61,29 +60,21 @@ int main() {
 	wrap->left = 0;
 	wrap->right = 0;
 	wrap->tenkic = player;
-	
-	struct Bullet* temp = (struct Bullet*)malloc(sizeof(struct Bullet));
-	temp->direction = 3;
-	temp->power = 1;
-	temp->source = player;
-	temp->speed = 60;
-	temp->width = 12;
-	temp->xPos = 20;
-	temp->yPos = 100;
 
 	char ggez = 0;
 	while (ggez == 0) {
 
 		state->time++;
-		doRender(state,renderer,sprites);
-		ggez = processEvents(window, wrap);
-
+		ggez = processEvents(window, wrap, state);
+		updateBullets(state, state->playerBullets);
+		doRender(state, renderer, sprites);
 		if (wrap->up && player->direction == 0) Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
 		if (wrap->down && player->direction == 2) Move(state, player, 2);
 		if (wrap->right && player->direction == 3) Move(state, player, 3);
 		
-		SDL_Delay(1./FPS * 1000);
+		SDL_Delay(1. / FPS * 1000);
+
 	}
 	return 0;
 }
