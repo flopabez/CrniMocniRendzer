@@ -26,7 +26,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	static int time = 0;
 	time++;
 	//set the drawing color to gray
-	SDL_SetRenderDrawColor(renderer, 54, 157, 216, 0);
+	SDL_SetRenderDrawColor(renderer, 65, 106, 204, 0);
 
 	//Clear the screen (to gray)
 	SDL_RenderClear(renderer);
@@ -50,13 +50,18 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	}
 
 	//Draw Logo
-	SDL_Rect logo_loc = { (WINDOW_W- 170*4)/2, BLOCK_X, 170*4, 24*4 };
-	SDL_Rect logo_sloc = { 230, 265, 170, 24 };
+	SDL_Rect logo_loc = { (WINDOW_W- 170*4)/2, BLOCK_X, 170*4, 25 *4 };
+	SDL_Rect logo_sloc = { 230, 264, 170, 25 };
 	SDL_RenderCopy(renderer, sprites, &logo_sloc, &logo_loc);
 
 	SDL_Rect pow_loc = { (WINDOW_W + 170*4 +16)/2, BLOCK_X, 16 * 3, 32 * 3 };
 	SDL_Rect pow_sloc = { 384, 302, 16, 32 };
 	SDL_RenderCopy(renderer, sprites, &pow_sloc, &pow_loc);
+
+	//Draw background
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+	SDL_Rect bg = { BLOCK_X/2 , BLOCK_X*4 , WINDOW_W-BLOCK_X, WINDOW_H- BLOCK_X *4.5 };
+	SDL_RenderFillRect(renderer, &bg);
 
 	//Draw buttons
 	for (int i = 0; i<BUTTON_NUM; i++) {

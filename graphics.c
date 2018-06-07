@@ -30,12 +30,18 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	SDL_Rect bg = { xofs , yofs , gameState->width/4*BLOCK_X, gameState->height/4*BLOCK_X };
 	SDL_RenderFillRect(renderer, &bg);
 
-	//Draw GUI
+	//Draw GUI///////////////////////////////////////////////////////////////////
 	int xGUI = ((xofs + gameState->width / 4 * BLOCK_X) + WINDOW_W - BLOCK_X)/2;
 	int yGUI = (WINDOW_H - BLOCK_X * 10.5) / 2;
 	SDL_Rect tank_count_loc = { xGUI, yGUI, BLOCK_X, BLOCK_X*5 };
 	SDL_Rect tank_count_sloc = {376, 24, 16, 80};
 	SDL_RenderCopy(renderer, sprites, &tank_count_sloc, &tank_count_loc);
+
+	for (int i = 0; i < 20; i++) {
+		SDL_Rect tank_mark_loc = { xGUI+(BLOCK_X/2)*(i%2), yGUI + (i/2)*(BLOCK_X/2), BLOCK_X/2, BLOCK_X/2 };
+		SDL_Rect tank_mark_sloc = { 328+8*1/*(gameState->tanksleft>i)*/, 192, 8, 8 };
+		SDL_RenderCopy(renderer, sprites, &tank_mark_sloc, &tank_mark_loc);
+	}
 
 	SDL_Rect P1_loc = { xGUI, yGUI+BLOCK_X*6, BLOCK_X, BLOCK_X };
 	SDL_Rect P1_sloc = { 376, 136, 16, 16 };
@@ -51,11 +57,24 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		SDL_Rect P2_loc = { xGUI, yGUI + BLOCK_X * 7.5, BLOCK_X, BLOCK_X };
 		SDL_Rect P2_sloc = { 376, 160, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &P2_sloc, &P2_loc);
+
+		struct Tank *p2 = (struct Tank*)gameState->playerTanks->data;
+
+		SDL_Rect num2_loc = { xGUI + BLOCK_X / 2, yGUI + BLOCK_X * 7.5 + BLOCK_X / 2, BLOCK_X / 2, BLOCK_X / 2 };
+		SDL_Rect num2_sloc = { 289 + 8 * (p2->lives), 200, 8, 8 };
+		SDL_RenderCopy(renderer, sprites, &num2_sloc, &num2_loc);
 	}
 
 	SDL_Rect lvl_loc = { xGUI, yGUI + BLOCK_X * 9, BLOCK_X, BLOCK_X*1.5 };
 	SDL_Rect lvl_sloc = { 376, 184, 16, 24 };
 	SDL_RenderCopy(renderer, sprites, &lvl_sloc, &lvl_loc);
+
+	SDL_Rect lvl_dnum_loc = { xGUI, yGUI + BLOCK_X * 10, BLOCK_X / 2, BLOCK_X / 2 };
+	SDL_Rect lvl_dnum_sloc = { 289 + 8 * (0/*gameState->Stage/10*/), 200, 8, 8 };
+	SDL_RenderCopy(renderer, sprites, &lvl_dnum_sloc, &lvl_dnum_loc);
+	SDL_Rect lvl_num_loc = { xGUI + BLOCK_X / 2, yGUI + BLOCK_X * 10, BLOCK_X / 2, BLOCK_X / 2 };
+	SDL_Rect lvl_num_sloc = { 289 + 8 * (1/*gameState->Stage%10*/), 200, 8, 8 };
+	SDL_RenderCopy(renderer, sprites, &lvl_num_sloc, &lvl_num_loc);
 	////////////////////////////END OF GUI////////////////////////////////
 
 	//Draw map
