@@ -23,7 +23,6 @@ void removeNode(struct listNode* stack) {
 	free(temp);
 }
 
-
 char squareCollision(int Ax, int Ay, int Awidth, int Bx, int By, int Bwidth) {
 	return !(Ax + Awidth - 1<Bx || Ax>Bx + Bwidth - 1 || Ay + Awidth - 1<By || Ay>By + Bwidth - 1);
 }
@@ -114,7 +113,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).yPos = newY;
-				//else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE +1; nije isto
+				else (*tenkic).yPos = (newY + (*tenkic).width - 1) / MAP_SCALE * MAP_SCALE - tenkic->width;
 			}
 		}
 		break;
@@ -136,7 +135,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 						break;
 					}
 				if (flag) (*tenkic).xPos = newX;
-				//else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE +1; nije ovako
+				else (*tenkic).xPos = (newX + (*tenkic).width - 1) / MAP_SCALE * MAP_SCALE - tenkic->width;
 			}
 		}
 		break;
@@ -419,7 +418,7 @@ void updateBots(struct gameState* state) {
 struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, char team) {
 	struct Tank* new = (struct Tank*)malloc(sizeof(struct Tank));
 
-	new->width = 42;//MAP_SCALE*4
+	new->width = 48;//MAP_SCALE*4
 
 	switch (spawnPoint) {
 	case 0:
