@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "strukture.h"
 #include "graphics.h"
-
+#include "mapgen.h"
 
 void setBase(struct gameState* state, char type) {
 	for (int i = state->width / 2 - 4; i < state->width / 2 + 4; i++) {
@@ -228,6 +228,13 @@ void hitDetection(struct gameState* state) {
 					boom->yPos = tenkic->yPos;
 					boom->xPos = tenkic->xPos;
 					insertBefore(&state->explosions, boom);
+
+					if (tenkic->pickup) {
+						state->pickup = (struct Pickup*)malloc(sizeof(struct Pickup));
+						state->pickup->yPos = tenkic->yPos;
+						state->pickup->xPos = tenkic->xPos;
+						state->pickup->type = random(6);
+					}
 
 					free(tenkic);
 					removeNode(tankshell);
@@ -458,6 +465,9 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	new->bot = tankType;
 	new->shield = 0;
 	new->earnedLives = 0;
+	new->pickup = (random(8) == 7);
+	
+	
 
 	new->kamikaze = 0;
 	new->mList = 0;
@@ -468,6 +478,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 
 	switch (tankType) {
 	case 0:
+		new->pickup = 0;
 		new->shield = 24 * 5;
 		new->lives = 3;
 		new->speed = 3;
