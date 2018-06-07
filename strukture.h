@@ -5,6 +5,12 @@
 #define FPS 24
 #define MAP_SCALE 12
 
+
+struct torka {
+	int a;
+	int b;
+};
+
 struct listNode {
 	void* data;
 	struct listNode* next;
@@ -32,6 +38,7 @@ struct Bullet {
 
 struct gameState {
 	char dif;
+	struct listNode *explosions;
 	struct listNode *playerTanks, *enemyTanks;
 	struct listNode *playerBullets, *enemyBullets;
 	char **terrain;
