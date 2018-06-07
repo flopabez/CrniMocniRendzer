@@ -26,7 +26,7 @@ struct listNode {
 
 struct Tank {
 	int xPos, yPos, width, score;
-	char earnedLives;
+	char earnedLives, pickup;
 	char direction, speed;
 	char upgrade, lives, hitPoints, bulletSpeed, inAir;
 	char team, bot, frame;
