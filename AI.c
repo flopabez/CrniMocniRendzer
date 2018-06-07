@@ -21,7 +21,7 @@
 
 #include "AI2.h"
 
-/*tankMoves is an auxiliary struct used to store the path between A and B in search algorithms. When opening new nodes, our BFS queue/Dijsktra priority queue enqueues a new tankMoves* state
+/*tankMoves is an auxiliary struct used to store the path between A and B for BFS (we use a predecessor matrix for Dijkstra instead). When opening new nodes, our BFS queue priority queue enqueues a new tankMoves* state
  whose parent is is the current tankMoves* state under consideration - the one we just dequeued. In essence, we use this approach since we can easily reconstruct all of a single state's ancestors.*/
 tankMoves *newState(tankMoves *P, int x, int y, int len, char dir)
 {
@@ -87,18 +87,14 @@ tankMoves* deq(moveQueue **F, moveQueue **R)
     return tMoves;
 }
 
-//Matrix that allows easy lookup of how a tank's coordinates change if it moves in any direction. The directions are in order: UP RIGHT DOWN LEFT
+//Matrix that allows easy lookup of how a tank's coordinates change if it moves in any direction. The directions are in order: UP LEFT DOWN RIGHT
 int dCoord[4][2]={{-1,0},{0,-1},{1,0},{0,1}};
 
 //Simple function that tells us if a bullet fired by T exists
-int bulletExists(Tank *T, listNode* L)
+int bulletExists(Tank *T)
 {
-    while (L)
-    {
-        if (((Tank*)(L->data))==T) return 1;
-        L=L->next;
-    }
-    return 0;
+    if (T->inAir>0) return 1;
+    else return 0;
 }
 //Checks if we haven't left the map boundaries
 int isBounded(int x, int y, int h, int w)
@@ -332,7 +328,7 @@ char chooseMove(Tank *T, gameState G)
     char chosenMove=0,m,shootMod;
 
     //Check if there's a player or base in front of us. We ignore base walls since we're supposed to try to destroy them.
-    if (bulletExists(T,G.enemyBullets)==0)
+    if (bulletExists(T)==0)
         if (seeObj(T,G,T->direction+UP,px,py)||seeObj(T,G,T->direction+UP,bx,by)) return SHOOT;
 
     //Should our tank pathfind or move randomly? This function checks that and generates a movelist if needed.
@@ -353,7 +349,7 @@ char chooseMove(Tank *T, gameState G)
     if (brickInFront(T->xPos,T->yPos,G,m)==2&&chosenMove)
     {
         T->direction=m-UP;
-        if (bulletExists(T,G.enemyBullets)==0) return SHOOT;
+        if (bulletExists(T)==0) return SHOOT;
         else return SIT;
     }
     //Sometimes our tank will just randomly shoot instead of moving. We now determine the likelihood of that.
@@ -370,7 +366,7 @@ char chooseMove(Tank *T, gameState G)
         break;
     }
     //We attempt to shoot randomly.
-    if (rand()%shootMod==0&&bulletExists(T,G.enemyBullets)==0) return SHOOT;
+    if (rand()%shootMod==0&&bulletExists(T)==0) return SHOOT;
     //if we got here that means we didn't fire a bullet, so now we finally return the move we're supposed to make.
     if (chosenMove) m=movePop(&(T->mList));
     return m;
@@ -435,7 +431,7 @@ char chooseMoveDJ(Tank *T, gameState G)
     char chosenMove=0,m;
 
     //Check if there's a player or base in front of us. We ignore base walls since we're supposed to try to destroy them. Same as previous.
-    if (bulletExists(T,G.enemyBullets)==0)
+    if (bulletExists(T)==0)
         if (seeObj(T,G,T->direction+UP,px,py)||seeObj(T,G,T->direction+UP,bx,by)) return SHOOT;
     //Same as previous, only we use a different algorithm.
     if (T->pathDone==0&&canPathfind(T,G,G.dif))
@@ -453,7 +449,7 @@ char chooseMoveDJ(Tank *T, gameState G)
     if (brickInFront(T->xPos,T->yPos,G,m)==2)
     {
         T->direction=m-UP;
-        if (bulletExists(T,G.enemyBullets)==0) return SHOOT;
+        if (bulletExists(T)==0) return SHOOT;
         else return SIT;
     }
 
