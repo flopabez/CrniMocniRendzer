@@ -95,6 +95,11 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		SDL_Rect rect = { xofs + player->xPos, yofs + player->yPos, BLOCK_X, BLOCK_X };
 		SDL_Rect dest = { 0 + player->frame * 16 + player->direction * 16 * 2, 0 + (playerNum * 128) + player->upgrade * 16, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
+		if (player->shield) {
+			SDL_Rect shield_sprite = { 256 * (gameState->time%2)*16, 144, 16, 16 };
+			SDL_RenderCopy(renderer, sprites, &shield_sprite, &rect);
+		}
+
 		playerNum++;
 		tank_wrapper = tank_wrapper->next;
 	}
@@ -108,6 +113,10 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		SDL_Rect rect = { xofs + enemy->xPos, yofs + enemy->yPos, BLOCK_X, BLOCK_X };
 		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2 , 64 + (enemy->bot-1) * 16 + (enemy->hitPoints>1) * 128 + (enemy->hitPoints>1)*(((gameState->time % 4) - enemy->hitPoints + 1)>0)*(-128), 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
+		if (enemy->shield) {
+			SDL_Rect shield_sprite = { 256 * (gameState->time % 2) * 16, 144, 16, 16 };
+			SDL_RenderCopy(renderer, sprites, &shield_sprite, &rect);
+		}
 		etank_wrapper = etank_wrapper->next;
 	}
 
@@ -143,7 +152,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		}
 	}
 
-	//Draw pickup
+	/*/Draw pickup
 	if (gameState->pickup) {
 	SDL_Rect rect = { xofs+ gameState->pickup->xPos, yofs+ gameState->pickup->yPos, BLOCK_X, BLOCK_X };
 	SDL_Rect dest = { 256 + (gameState->pickup->type)*16, 112, 16, 16};
