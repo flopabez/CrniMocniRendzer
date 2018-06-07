@@ -1,6 +1,7 @@
 #ifndef STRUKTURE_H
 #define STRUKTURE_H
 #include<SDL.h>
+#include "AI.h"
 #define FPS 24
 #define MAP_SCALE 12
 
@@ -14,6 +15,8 @@ struct Tank {
 	char direction, speed;
 	char upgrade, lives, hitPoints, bulletSpeed, bulletPower, inAir, score;
 	char team, bot, frame;
+	char move, moveDone, pathDone, kamikaze;
+	struct tankMovesStack* mList;
 };
 
 struct movementWrapper {
@@ -28,16 +31,13 @@ struct Bullet {
 };
 
 struct gameState {
+	char dif;
 	struct listNode *playerTanks, *enemyTanks;
 	struct listNode *playerBullets, *enemyBullets;
 	char **terrain;
 	char height, width;
-	char timeStop; //clock pickup timer
-
-	SDL_Renderer** renderer;
-	SDL_Texture** sprites;
-	int time;
-
+	unsigned int timeStop; //clock pickup timer
+	unsigned int time;
 };
 
 struct Level {
@@ -56,5 +56,6 @@ void updateBullets(struct gameState* state);
 void fireBullet(struct gameState* state, struct Tank* tenkic);
 void respawn(struct Tank* tenkic);
 void hitDetection(struct gameState* state);
-
+void updateBots(struct gameState* state);
+struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, char team);
 #endif
