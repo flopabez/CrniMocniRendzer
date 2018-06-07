@@ -19,7 +19,7 @@
 #define SHOOT 4
 #define SIT 5
 
-#include "AI2.h"
+#include "AI.h"
 
 /*tankMoves is an auxiliary struct used to store the path between A and B for BFS (we use a predecessor matrix for Dijkstra instead). When opening new nodes, our BFS queue priority queue enqueues a new tankMoves* state
  whose parent is is the current tankMoves* state under consideration - the one we just dequeued. In essence, we use this approach since we can easily reconstruct all of a single state's ancestors.*/
@@ -107,7 +107,7 @@ int isBaseBrick(char c, int x, int y, int h, int w)
     return (isBounded(x,y,h,w)&&(c==BRICK&&y<h&&y>=h-6&&x>=(w/2-6)&&x<=(w/2+5)));
 }
 
-//Checks if it's possible to see point [ty][tyx] from point [sy][sx], assuming a limited line sight distance and ignoring the base's brick wall.
+//Checks if it's possible to see point [ty][tx] from point [sy][sx], assuming a limited line of sight distance and ignoring the base's brick wall.
 int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty)
 {
     int i;
@@ -196,12 +196,12 @@ tankMovesStack *genMoveList(Tank *T, gameState G)
     {
         P=deq(&frontQ,&rearQ);
         vis[P->y][P->x]=1;
-        if (y>=h-4&&y<=h-1&&x>=w/2-4&&x<=w/2-1) R=P,notDone=0;
+        if (isBounded(x,y,h,w)&&(G.terrain)[y][x]==BASE) R=P,notDone=0;
         else for (i=0;i<4;i++)
         {
             tempx=x+dCoord[i][1];
             tempy=y+dCoord[i][0];
-            if (tileFree(tempx,tempy,G)&&vis[tempy][tempx]<=1) enq(&frontQ,&rearQ,newState(P,tempx,tempy,P->len+1,UP+i));
+            if (tileFree(tempx,tempy,G)&&vis[tempy][tempx]==0) enq(&frontQ,&rearQ,newState(P,tempx,tempy,P->len+1,UP+i));
         }
     }
 
@@ -246,7 +246,7 @@ int canPathfind(Tank *T, gameState G, char dif)
 int brickInFront(int x,int y, gameState G,char orient)
 {
     int h=G.height,w=G.width,i,ret=1;
-    char movedir,c;
+    char movedir,c[4];
 
     switch(orient)
     {
@@ -274,11 +274,16 @@ int brickInFront(int x,int y, gameState G,char orient)
 
     for (i=0;i<4;i++)
     {
-        c=(G.terrain)[y][x];
-        if (c==BRICK) ret=2;
-        else if (c==METAL) return 0;
+        c[i]=(G.terrain)[y][x];
+        if (c[i]==BRICK) ret=2;
+        else if (c[i]==METAL) return 0;
         x+=dCoord[movedir][1];
         y+=dCoord[movedir][0];
+    }
+    if (ret==2)
+    {
+        if (c[0]==BRICK&&c[1]!=BRICK) return 0;
+        if (c[3]==BRICK&&c[2]!=BRICK) return 0;
     }
     return ret;
 
