@@ -6,8 +6,8 @@
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
-	int xofs = gameState->xoffset;
-	int yofs = gameState->yoffset;
+	int xofs = (WINDOW_H-gameState->width/4*BLOCK_X)/2;
+	int yofs = (WINDOW_H-gameState->height/4*BLOCK_X)/2;
 	/*
 	stavi ovo u struct gameState:
 		int xoffset, yoffset;
