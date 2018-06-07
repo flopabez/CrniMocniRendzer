@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "strukture.h"
-
+#include "graphics.h"
 
 struct listNode* newNode(void* data) {
 	struct listNode* new = (struct listNode*)malloc(sizeof(struct listNode));
@@ -147,6 +147,13 @@ void updateBullets(struct gameState* state) {
 
 			if (bullet->xPos < 0 || bullet->yPos < 0 || bullet->xPos > state->width*MAP_SCALE - bullet->width || bullet->yPos > state->height*MAP_SCALE - bullet->width) {
 				(*bullet).source->inAir--;
+
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = bullet->yPos;
+				boom->xPos = bullet->xPos;
+
 				free((*bulletlist).data);
 				removeNode(bulletlist);
 				continue;
@@ -201,11 +208,16 @@ void updateBullets(struct gameState* state) {
 					break;
 				}
 				}
-
 				(*bullet).source->inAir--;
+
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = bullet->yPos;
+				boom->xPos = bullet->xPos;
+
 				free((*bulletlist).data);
 				removeNode(bulletlist);
-
 			}
 			else {
 				switch ((*bullet).direction) {
