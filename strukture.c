@@ -1,322 +1,96 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "strukture.h"
+#include "graphics.h"
+#include <stdio.h>
+#include "mapgen.h"
+#include "hook.h"
+#include <SDL.h>
+#include <SDL_image.h>
+
+#undef main
+#define BLOCK_X 48
 
 
-struct listNode* newNode(void* data) {
-	struct listNode* new = (struct listNode*)malloc(sizeof(struct listNode));
-	(*new).next = 0;
-	(*new).data = data;
-	return new;
-}
+int main() {
 
-void insertBefore(struct listNode** stack, void* data) {
-	struct listNode* new = newNode(data);
-	(*new).next = *stack;
-	*stack = new;
-}
+	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
+	state->enemyBullets = 0;
+	state->enemyTanks = 0;
+	state->playerBullets = newNode(0);
+	state->playerTanks = 0;
 
-void removeNode(struct listNode* stack) {
-	struct listNode* temp = stack->next;
-	stack->next = stack->next->next;
-	stack->data = temp->data;
-	free(temp);
-}
+	struct Tank* player = (struct Tank*)malloc(sizeof(struct Tank));
+	player->bot = 0;
+	player->bulletPower = 2;
+	player->bulletSpeed = 25*5;
+	player->direction = 2;
+	player->frame = 0;
+	player->hitPoints = 1;
+	player->lives = 1;
+	player->inAir = 0;
+	player->speed = 24 * 5;
+	player->team = 0;
+	player->score = 0;
+	player->upgrade = 0;
+	player->xPos = 0;
+	player->yPos = 0;
+	player->width = 42;
 
+	insertBefore(&(state->playerTanks), player);
+	SDL_Event event;
+	SDL_Window *window;
+	SDL_Texture* sprites = NULL;
+	SDL_Renderer* renderer = NULL;//inicijalizacija rendera i tekstura za crtanje
+	SDL_Init(SDL_INIT_VIDEO);
+	window = SDL_CreateWindow("Map Builder", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, BLOCK_X / 4 * 52, BLOCK_X / 4 * 52, 0);//kreiranje prozora
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
+	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
+	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
+	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
+	SDL_FreeSurface(surface);
+	state->renderer = &renderer;
+	state->sprites = &sprites;
+	state->timeStop = 0;
+	generate_random_map(13, 13);
+	state->terrain = read_map(&(state->height), &(state->width), "random_map");
+	state->time = 0;
 
-char squareCollision(int Ax, int Ay, int Awidth, int Bx, int By, int Bwidth) {
-	return !(Ax + Awidth - 1<Bx || Ax>Bx + Bwidth - 1 || Ay + Awidth - 1<By || Ay>By + Bwidth - 1);
-}
+	struct movementWrapper* wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
+	wrap->down = 0;
+	wrap->up = 0;
+	wrap->left = 0;
+	wrap->right = 0;
+	wrap->tenkic = player;
 
-struct Tank* tankCollision(struct gameState* state, struct Tank* tenkic) {
-	struct listNode* temp = (*state).enemyTanks;
-	while (temp) {
-		struct Tank* tenkic1 = (struct Tank*)(*temp).data;
-		if ((*temp).data != tenkic &&
-			squareCollision((*tenkic).yPos, (*tenkic).xPos, (*tenkic).width, (*tenkic1).yPos, (*tenkic1).xPos, (*tenkic1).width))
-			return (*temp).data;
-		temp = (*temp).next;
-	}
-	temp = (*state).playerTanks;
-	while (temp) {
-		struct Tank* tenkic1 = (struct Tank*)(*temp).data;
-		if ((*temp).data != tenkic &&
-			squareCollision((*tenkic).yPos, (*tenkic).xPos, (*tenkic).width, (*tenkic1).yPos, (*tenkic1).xPos, (*tenkic1).width))
-			return (*temp).data;
-		temp = (*temp).next;
+	char ggez = 0;
+	while (ggez == 0) {
+
+		state->time++;
+		ggez = processEvents(window, wrap, state);
+		updateBullets(state, state->playerBullets);
+		doRender(state, renderer, sprites);
+		if (wrap->up && player->direction == 0) Move(state, player, 0);
+		if (wrap->left && player->direction == 1) Move(state, player, 1);
+		if (wrap->down && player->direction == 2) Move(state, player, 2);
+		if (wrap->right && player->direction == 3) Move(state, player, 3);
+		
+		SDL_Delay(1. / FPS * 1000);
+
 	}
 	return 0;
 }
 
-void Move(struct gameState* state, struct Tank* tenkic, char direction) {
-
-	(*tenkic).direction = direction;
-	char flag = 1;
-
-	switch (direction) {
-	case 0: {
-		if ((*tenkic).yPos - (*tenkic).speed / FPS < 0) (*tenkic).yPos = 0;
-		else {
-			struct Tank* temp = tankCollision(state, tenkic);
-			if (temp) (*tenkic).yPos = (*temp).yPos + (*temp).width;
-			else {
-				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
-				int newY = (*tenkic).yPos - (*tenkic).speed / FPS;
-				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[newY / MAP_SCALE][i] && (*state).terrain[newY / MAP_SCALE][i] < 4) {
-						flag = 0;
-						break;
-					}
-				if (flag) (*tenkic).yPos = newY;
-				else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE;
-			}
-		}
-		break;
-	}
-
-	case 1: {
-		if ((*tenkic).xPos - (*tenkic).speed / FPS < 0) (*tenkic).xPos = 0;
-		else {
-			struct Tank* temp = tankCollision(state, tenkic);
-			if (temp) (*tenkic).xPos = (*temp).xPos + (*temp).width;
-			else {
-				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
-				int newX = (*tenkic).xPos - (*tenkic).speed / FPS;
-				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[i][newX / MAP_SCALE] && (*state).terrain[i][newX / MAP_SCALE] < 4) {
-						flag = 0;
-						break;
-					}
-				if (flag) (*tenkic).xPos = newX;
-				else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE;
-			}
-		}
-		break;
-	}
-
-	case 2: {
-		if ((*tenkic).yPos + (*tenkic).speed / FPS > (*state).height*MAP_SCALE - (*tenkic).width) (*tenkic).yPos = (*state).height*MAP_SCALE - (*tenkic).width;
-		else {
-			struct Tank* temp = tankCollision(state, tenkic);
-			if (temp) (*tenkic).yPos = (*temp).yPos - (*temp).width;
-			else {
-				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
-				int newY = (*tenkic).yPos + (*tenkic).speed / FPS;//isto kao case 0, samo drugi smer
-				for (int i = (*tenkic).xPos / MAP_SCALE; i < limit; i++)//isto kao case 0
-					if ((*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] && (*state).terrain[(newY + (*tenkic).width - 1) / MAP_SCALE][i] < 4) {//za razliku od case 0, gledamo donju a ne gornju ivicu
-						flag = 0;
-						break;
-					}
-				if (flag) (*tenkic).yPos = newY;
-				//else (*tenkic).yPos = (*tenkic).yPos / MAP_SCALE * MAP_SCALE +1; nije isto
-			}
-		}
-		break;
-	}
-
-	case 3: {
-		if ((*tenkic).xPos + (*tenkic).speed / FPS > (*state).width*MAP_SCALE - (*tenkic).width) (*tenkic).xPos = (*state).width*MAP_SCALE - (*tenkic).width;
-		else {
-			struct Tank* temp = tankCollision(state, tenkic);
-			if (temp) (*tenkic).xPos = (*temp).xPos - (*temp).width;
-			else {
-				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
-				int newX = (*tenkic).xPos + (*tenkic).speed / FPS;
-				for (int i = (*tenkic).yPos / MAP_SCALE; i < limit; i++)
-					if ((*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] && (*state).terrain[i][(newX + (*tenkic).width - 1) / MAP_SCALE] < 4) {
-						flag = 0;
-						break;
-					}
-				if (flag) (*tenkic).xPos = newX;
-				//else (*tenkic).xPos = (*tenkic).xPos / MAP_SCALE * MAP_SCALE +1; nije ovako
-			}
-		}
-		break;
-	}
-	}
+/*
+int main() {
+int a = 1, b = 2, c = 3;
+struct listNode* head = 0;
+insertBefore(&head, &a);
+insertBefore(&head, &a);
+insertBefore(&head, &b);
+insertBefore(&head, &c);
+removeNode(&(head->next->next->next));
+while (head) {
+printf("%d", *(int*)head->data);
+head = head->next;
 }
-
-void updateBullets(struct gameState* state) {
-
-	struct listNode* bulletlist = state->playerBullets;
-
-	while (bulletlist->data) {
-		struct Bullet* bullet = (*bulletlist).data;
-
-		if (bullet->xPos < 0 || bullet->yPos < 0 || bullet->xPos > state->width*MAP_SCALE - bullet->width || bullet->yPos > state->height*MAP_SCALE - bullet->width) {
-			(*bullet).source->inAir--;
-			free((*bulletlist).data);
-			removeNode(bulletlist);
-			continue;
-		}
-		char clip = (
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 ||
-			(*state).terrain[(*bullet).yPos / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2 ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 1 ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][(*bullet).xPos / MAP_SCALE] == 2 ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 1 ||
-			(*state).terrain[((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE][((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE] == 2);
-
-		if (clip) {
-			
-			switch ((*bullet).direction) {
-				case 0: {
-					int limit = ((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
-					for (int y = (*bullet).yPos / MAP_SCALE - (*bullet).power + 1; y < (*bullet).yPos / MAP_SCALE + 1; y++)
-						for (int x = (*bullet).xPos / MAP_SCALE - 1; x < limit + 1; x++) {
-							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
-							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
-						}
-					break;
-				}
-				case 1: {
-					int limit = ((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
-					for (int x = (*bullet).xPos / MAP_SCALE - (*bullet).power + 1; x < (*bullet).xPos / MAP_SCALE + 1; x++)
-						for (int y = (*bullet).yPos / MAP_SCALE - 1; y < limit + 1; y++) {
-							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
-							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
-						}
-					break;
-				}
-				case 2: {
-					int limit = ((*bullet).xPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).xPos%MAP_SCALE != 0);
-					for (int y = (*bullet).yPos / MAP_SCALE + 1; y < (*bullet).yPos / MAP_SCALE + (*bullet).power + 1; y++)
-						for (int x = (*bullet).xPos / MAP_SCALE - 1; x < limit + 1; x++) {
-							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
-							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
-						}
-					break;
-				}
-				case 3: {
-					int limit = ((*bullet).yPos + (*bullet).width - 1) / MAP_SCALE + ((*bullet).yPos%MAP_SCALE != 0);
-					for (int x = (*bullet).xPos / MAP_SCALE + 1; x < (*bullet).xPos / MAP_SCALE + (*bullet).power + 1; x++)
-						for (int y = (*bullet).yPos / MAP_SCALE - 1; y < limit + 1; y++) {
-							if ((*state).terrain[y][x] == 2 && (*bullet).power == 2) (*state).terrain[y][x] = 0;
-							else if ((*state).terrain[y][x]==1) (*state).terrain[y][x] = 0;
-						}
-					break;
-				}
-			}
-			
-			(*bullet).source->inAir--;
-			free((*bulletlist).data);
-			removeNode(bulletlist);
-
-		}
-		else {
-			switch ((*bullet).direction) {
-			case 0: (*bullet).yPos -= (*bullet).speed / FPS; break;
-			case 1: (*bullet).xPos -= (*bullet).speed / FPS; break;
-			case 2: (*bullet).yPos += (*bullet).speed / FPS; break;
-			case 3: (*bullet).xPos += (*bullet).speed / FPS; break;
-			}
-			bulletlist = (*bulletlist).next;
-		}
-	}
-
-}
-
-void fireBullet(struct gameState* state, struct Tank* tenkic) {
-
-	if ((*tenkic).inAir == 0 || (*tenkic).inAir == 1 && (*tenkic).upgrade > 1) {
-		(*tenkic).inAir++;
-		struct Bullet* new = (struct Bullet*)malloc(sizeof(struct Bullet));
-		(*new).source = tenkic;
-		(*new).direction = (*tenkic).direction;
-		(*new).speed = (*tenkic).bulletSpeed;
-		(*new).power = (*tenkic).bulletPower;
-		(*new).width = MAP_SCALE;
-		switch ((*new).direction) {
-		case 0:
-			(*new).yPos = (*tenkic).yPos - (*new).width + MAP_SCALE / 2;
-			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
-			break;
-		case 1:
-			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
-			break;
-		case 2:
-			(*new).yPos = (*tenkic).yPos + (*tenkic).width;
-			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
-			break;
-		case 3:
-			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos + (*tenkic).width;
-			break;
-		}
-		if ((*tenkic).team) insertBefore(&(*state).enemyBullets, new);
-		else insertBefore(&(*state).playerBullets, new);
-	}
-}
-
-void respawn(struct Tank* tenkic) {
-	(*tenkic).hitPoints = 1;
-	/* treba da se porta na spawn point i da dobije shield */
-}
-
-void hitDetection(struct gameState* state) {
-
-	struct listNode* bulletshell = (*state).playerBullets;
-	while (bulletshell) {
-
-		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
-		struct listNode* tankshell = (*state).enemyTanks;
-		struct Tank* tenkic = 0;
-
-		while (tankshell) {
-			tenkic = (struct Tank*)(*tankshell).data;
-			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
-				break;
-			tankshell = (*tankshell).next;
-		}
-		if (tankshell) {
-			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
-			if ((*tenkic).hitPoints == 0) {
-				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(tenkic);
-				else {
-					if ((*metak).source->bot == 0)
-						(*metak).source->score += (*tenkic).score;
-					free(tenkic);
-					removeNode(&tankshell);
-					break;
-				}
-			}
-		}
-		bulletshell = (*bulletshell).next;
-	}
-
-	bulletshell = (*state).enemyBullets;
-	while (bulletshell) {
-
-		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
-		struct listNode* tankshell = (*state).playerTanks;
-		struct Tank* tenkic = 0;
-
-		while (tankshell) {
-			tenkic = (struct Tank*)(*tankshell).data;
-			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
-				break;
-			tankshell = (*tankshell).next;
-		}
-		if (tankshell) {
-			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
-			if ((*tenkic).hitPoints == 0) {
-				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(tenkic);
-				else {
-					if ((*metak).source->bot == 0)
-						(*metak).source->score += (*tenkic).score;
-					free(tenkic);
-					removeNode(&tankshell);
-					break;
-				}
-			}
-		}
-		bulletshell = (*bulletshell).next;
-	}
-}
+getchar();
+}*/
