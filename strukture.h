@@ -5,10 +5,17 @@
 #define FPS 24
 #define MAP_SCALE 12
 
+
+
+struct Pickup {
+	int yPos, xPos;
+	char type;
+};
+
 typedef
 struct explosion {
 	char size;
-	int xPos, yPos;
+	int yPos, xPos;
 	unsigned int time;
 }Explosion;
 
@@ -38,6 +45,9 @@ struct Bullet {
 };
 
 struct gameState {
+	char killCount;
+	char stage;
+	struct Pickup* pickup;
 	char dif;
 	struct listNode *explosions;
 	struct listNode *playerTanks, *enemyTanks;
