@@ -92,7 +92,7 @@ char** allocate_map(int map_h, int map_w)//funkcija za alokaciju memorije za map
 	return map;
 }
 
-void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big)
+void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big,int type)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
@@ -130,14 +130,18 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 	if (big)
 	{
 		SDL_Rect rect = { y_brush*BLOCK_X / 4, x_brush*BLOCK_X / 4, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 272, 208, 16, 16 };
+		SDL_Rect dest2 = { 272, 208, 16, 16 };
+		SDL_Rect dest = { 256,(type - 1) * 16, 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje brusha u renderer
+		SDL_RenderCopy(renderer, sprites, &dest2, &rect);
 	}
 	else
 	{
 		SDL_Rect rect = { y_brush*BLOCK_X / 4, x_brush*BLOCK_X / 4, BLOCK_X/2, BLOCK_X/2 };
-		SDL_Rect dest = { 272, 208, 16, 16 };
-		SDL_RenderCopy(renderer, sprites, &dest, &rect);//dodavanje brusha u renderer
+		SDL_Rect dest2 = { 272, 208, 16, 16 };
+		SDL_Rect dest = { 256,(type - 1) * 16, 16, 16 };
+		SDL_RenderCopy(renderer, sprites, &dest, &rect);
+		SDL_RenderCopy(renderer, sprites, &dest2, &rect);//dodavanje brusha u renderer
 	}
 
 	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
@@ -196,15 +200,11 @@ int build_map(int map_height, int map_width/*,char** mapx*/)
 		exit(1);
 		return 0;
 	}
-	FILE* fmap = fopen("Maps\\bmap.bin", "wb");
+	
 	int x = 0;//pozicije "brusha"
 	int y = 0;
 	char** map;
-	if (fmap == NULL)
-	{
-		printf("Error creating file!\n");
-		return 0;
-	}
+	
 	map = allocate_map(map_h, map_w);
 	if (map == NULL)
 		return 0;
@@ -224,7 +224,7 @@ int build_map(int map_height, int map_width/*,char** mapx*/)
 		set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
 		set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
 		SDL_Delay(15);//delay za normalnu animaciju vode
-		render_map(renderer, sprites, map, map_h, map_w, x, y,time,big);
+		render_map(renderer, sprites, map, map_h, map_w, x, y, time, big, type);
 		while (SDL_PollEvent(&event)) //petlja koja se aktivira tek kada naidje komanda
 		{
 			switch (event.type) //tip komande, ovde nam treba pritisnuto dugme
@@ -328,6 +328,18 @@ int build_map(int map_height, int map_width/*,char** mapx*/)
 	}
 	SDL_DestroyWindow(window);//gasenje prozora
 	SDL_Quit();
+	char* extension = ".bin";
+	char* folder = "Maps\\";
+	char* file_name[50];
+	char* filename[50];
+	scanf("%s", file_name);
+	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
+	FILE* fmap = fopen(filename, "wb");
+	if (fmap == NULL)
+	{
+		printf("Error creating file!\n");
+		return 0;
+	}
 	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
 	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
 	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//skidanje vrednosti spawna jer su to realno prazna polja
