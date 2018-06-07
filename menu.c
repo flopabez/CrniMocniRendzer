@@ -76,3 +76,27 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	return ret;
 }
 
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
+	LoadMenu(buttons);
+	SDL_Event event;
+	int ret = 0;
+	while (ret == 0) {
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_WINDOWEVENT_CLOSE:
+				if (window) {
+					SDL_DestroyWindow(window);
+					window = NULL;
+					ret = 6;
+				}
+				break;
+
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) ret = 6;
+				break;
+			}
+		}
+		ret = MainMenu(renderer, sprites, buttons);
+	}
+	return ret;
+}
