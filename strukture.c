@@ -140,7 +140,7 @@ void updateBullets(struct gameState* state) {
 
 	struct listNode* bulletlist = state->playerBullets;
 
-	int i = 2;
+	char i = 2;
 	while (i--) {
 		while (bulletlist->data) {
 			struct Bullet* bullet = (*bulletlist).data;
@@ -323,4 +323,114 @@ void hitDetection(struct gameState* state) {
 		}
 		bulletshell = (*bulletshell).next;
 	}
+}
+
+void updateBots(struct gameState* state) {
+
+	struct listNode* temp = state->enemyTanks;
+	char i = 2;
+
+	while (i--) {
+		
+		while (temp->data) {
+			struct Tank* tenkic = temp->data;
+			if (tenkic->bot == 0) {
+				temp = temp->next;
+				continue;
+			}
+			if (tenkic->moveDone) {
+				tenkic->moveDone--;
+				Move(state, tenkic, tenkic->move);
+			}
+			else {
+				tenkic->move = pickMove(tenkic, *state);
+				if (tenkic->move < 4) tenkic->moveDone = MAP_SCALE / tenkic->speed;
+				else if (tenkic->move == 4) fireBullet(state, tenkic);
+			}
+
+			temp = temp->next;
+		}
+
+		temp = state->playerTanks;
+	}
+}
+
+struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, char team) {
+	struct Tank* new = (struct Tank*)malloc(sizeof(struct Tank));
+
+	new->width = 42;//MAP_SCALE*4
+
+	switch (spawnPoint) {
+	case 0:
+		new->yPos = 0;
+		new->xPos = 0;
+		break;
+	case 1:
+		new->yPos = 0;
+		new->xPos = state->width*MAP_SCALE - new->width;
+		break;
+	case 2:
+		new->yPos = (state->height - 10)*MAP_SCALE;
+		new->xPos = (state->width / 2 - 2)* MAP_SCALE;
+		break;
+	default: break;
+	}
+
+	new->inAir = 0;
+	new->lives = 1;
+	new->upgrade = 0;
+	new->frame = 0;
+	new->direction = 0;
+	new->bot = 1;
+
+	new->kamikaze = 0;
+	new->mList = 0;
+	new->move = 7;
+	new->moveDone = 0;
+	new->pathDone = 0;
+	new->team = team;
+
+	switch (tankType) {
+	case 0:
+		new->speed = 2;
+		new->bulletSpeed = 4;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 1;
+		break;
+	case 1:
+		new->speed = 6;
+		new->bulletSpeed = 8;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 2;
+		break;
+	case 2:
+		new->speed = 3;
+		new->bulletSpeed = 12;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 3;
+		break;
+	case 3:
+		new->speed = 3;
+		new->bulletSpeed = 8;
+		new->bulletPower = 1;
+		new->hitPoints = 4;
+		new->score = 4;
+		break;
+	case 4:
+		new->bot = 0;
+		new->lives = 3;
+		new->speed = 3;
+		new->bulletSpeed = 8;
+		new->bulletPower = 1;
+		new->hitPoints = 1;
+		new->score = 0;
+		break;
+	}
+
+	if (team) insertBefore(&state->playerTanks, new);
+	else insertBefore(&state->enemyTanks, new);
+	return new;
 }
