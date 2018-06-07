@@ -1,5 +1,4 @@
-#ifndef AI_H_INCLUDED
-#define AI_H_INCLUDED
+#pragma once
 #include "strukture.h"
 
 typedef struct Tank Tank;
@@ -63,5 +62,3 @@ coPair tankPopPQ (heap_t *h);
 char chooseMoveDJ(Tank *T, gameState G);
 tankMovesStack *genMoveListDJ(Tank *T, gameState G);
 char pickMove(Tank *T, gameState G);
-
-#endif // AI_H_INCLUDED
