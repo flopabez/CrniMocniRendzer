@@ -136,15 +136,144 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 	}
 }
 
+void fireBullet(struct gameState* state, struct Tank* tenkic) {
+
+	if ((*tenkic).inAir == 0 || (*tenkic).inAir == 1 && (*tenkic).upgrade > 1) {
+		(*tenkic).inAir++;
+		struct Bullet* new = (struct Bullet*)malloc(sizeof(struct Bullet));
+		(*new).source = tenkic;
+		(*new).direction = (*tenkic).direction;
+		(*new).speed = (*tenkic).bulletSpeed;
+		(*new).power = (*tenkic).bulletPower;
+		(*new).width = MAP_SCALE;
+		switch ((*new).direction) {
+		case 0:
+			(*new).yPos = (*tenkic).yPos - (*new).width + MAP_SCALE / 2;
+			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
+			break;
+		case 1:
+			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
+			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
+			break;
+		case 2:
+			(*new).yPos = (*tenkic).yPos + (*tenkic).width   - MAP_SCALE;//
+			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
+			break;
+		case 3:
+			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
+			(*new).xPos = (*tenkic).xPos + (*tenkic).width   - MAP_SCALE; //
+			break;
+		}
+		if ((*tenkic).team) insertBefore(&(*state).enemyBullets, new);
+		else insertBefore(&(*state).playerBullets, new);
+	}
+}
+
+void respawn(struct gameState* state, struct Tank* tenkic) {
+	(*tenkic).hitPoints = 1;
+	tenkic->yPos = (state->height - 10)*MAP_SCALE;
+	tenkic->xPos = (state->width / 2 - 2)* MAP_SCALE;
+	tenkic->upgrade = 0;
+}
+
+void hitDetection(struct gameState* state) {
+
+	struct listNode* bulletshell = (*state).playerBullets;
+	while (bulletshell->data) {
+
+		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
+		struct listNode* tankshell = (*state).enemyTanks;
+		struct Tank* tenkic = 0;
+
+		while (tankshell->data) {
+			tenkic = (struct Tank*)(*tankshell).data;
+			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
+				break;
+			tankshell = (*tankshell).next;
+		}
+		if (tankshell->data) {
+			(*metak).source->inAir--;
+			(*tenkic).hitPoints--;
+			if ((*tenkic).hitPoints == 0) {
+				(*tenkic).lives--;
+				if ((*tenkic).lives) respawn(state,tenkic);
+				else {
+					if ((*metak).source->bot == 0)
+						(*metak).source->score += (*tenkic).score;
+
+					Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+					boom->size = 1;
+					boom->time = 0;
+					boom->yPos = tenkic->yPos;
+					boom->xPos = tenkic->xPos;
+					insertBefore(&state->explosions, boom);
+
+					free(tenkic);
+					removeNode(tankshell);
+
+					free(metak);
+					removeNode(bulletshell);
+					break;
+				}
+			}
+		}
+		bulletshell = (*bulletshell).next;
+	}
+
+	bulletshell = (*state).enemyBullets;
+	while (bulletshell->data) {
+
+		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
+		struct listNode* tankshell = (*state).playerTanks;
+		struct Tank* tenkic = 0;
+
+		while (tankshell->data) {
+			tenkic = (struct Tank*)(*tankshell).data;
+			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
+				break;
+			tankshell = (*tankshell).next;
+		}
+		if (tankshell->data) {
+			(*metak).source->inAir--;
+			(*tenkic).hitPoints--;
+			if ((*tenkic).hitPoints == 0) {
+				(*tenkic).lives--;
+				if ((*tenkic).lives) respawn(state,tenkic);
+				else {
+					if ((*metak).source->bot == 0)
+						(*metak).source->score += (*tenkic).score;
+
+					Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+					boom->size = 1;
+					boom->time = 0;
+					boom->yPos = tenkic->yPos;
+					boom->xPos = tenkic->xPos;
+					insertBefore(&state->explosions, boom);
+
+					free(tenkic);
+					removeNode(tankshell);
+
+					free(metak);
+					removeNode(bulletshell);
+					break;
+				}
+			}
+		}
+		bulletshell = (*bulletshell).next;
+	}
+}
+
 void updateBullets(struct gameState* state) {
 
 	struct listNode* bulletlist = state->playerBullets;
+	struct listNode* tanklist = state->enemyTanks;
 
 	char i = 2;
 	while (i--) {
 		while (bulletlist->data) {
-			struct Bullet* bullet = (*bulletlist).data;
 
+			struct Bullet* bullet = (*bulletlist).data;
+			
 			if (bullet->xPos < 0 || bullet->yPos < 0 || bullet->xPos > state->width*MAP_SCALE - bullet->width || bullet->yPos > state->height*MAP_SCALE - bullet->width) {
 				(*bullet).source->inAir--;
 
@@ -153,6 +282,7 @@ void updateBullets(struct gameState* state) {
 				boom->time = 0;
 				boom->yPos = bullet->yPos;
 				boom->xPos = bullet->xPos;
+				insertBefore(&state->explosions, boom);
 
 				free((*bulletlist).data);
 				removeNode(bulletlist);
@@ -215,6 +345,7 @@ void updateBullets(struct gameState* state) {
 				boom->time = 0;
 				boom->yPos = bullet->yPos;
 				boom->xPos = bullet->xPos;
+				insertBefore(&state->explosions, boom);
 
 				free((*bulletlist).data);
 				removeNode(bulletlist);
@@ -230,111 +361,9 @@ void updateBullets(struct gameState* state) {
 			}
 		}
 		bulletlist = state->enemyBullets;
+		tanklist = state->playerTanks;
 	}
 
-}
-
-void fireBullet(struct gameState* state, struct Tank* tenkic) {
-
-	if ((*tenkic).inAir == 0 || (*tenkic).inAir == 1 && (*tenkic).upgrade > 1) {
-		(*tenkic).inAir++;
-		struct Bullet* new = (struct Bullet*)malloc(sizeof(struct Bullet));
-		(*new).source = tenkic;
-		(*new).direction = (*tenkic).direction;
-		(*new).speed = (*tenkic).bulletSpeed;
-		(*new).power = (*tenkic).bulletPower;
-		(*new).width = MAP_SCALE;
-		switch ((*new).direction) {
-		case 0:
-			(*new).yPos = (*tenkic).yPos - (*new).width + MAP_SCALE / 2;
-			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
-			break;
-		case 1:
-			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
-			break;
-		case 2:
-			(*new).yPos = (*tenkic).yPos + (*tenkic).width   - MAP_SCALE;//
-			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
-			break;
-		case 3:
-			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos + (*tenkic).width   - MAP_SCALE; //
-			break;
-		}
-		if ((*tenkic).team) insertBefore(&(*state).enemyBullets, new);
-		else insertBefore(&(*state).playerBullets, new);
-	}
-}
-
-void respawn(struct Tank* tenkic) {
-	(*tenkic).hitPoints = 1;
-	/* treba da se porta na spawn point i da dobije shield */
-}
-
-void hitDetection(struct gameState* state) {
-
-	struct listNode* bulletshell = (*state).playerBullets;
-	while (bulletshell) {
-
-		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
-		struct listNode* tankshell = (*state).enemyTanks;
-		struct Tank* tenkic = 0;
-
-		while (tankshell) {
-			tenkic = (struct Tank*)(*tankshell).data;
-			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
-				break;
-			tankshell = (*tankshell).next;
-		}
-		if (tankshell) {
-			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
-			if ((*tenkic).hitPoints == 0) {
-				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(tenkic);
-				else {
-					if ((*metak).source->bot == 0)
-						(*metak).source->score += (*tenkic).score;
-					free(tenkic);
-					removeNode(&tankshell);
-					break;
-				}
-			}
-		}
-		bulletshell = (*bulletshell).next;
-	}
-
-	bulletshell = (*state).enemyBullets;
-	while (bulletshell) {
-
-		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
-		struct listNode* tankshell = (*state).playerTanks;
-		struct Tank* tenkic = 0;
-
-		while (tankshell) {
-			tenkic = (struct Tank*)(*tankshell).data;
-			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*tenkic).yPos, (*tenkic).xPos, (*tenkic).width))
-				break;
-			tankshell = (*tankshell).next;
-		}
-		if (tankshell) {
-			(*metak).source->inAir--;
-			(*tenkic).hitPoints--;
-			if ((*tenkic).hitPoints == 0) {
-				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(tenkic);
-				else {
-					if ((*metak).source->bot == 0)
-						(*metak).source->score += (*tenkic).score;
-					free(tenkic);
-					removeNode(&tankshell);
-					break;
-				}
-			}
-		}
-		bulletshell = (*bulletshell).next;
-	}
 }
 
 void updateBots(struct gameState* state) {
