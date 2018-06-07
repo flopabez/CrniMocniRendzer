@@ -1,24 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-#define SEE_DIST 30
-#define BRICK 1
-#define METAL 2
-#define WATER 3
-#define ICE 5
-#define FOREST 4
-#define BASE 6
-#define EMPTY 0
-#define BLOCK_X 48
-
-#define UP 0
-#define LEFT 1
-#define DOWN 2
-#define RIGHT 3
-#define SHOOT 4
-#define SIT 5
-
 #include "AI.h"
 
 /*tankMoves is an auxiliary struct used to store the path between A and B for BFS (we use a predecessor matrix for Dijkstra instead). When opening new nodes, our BFS queue priority queue enqueues a new tankMoves* state
