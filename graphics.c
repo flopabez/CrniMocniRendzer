@@ -4,8 +4,8 @@
 
 #include "graphics.h"
 
-//#include <SDL_ttf.h>
-//#include "sound.h"
+#include <SDL_ttf.h>
+#include "sound.h"
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
@@ -27,7 +27,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		letter_num++;
 	}
 
-	/*/Write Score
+	//Write Score
 	static TTF_Font *font;
 	if (!font) {
 		font = TTF_OpenFont("../resursi/RosesareFF0000.ttf", 20);
@@ -188,7 +188,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	struct listNode *booms = gameState->explosions;
 	while (booms->data) {
 		Explosion *exp = (struct Bullet*)booms->data;
-		//if (exp->time == 0 && exp->size == 1) BoomSound();
+		if (exp->time == 0 && exp->size == 1) BoomSound();
 		SDL_Rect rect = { xofs+exp->xPos - (BLOCK_X/2*(exp->size + 1)), yofs+exp->yPos - (BLOCK_X / 2 * (exp->size + 1)), BLOCK_X*(exp->size + 1), BLOCK_X*(exp->size + 1) };
 		SDL_Rect dest = { 256 + exp->size*48 + 16*(exp->time / 2)*(exp->size+1), 128, 16*(exp->size+1), 16*(exp->size + 1) };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
@@ -198,7 +198,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	}
 	//*/
 
-	//SDL_DestroyTexture(text);
+	SDL_DestroyTexture(text);
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
 }
