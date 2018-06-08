@@ -162,7 +162,7 @@ char *randarr_m()
 {
     //srand(time(NULL));
     char *tArr=(char*)(malloc(4));
-    char R[4]={};
+    char R[4]={0};
     int n=0;
     while (n<4)
     {
