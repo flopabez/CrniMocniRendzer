@@ -24,6 +24,6 @@ typedef struct button {
 
 void LoadMenu(Button *buttons);
 
-int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons);
+int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable);
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable);
