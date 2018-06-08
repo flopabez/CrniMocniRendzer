@@ -211,6 +211,10 @@ void hitDetection(struct gameState* state) {
 		while (otherbullet->data) {
 			struct Bullet* otherone = otherbullet->data;
 			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*otherone).yPos, (*otherone).xPos, (*otherone).width)) {
+
+				metak->source->inAir--;
+				otherone->source->inAir--;
+
 				free(metak);
 				removeNode(bulletshell);
 
@@ -297,6 +301,10 @@ void hitDetection(struct gameState* state) {
 		while (otherbullet->data) {
 			struct Bullet* otherone = otherbullet->data;
 			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*otherone).yPos, (*otherone).xPos, (*otherone).width)) {
+
+				metak->source->inAir--;
+				otherone->source->inAir--;
+
 				free(metak);
 				removeNode(bulletshell);
 
@@ -584,7 +592,7 @@ void updatePowerUps(struct gameState* state) {
 	while (temp->data) {
 		struct Tank* tenkic = temp->data;
 		if (tenkic->bot == 0) {
-			if ((tenkic->earnedLives + 1) * 200 < tenkic->score) {
+			if ((tenkic->earnedLives + 1) * 40 < tenkic->score) {
 				tenkic->earnedLives++;
 				tenkic->lives++;
 			}
