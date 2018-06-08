@@ -204,12 +204,16 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 
 void respawn(struct gameState* state, struct Tank* tenkic) {
 	(*tenkic).hitPoints = 1;
+	tenkic->shield = FPS * 5;
 	tenkic->yPos = (state->height - 10)*MAP_SCALE;
 	tenkic->xPos = (state->width / 2 - 2)* MAP_SCALE;
 	tenkic->upgrade = 0;
 }
 
 int baseHitDetection(struct gameState* state) {
+	/*
+	proverava da li je baza pogodjena
+	*/
 	struct listNode* bulletshell = state->enemyBullets;
 	char flag = 0;
 	while (bulletshell->data) {
@@ -253,7 +257,9 @@ int baseHitDetection(struct gameState* state) {
 }
 
 void hitDetection(struct gameState* state) {
-
+	/*
+	sudar metkova jednog tima sa mecima i tenkovima drugog tima
+	*/
 	struct listNode* bulletshell = (*state).playerBullets;
 	while (bulletshell->data) {
 
@@ -299,19 +305,34 @@ void hitDetection(struct gameState* state) {
 		if (tankshell->data) {
 			(*metak).source->inAir--;
 			if (tenkic->shield == 0) (*tenkic).hitPoints--;
+			else {
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = metak->yPos;
+				boom->xPos = metak->xPos;
+				insertBefore(&state->explosions, boom);
+
+				free(metak);
+				removeNode(bulletshell);
+				continue;
+			}
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
+
+				printf("boom\n");
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 1;
+				boom->time = 0;
+				boom->yPos = tenkic->yPos;
+				boom->xPos = tenkic->xPos;
+				insertBefore(&state->explosions, boom);
+
 				if ((*tenkic).lives >= 0) respawn(state,tenkic);
 				else {
 					if ((*metak).source->bot == 0)
 						(*metak).source->score += (*tenkic).score;
 
-					Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
-					boom->size = 1;
-					boom->time = 0;
-					boom->yPos = tenkic->yPos;
-					boom->xPos = tenkic->xPos;
-					insertBefore(&state->explosions, boom);
 
 					if (tenkic->pickup) {
 						state->pickup = (struct Pickup*)malloc(sizeof(struct Pickup));
@@ -389,19 +410,41 @@ void hitDetection(struct gameState* state) {
 		if (tankshell->data) {
 			(*metak).source->inAir--;
 			if (tenkic->shield == 0) (*tenkic).hitPoints--;
+			else {
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = metak->yPos;
+				boom->xPos = metak->xPos;
+				insertBefore(&state->explosions, boom);
+
+				free(metak);
+				removeNode(bulletshell);
+				continue;
+			}
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(state,tenkic);
+
+				printf("boom\n");
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 1;
+				boom->time = 0;
+				boom->yPos = tenkic->yPos;
+				boom->xPos = tenkic->xPos;
+				insertBefore(&state->explosions, boom);
+
+				if ((*tenkic).lives >= 0) respawn(state, tenkic);
 				else {
 					if ((*metak).source->bot == 0)
 						(*metak).source->score += (*tenkic).score;
 
-					Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
-					boom->size = 1;
-					boom->time = 0;
-					boom->yPos = tenkic->yPos;
-					boom->xPos = tenkic->xPos;
-					insertBefore(&state->explosions, boom);
+
+					if (tenkic->pickup) {
+						state->pickup = (struct Pickup*)malloc(sizeof(struct Pickup));
+						state->pickup->yPos = tenkic->yPos;
+						state->pickup->xPos = tenkic->xPos;
+						state->pickup->type = random(6);
+					}
 
 					free(tenkic);
 					removeNode(tankshell);
@@ -411,15 +454,28 @@ void hitDetection(struct gameState* state) {
 					break;
 				}
 			}
+			else {
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = metak->yPos;
+				boom->xPos = metak->xPos;
+
+				insertBefore(&state->explosions, boom);
+				free(metak);
+				removeNode(bulletshell);
+				break;
+			}
 		}
 		bulletshell = (*bulletshell).next;
 	}
 }
 
 void updateBullets(struct gameState* state) {
-
+	/*
+	samo pomera metke i rusi zidove
+	*/
 	struct listNode* bulletlist = state->playerBullets;
-	struct listNode* tanklist = state->enemyTanks;
 
 	char i = 2;
 	while (i--) {
@@ -514,13 +570,14 @@ void updateBullets(struct gameState* state) {
 			}
 		}
 		bulletlist = state->enemyBullets;
-		tanklist = state->playerTanks;
 	}
 
 }
 
 void updateBots(struct gameState* state) {
-
+	/*
+	trosenje poteza zadatih od strane AI
+	*/
 	struct listNode* temp = state->enemyTanks;
 	char i = 2;
 
@@ -570,6 +627,23 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	default: break;
 	}
 
+	new->dif = random(10);
+	switch (state->dif) {
+	case 0:
+		if (new->dif < 8) new->dif = 0;
+		else new->dif = 1;
+		break;
+	case 1:
+		if (new->dif == 0) new->dif = 0;
+		else if (new->dif < 8) new->dif = 1;
+		else new->dif = 2;
+		break;
+	case 2:
+		if (new->dif < 2) new->dif = 1;
+		else new->dif = 2;
+		break;
+	}
+	
 	new->inAir = 0;
 	new->lives = 0;
 	new->upgrade = 0;
@@ -601,7 +675,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 		break;
 	case 1:
 		new->speed = 2;
-		new->bulletSpeed = 4;
+		new->bulletSpeed = 6;
 		new->hitPoints = 1;
 		new->score = 1;
 		break;
@@ -631,6 +705,9 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 }
 
 void updatePowerUps(struct gameState* state) {
+	/*
+	regulise pickup-ove
+	*/
 	struct listNode* temp = state->playerTanks;
 	while (temp->data) {
 		struct Tank* tenkic = temp->data;

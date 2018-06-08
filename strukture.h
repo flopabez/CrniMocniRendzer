@@ -79,7 +79,7 @@ void powerUp(struct gameState* state);
 void setBase(struct gameState* state, char type);
 struct listNode* newNode(void* data);
 void insertBefore(struct listNode** stack, void* data);
-void removeNode(struct listNode* stack);
+void removeNode(struct listNode** stack);
 char squareCollision(int Ax, int Ay, int Awidth, int Bx, int By, int Bwidth);
 struct Tank* tankCollision(struct gameState* state, struct Tank* tenkic);
 void Move(struct gameState* state, struct Tank* tenkic, char direction);
