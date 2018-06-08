@@ -205,6 +205,31 @@ void hitDetection(struct gameState* state) {
 		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
 		struct listNode* tankshell = (*state).enemyTanks;
 		struct Tank* tenkic = 0;
+		struct listNode* otherbullet = (*state).enemyBullets;
+		char ceoni = 0;
+
+		while (otherbullet->data) {
+			struct Bullet* otherone = otherbullet->data;
+			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*otherone).yPos, (*otherone).xPos, (*otherone).width)) {
+				free(metak);
+				removeNode(bulletshell);
+
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = otherone->yPos;
+				boom->xPos = otherone->xPos;
+				insertBefore(&state->explosions, boom);
+
+				free(otherone);
+				removeNode(otherbullet);
+
+				ceoni = 1;
+				break;
+			}
+			otherbullet = (*otherbullet).next;
+		}
+		if (ceoni) continue;
 
 		while (tankshell->data) {
 			tenkic = (struct Tank*)(*tankshell).data;
@@ -217,7 +242,7 @@ void hitDetection(struct gameState* state) {
 			if (tenkic->shield == 0) (*tenkic).hitPoints--;
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
-				if ((*tenkic).lives) respawn(state,tenkic);
+				if ((*tenkic).lives >= 0) respawn(state,tenkic);
 				else {
 					if ((*metak).source->bot == 0)
 						(*metak).source->score += (*tenkic).score;
@@ -266,6 +291,31 @@ void hitDetection(struct gameState* state) {
 		struct Bullet* metak = (struct Bullet*)(*bulletshell).data;
 		struct listNode* tankshell = (*state).playerTanks;
 		struct Tank* tenkic = 0;
+		struct listNode* otherbullet = (*state).playerBullets;
+		char ceoni = 0;
+
+		while (otherbullet->data) {
+			struct Bullet* otherone = otherbullet->data;
+			if (squareCollision((*metak).yPos, (*metak).xPos, (*metak).width, (*otherone).yPos, (*otherone).xPos, (*otherone).width)) {
+				free(metak);
+				removeNode(bulletshell);
+
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 0;
+				boom->time = 0;
+				boom->yPos = otherone->yPos;
+				boom->xPos = otherone->xPos;
+				insertBefore(&state->explosions, boom);
+
+				free(otherone);
+				removeNode(otherbullet);
+
+				ceoni = 1;
+				break;
+			}
+			otherbullet = (*otherbullet).next;
+		}
+		if (ceoni) continue;
 
 		while (tankshell->data) {
 			tenkic = (struct Tank*)(*tankshell).data;
@@ -458,7 +508,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	}
 
 	new->inAir = 0;
-	new->lives = 1;
+	new->lives = 0;
 	new->upgrade = 0;
 	new->frame = 0;
 	new->direction = 0;
