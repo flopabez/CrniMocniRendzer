@@ -111,7 +111,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		struct Tank *enemy = (struct Tank*)etank_wrapper->data;
 		if (!(gameState->time % 2)) enemy->frame = (enemy->frame + 1) % 2;
 		SDL_Rect rect = { xofs + enemy->xPos, yofs + enemy->yPos, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2 , 64 + (enemy->bot-1) * 16 + (enemy->hitPoints>1) * 128 + (enemy->hitPoints>1)*(((gameState->time % 4) - enemy->hitPoints + 1)>0)*(-128), 16, 16 };
+		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2 -128*enemy->pickup* (gameState->time % 2), 64 + (enemy->bot-1) * 16 + (enemy->hitPoints>1) * 128 + (enemy->hitPoints>1)*(((gameState->time % 4) - enemy->hitPoints + 1)>0)*(-128) + 128*(enemy->bot!=4)*enemy->pickup* (gameState->time % 2), 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
 		if (enemy->shield) {
 			SDL_Rect shield_sprite = { 256 * (gameState->time % 2) * 16, 144, 16, 16 };
@@ -152,7 +152,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		}
 	}
 
-	//Draw pickup
+	/*/Draw pickup
 	if (gameState->pickup) {
 	SDL_Rect rect = { xofs+ gameState->pickup->xPos, yofs+ gameState->pickup->yPos, BLOCK_X, BLOCK_X };
 	SDL_Rect dest = { 256 + (gameState->pickup->type)*16, 112, 16, 16};
