@@ -33,5 +33,5 @@ char chooseMoveDJ(Tank *T, gameState G);
 tankMovesStack *genMoveListDJ(Tank *T, gameState G, char priority);
 char pickMove(Tank *T, gameState G);
 char *randarr_m();
-char getmove(struct Tank* T);
+char getMove(struct Tank* T);
 int tileFreeTank(int x, int y, gameState G, Tank *T);
