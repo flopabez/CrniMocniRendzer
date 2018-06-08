@@ -74,7 +74,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->yPos += tenkic->speed;
 			if (temp) {
-				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				if (tenkic->bot && (temp->team == tenkic->team)) tenkic->move = (tenkic->move + 2) % 4;
 				(*tenkic).yPos = (*temp).yPos + (*temp).width;
 			}
 			else {
@@ -99,7 +99,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->xPos += tenkic->speed;
 			if (temp) {
-				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				if (tenkic->bot && (temp->team == tenkic->team)) tenkic->move = (tenkic->move + 2) % 4;
 				(*tenkic).xPos = (*temp).xPos + (*temp).width;
 			}
 			else {
@@ -124,7 +124,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->yPos -= tenkic->speed;
 			if (temp) {
-				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				if (tenkic->bot && (temp->team == tenkic->team)) tenkic->move = (tenkic->move + 2) % 4;
 				(*tenkic).yPos = (*temp).yPos - (*temp).width;
 			}
 			else {
@@ -149,7 +149,7 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->xPos -= tenkic->speed;
 			if (temp) {
-				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				if (tenkic->bot && (temp->team == tenkic->team)) tenkic->move = (tenkic->move + 2) % 4;
 				(*tenkic).xPos = (*temp).xPos - (*temp).width;
 			}
 			else {

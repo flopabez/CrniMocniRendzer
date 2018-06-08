@@ -71,7 +71,7 @@ int main() {
 
 
 	float delay = 1. / FPS * 1000;
-	int spawnDelay = 24 * (4 - state->dif);
+	int spawnDelay = 0;
 	char maxOnscreen = 3 + state->dif;
 
 	while (ggez == 0) {
