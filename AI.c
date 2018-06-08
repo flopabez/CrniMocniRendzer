@@ -360,7 +360,7 @@ int canPathfind(Tank *T, gameState G, char dif)
     case EASY:
         return 0;
     case MEDIUM:
-        return ((0.1*T->yPos/MAP_SCALE)>(0.1*G.height/3));
+        return ((0.1*T->yPos/MAP_SCALE)>(0.1*G.height/2));
     case HARD:
         return 1;
     default:
@@ -412,31 +412,86 @@ int brickInFront(int x,int y, gameState G,char orient)
 
 }
 
+int tileFreeTank(int x, int y, gameState G, Tank *T)
+{
+    int tx,ty;
+    struct listNode* tankList;
+    if (tileFree(x,y,G))
+    {
+        tankList=G.enemyTanks;
+        while (tankList&&tankList->data)
+        {
+            tx=((Tank*)(tankList->data))->xPos/MAP_SCALE;
+            ty=((Tank*)(tankList->data))->yPos/MAP_SCALE;
+            if (tx>=x&&tx<=x+3&&ty>=y&&ty<=y+3&&((Tank*)(tankList->data))!=T)
+            {
+                printf("Tank conflict: %d %d | %d %d\n",y,x,ty,tx);
+                return 0;
+            }
+            tankList=tankList->next;
+        }
+
+
+       /* tankList=G.playerTanks;
+        while (tankList&&tankList->data)
+        {
+            tx=((Tank*)(tankList->data))->xPos/MAP_SCALE;
+            ty=((Tank*)(tankList->data))->yPos/MAP_SCALE;
+            if (tx>=x&&tx<=x+3&&ty>=y&&ty<=y+3&&((Tank*)(tankList->data))!=T) return 0;
+            tankList=tankList->next;
+        }*/
+        return 1;
+
+    }
+    return 0;
+}
+
+char getMove(Tank *T)
+{
+    int r=rand()%100;
+    int upw=5,leftw=15,downw=65;
+    if (T->direction==RIGHT) leftw=5;
+    else leftw=25;
+    if (r<upw) return UP;
+    if (r<upw+leftw) return LEFT;
+    if (r<upw+leftw+downw) return DOWN;
+    return RIGHT;
+}
+
 //Generates a random legal move.
 char randMove(Tank *T, gameState G)
 {
-    char mArr[4],cdir;
+    char mArr[4],cdir,m;
     int x,y;
     int i,numChoices=0,keepDirection;
 
-    cdir=T->direction;
+    /*cdir=T->direction;
     if (cdir>=0&&cdir<4)
     {
         x=T->xPos/MAP_SCALE+dCoord[cdir][1];
         y=T->yPos/MAP_SCALE+dCoord[cdir][0];
         keepDirection=rand()%100;
-        if (keepDirection<=95) if (tileFree(x,y,G)) return cdir;
-    }
+        if (keepDirection<=95) if (tileFreeTank(x,y,G,T)) return cdir;
+    }*/
 
-    for (i=0;i<4;i++)
+    /*for (i=0;i<4;i++)
     {
         x=T->xPos/MAP_SCALE+dCoord[i][1];
         y=T->yPos/MAP_SCALE+dCoord[i][0];
-        if (tileFree(x,y,G)==1) mArr[numChoices++]=UP+i;
+        if (tileFreeTank(x,y,G)==1) mArr[numChoices++]=UP+i;
+    }
+    if (rand()%3==0)
+    {
+        if (tileFreeTank(T->xPos/MAP_SCALE+dCoord[DOWN][1],T->yPos/MAP_SCALE+dCoord[i][0])&&rand()%3==0)
     }
    // printf("Broj poteza: %d\n");
     if (numChoices==0) return 25;
-    return mArr[rand()%numChoices];
+    return mArr[rand()%numChoices];*/
+    do
+    {
+        m=getMove(T);
+    } while (tileFreeTank(T->xPos/MAP_SCALE+dCoord[m][1],T->yPos/MAP_SCALE+dCoord[m][0],G,T)==0);
+    return m;
 }
 
 #define EASY_SHOOTCHANCE 20
