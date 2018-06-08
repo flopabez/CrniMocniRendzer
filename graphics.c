@@ -1,11 +1,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
-
-#include "graphics.h"
-
 #include <SDL_ttf.h>
+#include "graphics.h"
 #include "sound.h"
+
+#define LOAD_SCALE 4
+
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
@@ -47,7 +48,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	for (int i = 0; i < 20; i++) {
 		SDL_Rect tank_mark_loc = { xGUI + (BLOCK_X / 2)*(i % 2), yGUI + (i / 2)*(BLOCK_X / 2), BLOCK_X / 2, BLOCK_X / 2 };
-		SDL_Rect tank_mark_sloc = { 328 + 8 * (gameState->tanksleft>i), 192, 8, 8 };
+		SDL_Rect tank_mark_sloc = { 328 + 8 * 19/*(gameState->tanksleft>i)*/, 192, 8, 8 };
 		SDL_RenderCopy(renderer, sprites, &tank_mark_sloc, &tank_mark_loc);
 	}
 
@@ -203,5 +204,20 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//*/
 
 	//We are done drawing, "present" or show to the screen what we've drawn
+	SDL_RenderPresent(renderer);
+}
+
+void Loading(SDL_Renderer *renderer, SDL_Texture *sprites) {
+
+	//set the drawing color to black
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+
+	//Clear the screen (to black)
+	SDL_RenderClear(renderer);
+
+	SDL_Rect loading_loc = {(WINDOW_W - 54 * LOAD_SCALE) / 2, (WINDOW_H - 7 * LOAD_SCALE) / 2, 54* LOAD_SCALE, 7 * LOAD_SCALE };
+	SDL_Rect loading_sloc = { 289, 208, 54, 7 };
+	SDL_RenderCopy(renderer, sprites, &loading_sloc, &loading_loc);
+
 	SDL_RenderPresent(renderer);
 }
