@@ -315,7 +315,7 @@ void hitDetection(struct gameState* state) {
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
-				printf("boom\n");
+				//removeNode(state->explosions);
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
 				boom->size = 1;
 				boom->time = 0;
@@ -338,10 +338,10 @@ void hitDetection(struct gameState* state) {
 
 					free(tenkic);
 					removeNode(tankshell);
+					free(metak);
+					removeNode(bulletshell);
 					break;
 				}
-				free(metak);
-				removeNode(bulletshell);
 			}
 			else {
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
@@ -351,10 +351,10 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = metak->xPos;
 
 				insertBefore(&state->explosions, boom);
+				free(metak);
+				removeNode(bulletshell);
 				break;
 			}
-			free(metak);
-			removeNode(bulletshell);
 		}
 		bulletshell = (*bulletshell).next;
 	}
@@ -414,7 +414,7 @@ void hitDetection(struct gameState* state) {
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
-				printf("boom\n");
+				//removeNode(state->explosions);
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
 				boom->size = 1;
 				boom->time = 0;
@@ -437,10 +437,10 @@ void hitDetection(struct gameState* state) {
 
 					free(tenkic);
 					removeNode(tankshell);
+					free(metak);
+					removeNode(bulletshell);
 					break;
 				}
-				free(metak);
-				removeNode(bulletshell);
 			}
 			else {
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
@@ -450,10 +450,10 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = metak->xPos;
 
 				insertBefore(&state->explosions, boom);
+				free(metak);
+				removeNode(bulletshell);
 				break;
 			}
-			free(metak);
-			removeNode(bulletshell);
 		}
 		bulletshell = (*bulletshell).next;
 	}
