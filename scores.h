@@ -1,4 +1,4 @@
-#ifndef score_h
+#ifndef scores_h
 #define scores_h
 
 struct score
