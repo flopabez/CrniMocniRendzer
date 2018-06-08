@@ -32,3 +32,4 @@ coPair tankPopPQ (heap_t *h);
 char chooseMoveDJ(Tank *T, gameState G);
 tankMovesStack *genMoveListDJ(Tank *T, gameState G, char priority);
 char pickMove(Tank *T, gameState G);
+char *randarr_m();
