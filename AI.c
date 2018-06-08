@@ -238,13 +238,31 @@ char getDir(int x1, int y1, int x2, int y2)
     return SIT;
 }
 
+char *randarr_m()
+{
+    srand(time(NULL));
+    char *tArr=(char*)(malloc(4));
+    char R[4]={};
+    int n=0;
+    while (n<4)
+    {
+        char c=rand()%4;
+        if (R[c]==0)
+        {
+            R[c]=1;
+            (tArr[n++])=c;
+        }
+    }
+    return tArr;
+}
+
 tankMovesStack* genMoveList(Tank *T,gameState G, int PlayerX, int PlayerY, int chasePlayer)
 {
     int h=G.height,w=G.width,x=T->xPos/MAP_SCALE,y=T->yPos/MAP_SCALE;
     int i,j;
     int nx,ny,whileDone=0;
-    char **vis;
-    coPair **pred,P,Q,R,O,L;
+    char **vis,*randM;
+    coPair **pred,P,Q,R,O;
     moveQueue *front=NULL,*rear=NULL;
 
     vis=(char**)(malloc(h*sizeof(char*)));
@@ -265,9 +283,10 @@ tankMovesStack* genMoveList(Tank *T,gameState G, int PlayerX, int PlayerY, int c
     {
         P=deq(&front,&rear);
         vis[P.y][P.x]=1;
-
-        for (i=0;i<4;i++)
+        randM=randarr_m();
+        for (j=0;j<4;j++)
         {
+            i=randM[j];
             nx=dCoord[i][1]+P.x;
             ny=dCoord[i][0]+P.y;
 
