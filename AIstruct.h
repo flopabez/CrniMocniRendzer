@@ -16,12 +16,6 @@
 #define SHOOT 4
 #define SIT 5
 
-typedef struct tankMoves
-{
-    struct tankMoves *par;
-    char dir;
-    int x,y,len;
-} tankMoves;
 
 typedef struct tankMovesStack
 {
@@ -40,14 +34,3 @@ typedef struct moveQueue
     struct moveQueue *next;
     struct coPair d;
 } moveQueue;
-
-typedef struct {
-    int priority;
-    coPair data;
-} node_t;
-
-typedef struct {
-    node_t *nodes;
-    int len;
-    int size;
-    } heap_t;
