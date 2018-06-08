@@ -425,7 +425,7 @@ int tileFreeTank(int x, int y, gameState G, Tank *T)
             ty=((Tank*)(tankList->data))->yPos/MAP_SCALE;
             if (tx>=x&&tx<=x+3&&ty>=y&&ty<=y+3&&((Tank*)(tankList->data))!=T)
             {
-                printf("Tank conflict: %d %d | %d %d\n",y,x,ty,tx);
+                //printf("Tank conflict: %d %d | %d %d\n",y,x,ty,tx);
                 return 0;
             }
             tankList=tankList->next;
