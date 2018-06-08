@@ -497,7 +497,7 @@ void updateBots(struct gameState* state) {
 struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, char team) {
 	struct Tank* new = (struct Tank*)malloc(sizeof(struct Tank));
 
-	new->width = 48;//MAP_SCALE*4
+	new->width = 42;//MAP_SCALE*4
 
 	switch (spawnPoint) {
 	case 0:
@@ -650,7 +650,7 @@ void powerUp(struct gameState* state) {
 					setBase(state, 2);
 					break;
 				case 3: tenkic->upgrade += tenkic->upgrade == 3 ? 0 : 1; break;
-				case 4:
+				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
 						free(temp->data);
@@ -667,4 +667,89 @@ void powerUp(struct gameState* state) {
 			temp = temp->next;
 		}
 	}
+}
+
+struct gameState* initGame(int difficulty) {
+
+	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
+	state->explosions = newNode(0);
+	state->enemyBullets = newNode(0);
+	state->enemyTanks = newNode(0);
+	state->playerBullets = newNode(0);
+	state->playerTanks = newNode(0);
+	state->timeStop = 0;
+	state->time = 0;
+	state->pickup = 0;
+	state->shovel = 0;
+	state->dif = difficulty;
+	state->killCount = 20;
+	state->stage = 0;
+	generate_random_map(13, 13);
+	state->terrain = read_map(&(state->height), &(state->width), "random_map");
+
+	return state;
+}
+
+void freeGame(struct gameState* gameState){
+	for (int i = 0; i < gameState->height; i++)
+		free(gameState->terrain[i]);
+	free(gameState->terrain);
+	free(gameState->pickup);
+	void* temp;
+	while (gameState->playerTanks->next != NULL)
+	{
+		temp = gameState->playerTanks;
+		gameState->playerTanks = gameState->playerTanks->next;
+		free(((struct listNode*)temp)->data);
+		free((struct listNode*)temp);
+	}
+	free(gameState->playerTanks->data);
+	free(gameState->playerTanks);
+	while (gameState->enemyTanks->next != NULL)
+	{
+		temp = gameState->enemyTanks;
+		gameState->enemyTanks = gameState->enemyTanks->next;
+		free(((struct listNode*)temp)->data);
+		free((struct listNode*)temp);
+	}
+	free(gameState->enemyTanks->data);
+	free(gameState->enemyTanks);
+	while (gameState->playerBullets->next != NULL)
+	{
+		temp = gameState->playerBullets;
+		gameState->playerBullets = gameState->playerBullets->next;
+		free(((struct listNode*)temp)->data);
+		free((struct listNode*)temp);
+	}
+	free(gameState->playerBullets->data);
+	free(gameState->playerBullets);
+	while (gameState->enemyBullets->next != NULL)
+	{
+		temp = gameState->enemyBullets;
+		gameState->enemyBullets = gameState->enemyBullets->next;
+		free(((struct listNode*)temp)->data);
+		free((struct listNode*)temp);
+	}
+	free(gameState->enemyBullets->data);
+	free(gameState->enemyBullets);
+	while (gameState->explosions->next != NULL)
+	{
+		temp = gameState->explosions;
+		gameState->explosions = gameState->explosions->next;
+		free(((struct listNode*)temp)->data);
+		free((struct listNode*)temp);
+	}
+	free(gameState->explosions->data);
+	free(gameState->explosions);
+	free(gameState);
+}
+
+int botCount(struct gameState* state) {
+	struct listNode* temp = state->enemyTanks;
+	int t = 0;
+	while (temp->next) {
+		t++;
+		temp = temp->next;
+	}
+	return t;
 }
