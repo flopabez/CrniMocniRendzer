@@ -305,18 +305,13 @@ void hitDetection(struct gameState* state) {
 		if (tankshell->data) {
 			(*metak).source->inAir--;
 			if (tenkic->shield == 0) (*tenkic).hitPoints--;
-			else {
-				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
-				boom->size = 0;
-				boom->time = 0;
-				boom->yPos = metak->yPos;
-				boom->xPos = metak->xPos;
-				insertBefore(&state->explosions, boom);
+			Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+			boom->size = 0;
+			boom->time = 0;
+			boom->yPos = metak->yPos;
+			boom->xPos = metak->xPos;
+			insertBefore(&state->explosions, boom);
 
-				free(metak);
-				removeNode(bulletshell);
-				continue;
-			}
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
@@ -343,11 +338,10 @@ void hitDetection(struct gameState* state) {
 
 					free(tenkic);
 					removeNode(tankshell);
-
-					free(metak);
-					removeNode(bulletshell);
 					break;
 				}
+				free(metak);
+				removeNode(bulletshell);
 			}
 			else {
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
@@ -410,18 +404,13 @@ void hitDetection(struct gameState* state) {
 		if (tankshell->data) {
 			(*metak).source->inAir--;
 			if (tenkic->shield == 0) (*tenkic).hitPoints--;
-			else {
-				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
-				boom->size = 0;
-				boom->time = 0;
-				boom->yPos = metak->yPos;
-				boom->xPos = metak->xPos;
-				insertBefore(&state->explosions, boom);
+			Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+			boom->size = 0;
+			boom->time = 0;
+			boom->yPos = metak->yPos;
+			boom->xPos = metak->xPos;
+			insertBefore(&state->explosions, boom);
 
-				free(metak);
-				removeNode(bulletshell);
-				continue;
-			}
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
@@ -448,11 +437,10 @@ void hitDetection(struct gameState* state) {
 
 					free(tenkic);
 					removeNode(tankshell);
-
-					free(metak);
-					removeNode(bulletshell);
 					break;
 				}
+				free(metak);
+				removeNode(bulletshell);
 			}
 			else {
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));

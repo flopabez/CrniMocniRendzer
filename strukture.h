@@ -62,11 +62,6 @@ struct gameState {
 	unsigned int time;
 };
 
-struct Level {
-	struct gameState* state;
-	struct listNode* enemies;
-};
-
 
 
 int baseHitDetection(struct gameState* state);
