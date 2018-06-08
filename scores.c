@@ -5,95 +5,137 @@
 #include "scores.h"
 
 int get_score(char* line);
-void insert_score(struct score** list, char* line)
+
+//122
+
+void generate_new_key()
+{
+	FILE* fkey = fopen("key.bin", "rb");
+	char key[10000];
+	for (int i = 0;i < 9999;i++)
+		key[i] = 1+ random(20);
+	key[9999] = '\0';
+	fprintf(fkey, "%s", key);
+	fclose(fkey);
+}
+
+char* read_key()
+{
+	FILE* key = fopen("key.bin", "rb");
+	char* k=(char*)malloc(sizeof(char)*10000);
+	fscanf(key, "%s", k);
+	fclose(key);
+	return k;
+}
+int encrypt()
+{
+	FILE *fp1 = fopen("highscores.txt", "r");
+	if (fp1 == NULL)
+	{
+		return 0;
+	}
+	FILE *fp2 = fopen("pp2.bin", "wb");
+	if (fp2 == NULL)
+	{
+		return 0;
+	}
+	char ch;
+	while (1)
+	{
+		ch = fgetc(fp1);
+		if (ch == EOF)
+		{
+			break;
+		}
+		else
+		{
+			ch = ch-37;
+			fputc(ch, fp2);
+		}
+	}
+	fclose(fp1);
+	fclose(fp2);
+	return 1;
+}
+
+int decrypt()
+{
+	FILE* fp1 = fopen("pp2.bin", "rb");
+	if (fp1 == NULL)
+	{
+		return 0;
+	}
+	FILE* fp2 = fopen("highscores.txt", "w");
+	if (fp2 == NULL)
+	{
+		return 0;
+	}
+	char ch;
+	while (1)
+	{
+		ch = fgetc(fp1);
+		if (ch == EOF)
+		{
+			break;
+		}
+		else
+		{
+			ch = ch +37;
+			fputc(ch, fp2);
+		}
+	}
+	fclose(fp1);
+	fclose(fp2);
+	return 1;
+}
+
+
+
+void insert_score(struct score** list, char* name,int score,int pos)
 {
 	struct score* temp;
-	struct score* curr;
 	temp = (struct score*)malloc(sizeof(struct score));
 	if (temp == NULL)
 		return;
-	char* name;
-	name = malloc(sizeof(char)*strlen(line));
-	int i = 0;
-	while (line[i] != ':')
-	{
-		name[i] = line[i];
-		i++;
-	}
-	name[i] = '\0';
-	i++;
-	temp->name = (char*)malloc(sizeof(char)*30);
-	if (temp->name == NULL)
-		return;
 	strcpy(temp->name, name);
-	temp->score =get_score(line);
+	temp->score = score;
 	temp->next = NULL;
-	if (*list == NULL)
-		*list =temp;
-	else
-	{
-		curr = *list;
-		while (curr->next != NULL)
-			curr = curr->next;
-		curr->next = temp;
-	}
+	list[pos] = temp;
 }
 
-int get_score(char* line)
-{
-	int i = 0;
-	char* charscore;
-	charscore = (char*)malloc(sizeof(char) * 12);
-	if (charscore == NULL)
-		return 0;
-	while (line[i] != ':')
-	{
-		i++;
-	}
-	i++;
-	int j = 0;
-	while (line[i])
-	{
-		charscore[j] = line[i];
-		j++;
-		i++;
-	}
-	int score = atoi(charscore);
-	return score;
-
-}
 
 void update_score(int score)
 {
-
-	char* name;
-	name = (char*)malloc(sizeof(char) * 20);
-	if (name == NULL)
-		return;
-	char* string;
-	struct score* list = NULL;
-	string = (char*)malloc(sizeof(char) * 50);
-	if (string == NULL)
-		return;
-	char new_score[50];
-	scanf("%s", name);
-	char dot[2] = ":";
-	snprintf(new_score, sizeof(new_score), "%s%s%d", name, dot, score);
+	char* key = read_key();
+	char new_name[30];
+	char number[20];
+	char name[30];
+	struct score* list[20];
+	int val;
+	scanf("%s", new_name);
+	int not_inserted = 1;
+	decrypt();
 	FILE* fscore = fopen("highscores.txt", "r");
-	while (fgets(string, 50, fscore))
+	int i = 0;
+	char c;
+	while( (c=fscanf(fscore,"%s %s ",name ,number))!=EOF && i<19)
 	{
-		if(score<get_score(string))
-			insert_score(&list, string);
-		else { insert_score(&list, new_score);insert_score(&list, string); score = -1; }
+		val = atoi(number);
+			if ( score < val)
+			{
+				insert_score(list, name,val, i);i++;
+			}
+			else { insert_score(list, new_name,score, i);i++;insert_score(list, name,val, i);i++; not_inserted = 0;score = -1; }
 	}
-	if (score != -1)
-		insert_score(&list, new_score);
+	if (not_inserted)
+	{
+		insert_score(list, new_name,score, i);i++;
+	}
+
 	fclose(fscore);
 	FILE * new_fscore = fopen("highscores.txt", "w");
-	while (list != NULL)
-	{
-		fprintf(new_fscore, "%s:%d\n", list->name, list->score);
-		list = list->next;
-	}
+	for(int j=0;j<i;j++)
+		fprintf(new_fscore, "%s %d ", list[j]->name, list[j]->score);
 	fclose(new_fscore);
+	encrypt();
 }

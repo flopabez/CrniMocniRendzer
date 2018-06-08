@@ -4,12 +4,13 @@
 struct score
 {
 	int score;
-	char* name;
+	char name[30];
 	struct score* next;
 };
-void insert_score(struct score** list, char* line);
-int get_score(char* line);
-
-
+int encrypt();
+int decrypt();
+char* read_key();
+void generate_new_key();
+void insert_score(struct score** list, char* name, int score, int pos);
 void update_score(int score);
 #endif
