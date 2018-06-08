@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL_mixer.h>
 
 #include "menu.h"
 #include "strukture.h"
@@ -63,7 +64,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 
 	//Draw Logo
 	SDL_Rect logo_loc = { (WINDOW_W- 170*4)/2, BLOCK_X, 170*4, 25 *4 };
-	SDL_Rect logo_sloc = { 230, 264, 170, 25 };
+	SDL_Rect logo_sloc = { 228, 256, 170, 25 };
 	SDL_RenderCopy(renderer, sprites, &logo_sloc, &logo_loc);
 
 	SDL_Rect pow_loc = { (WINDOW_W + 170*4 +16)/2, BLOCK_X, 16 * 3, 32 * 3 };
@@ -93,7 +94,7 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 	LoadMenu(buttons);
 	SDL_Event event;
 	int ret = 0;
-	PlayMenuMusic();
+	if (!Mix_PlayingMusic()) PlayMenuMusic();
 	while (ret == 0) {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -116,33 +117,37 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 		ret = MainMenu(renderer, sprites, buttons, enable);
 		SDL_Delay(1. / FPS * 1000);
 	}
-	PlayMenuMusic();
+	if (ret ==1 || ret == 2 || ret == 6) PlayMenuMusic();
 	return ret;
 }
 
-int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites) {
+OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
 	Button *buttons = malloc(2 * sizeof(Button));
+	OptionsReturnStructure ret;
+	ret.dif = 1;
+	ret.height = 13 * 4;
+	ret.width = 13 * 4;
 	LoadOptions(buttons);
 	SDL_Event event;
-	int ret=0;
+	int done=0;
 
-	PlayMenuMusic();
-	while (ret == 0) {
+	
+	while (!done) {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_WINDOWEVENT_CLOSE:
 				if (window) {
 					SDL_DestroyWindow(window);
 					window = NULL;
-					ret = 1;
+					done = 1;
 				}
 				break;
 
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE) ret = 1;
+				if (event.key.keysym.sym == SDLK_ESCAPE) done = 1;
 				break;
 			case SDL_QUIT:
-				ret = 1;
+				done = 1;
 				break;
 			}
 		}
@@ -160,7 +165,7 @@ int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *re
 		for (int i = 0; i < 2; i++) {
 			char first = 0;
 			
-			if ((i == 0 && gameState->dif==0) || (i == 1 && gameState->dif == 2)) {
+			if ((i == 0 && ret.dif ==0) || (i == 1 && ret.dif == 2)) {
 				buttons[i].state = 2;
 				buttons[i].click = 0;
 			}
@@ -171,9 +176,8 @@ int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *re
 
 				buttons[i].click = mouse_press % 8;
 				if ((buttons[i].click !=0) && (first != 0)) {
-					if (!i) gameState->dif--;
-					else gameState->dif++;
-					gameState->height = gameState->width;
+					if (!i) ret.dif--;
+					else ret.dif++;
 					ClickButtonSound();
 				}
 			}
@@ -185,7 +189,7 @@ int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *re
 
 		//Draw Logo
 		SDL_Rect logo_loc = { (WINDOW_W - 170 * 4) / 2, BLOCK_X, 170 * 4, 25 * 4 };
-		SDL_Rect logo_sloc = { 230, 264, 170, 25 };
+		SDL_Rect logo_sloc = { 228, 256, 170, 25 };
 		SDL_RenderCopy(renderer, sprites, &logo_sloc, &logo_loc);
 
 		SDL_Rect pow_loc = { (WINDOW_W + 170 * 4 + 16) / 2, BLOCK_X, 16 * 3, 32 * 3 };
@@ -200,19 +204,19 @@ int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *re
 		//Draw buttons
 		for (int i = 0; i<2; i++) {
 			SDL_Rect location = { buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) - buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_H - 2 * buttons[i].offset)*BUTTON_SCALE + 2 * buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
-			SDL_Rect sprite_loc = { 228 + buttons[i].offset + buttons[i].state*BUTTON_H, 303 + i * BUTTON_H, BUTTON_H - 2 * buttons[i].offset, BUTTON_H };
+			SDL_Rect sprite_loc = { 228 +buttons[i].state*BUTTON_H, 294 + i * BUTTON_H, BUTTON_H - 2 * buttons[i].offset, BUTTON_H };
 			SDL_RenderCopy(renderer, sprites, &sprite_loc, &location);
 		}
 
 		int difoffset[3] = { 6,0,5 };
-		SDL_Rect diflocation = { BUTTON_X+ 56, BUTTON_Y, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
-		SDL_Rect difsprite_loc = { 228 + gameState->dif*48, 290, 48, BUTTON_H };
+		SDL_Rect diflocation = { (WINDOW_W- 48 * BUTTON_SCALE)/2 , BUTTON_Y, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
+		SDL_Rect difsprite_loc = { 228 + ret.dif *48, 281, 48, BUTTON_H };
 		SDL_RenderCopy(renderer, sprites, &difsprite_loc, &diflocation);
 
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1. / FPS * 1000);
 	}
-	PlayMenuMusic();
+	
 	return ret;
 }
