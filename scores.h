@@ -13,4 +13,5 @@ char* read_key();
 void generate_new_key();
 void insert_score(struct score** list, char* name, int score, int pos);
 void update_score(int score);
+void show_score();
 #endif

@@ -4,7 +4,6 @@
 #include<SDL.h>
 #include "scores.h"
 
-int get_score(char* line);
 
 //122
 
@@ -138,4 +137,21 @@ void update_score(int score)
 		fprintf(new_fscore, "%s %d ", list[j]->name, list[j]->score);
 	fclose(new_fscore);
 	encrypt();
+}
+
+
+void show_score()
+{
+	decrypt();
+	FILE* fscore = fopen("highscores.txt", "r");
+	char c;
+	char name[30], number[20];
+	int i = 1;
+	while ((c = fscanf(fscore, "%s %s ", name, number)) != EOF)
+	{
+		printf("%d-%s:%s\n", i, name, number);
+		i++;
+	}
+	fclose(fscore);
+	system("pause");
 }
