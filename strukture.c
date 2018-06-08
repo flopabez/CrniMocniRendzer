@@ -635,6 +635,7 @@ void powerUp(struct gameState* state) {
 				state->pickup = 0;
 				return;
 			}
+			temp = temp->next;
 		}
 
 		temp = state->enemyTanks;
@@ -663,6 +664,7 @@ void powerUp(struct gameState* state) {
 				state->pickup = 0;
 				return;
 			}
+			temp = temp->next;
 		}
 	}
 }
