@@ -240,7 +240,7 @@ char getDir(int x1, int y1, int x2, int y2)
 
 char *randarr_m()
 {
-    srand(time(NULL));
+    //srand(time(NULL));
     char *tArr=(char*)(malloc(4));
     char R[4]={};
     int n=0;
@@ -456,7 +456,7 @@ Kamikaze tanks will only fire if their path requires it or they can destroy the 
 */
 char chooseMove(Tank *T, gameState G)
 {
-    srand(time(NULL));
+    //srand(time(NULL));
     //printf("%d %d\n",T->xPos/MAP_SCALE,T->yPos/MAP_SCALE);
     //Init parameters
 
