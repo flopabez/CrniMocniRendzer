@@ -152,7 +152,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		}
 	}
 
-	/*/Draw pickup
+	//Draw pickup
 	if (gameState->pickup) {
 	SDL_Rect rect = { xofs+ gameState->pickup->xPos, yofs+ gameState->pickup->yPos, BLOCK_X, BLOCK_X };
 	SDL_Rect dest = { 256 + (gameState->pickup->type)*16, 112, 16, 16};
