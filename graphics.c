@@ -21,12 +21,6 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//Clear the screen (to gray)
 	SDL_RenderClear(renderer);
 
-	int temp = gameState->score, letter_num=0;
-	while (temp) {
-		temp = temp / 10;
-		letter_num++;
-	}
-
 	//Write Score
 	static TTF_Font *font;
 	if (!font) {
@@ -35,18 +29,8 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 			printf("Can't find font 'RosesareFF0000.ttf\n'");
 		}
 	}
-	char score[20];
-	sprintf(score, "Score: %d", gameState->score);
-
 	SDL_Color font_color = { 255,255,255,0 };
-	int font_h = (yofs * 9 / 10 < BLOCK_X / 2) ? yofs * 9 / 10 : BLOCK_X / 2;
-	int font_w = (((yofs * 9 / 10) * 5 / 7 < BLOCK_X / 2  ) ? (yofs * 9 / 10) * 5 / 7 : BLOCK_X / 2)*(8 + letter_num);
-	SDL_Rect font_rect = { xofs, (yofs- font_h)/2, font_w, font_h };
-	SDL_Surface *textSurface = TTF_RenderText_Solid(font, score, font_color);
-	SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
-	SDL_FreeSurface(textSurface);
-	textSurface = NULL;
-	SDL_RenderCopy(renderer, text, NULL, &font_rect);
+	
 	//*/
 
 	//Draw map background
@@ -114,6 +98,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//Draw player
 	struct listNode *tank_wrapper = gameState->playerTanks;
 	char playerNum = 0;
+	int playerOffset = 0;
 	while (tank_wrapper->data) {
 		struct Tank *player = (struct Tank*)tank_wrapper->data;
 		SDL_Rect rect = { xofs + player->xPos, yofs + player->yPos, BLOCK_X, BLOCK_X };
@@ -124,6 +109,25 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 			SDL_RenderCopy(renderer, sprites, &shield_sprite, &rect);
 		}
 
+		char score[20];
+		sprintf(score, "P%d Score: %d",playerNum+1, player->score);
+
+		int temp = player->score, letter_num = 0;
+		while (temp) {
+			temp = temp / 10;
+			letter_num++;
+		}
+
+		int font_h = (yofs * 9 / 20 < BLOCK_X / 4) ? yofs * 9 / 20 : BLOCK_X / 4;
+		int font_w = (((yofs * 9 / 20) * 5 / 7 < BLOCK_X / 4) ? (yofs * 9 / 20) * 5 / 7 : BLOCK_X / 4)*(11 + letter_num);
+		SDL_Rect font_rect = { xofs + playerOffset, (yofs - font_h) / 2, font_w, font_h };
+		SDL_Surface *textSurface = TTF_RenderText_Solid(font, score, font_color);
+		SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+		SDL_FreeSurface(textSurface);
+		textSurface = NULL;
+		SDL_RenderCopy(renderer, text, NULL, &font_rect);
+
+		playerOffset = font_w + 2 * font_h;
 		playerNum++;
 		tank_wrapper = tank_wrapper->next;
 	}
@@ -198,7 +202,6 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	}
 	//*/
 
-	SDL_DestroyTexture(text);
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
 }
