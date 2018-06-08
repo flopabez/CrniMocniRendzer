@@ -264,6 +264,7 @@ tankMovesStack* genMoveList(Tank *T,gameState G, int PlayerX, int PlayerY, int c
     char **vis,*randM;
     coPair **pred,P,Q,R,O;
     moveQueue *front=NULL,*rear=NULL;
+    O.x=-1; O.y=-1;
 
     vis=(char**)(malloc(h*sizeof(char*)));
     for (i=0;i<h;i++) vis[i]=(char*)(calloc(w,1));
@@ -312,6 +313,7 @@ tankMovesStack* genMoveList(Tank *T,gameState G, int PlayerX, int PlayerY, int c
     #define HORI 2
     tankMovesStack *S=NULL;
     int difx,dify,mode;
+    if (O.x!=-1)
     Q=O;
     R.x=-1,R.y=-1;
     while (R.x!=T->xPos/MAP_SCALE||R.y!=T->yPos/MAP_SCALE)
