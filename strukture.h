@@ -67,6 +67,8 @@ struct Level {
 };
 
 
+
+int baseHitDetection(struct gameState* state);
 int botCount(struct gameState* state);
 struct gameState* initGame();
 void freeGame(struct gameState* gameState);

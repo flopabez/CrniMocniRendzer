@@ -197,6 +197,49 @@ void respawn(struct gameState* state, struct Tank* tenkic) {
 	tenkic->upgrade = 0;
 }
 
+int baseHitDetection(struct gameState* state) {
+	struct listNode* bulletshell = state->enemyBullets;
+	char flag = 0;
+	while (bulletshell->data) {
+		struct Bullet* metak = bulletshell->data;
+		if (squareCollision(metak->yPos, metak->xPos, metak->width, (state->height - 4)*MAP_SCALE, (state->width / 2 - 2)*MAP_SCALE, MAP_SCALE * 4)) {
+
+			free(metak);
+			removeNode(bulletshell);
+
+			Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+			boom->size = 1;
+			boom->time = 0;
+			boom->yPos = metak->yPos;
+			boom->xPos = metak->xPos;
+			insertBefore(&state->explosions, boom);
+
+			return 1;
+		}
+		bulletshell = bulletshell->next;
+	}
+	bulletshell = state->playerBullets;
+	while (bulletshell->data) {
+		struct Bullet* metak = bulletshell->data;
+		if (squareCollision(metak->yPos, metak->xPos, metak->width, (state->height - 4)*MAP_SCALE, (state->width / 2 - 2)*MAP_SCALE, MAP_SCALE * 4)) {
+			metak->source->inAir--;
+			free(metak);
+			removeNode(bulletshell);
+
+			Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+			boom->size = 1;
+			boom->time = 0;
+			boom->yPos = metak->yPos;
+			boom->xPos = metak->xPos;
+			insertBefore(&state->explosions, boom);
+
+			return 1;
+		}
+		bulletshell = bulletshell->next;
+	}
+	return 0;
+}
+
 void hitDetection(struct gameState* state) {
 
 	struct listNode* bulletshell = (*state).playerBullets;
@@ -621,7 +664,7 @@ void powerUp(struct gameState* state) {
 					setBase(state, 2);
 					break;
 				case 3: tenkic->upgrade += tenkic->upgrade == 3 ? 0 : 1; break;
-				case 4:
+				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
 						free(temp->data);
