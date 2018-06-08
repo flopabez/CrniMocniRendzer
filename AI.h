@@ -18,7 +18,7 @@ void enq(moveQueue **F, moveQueue **R, coPair P);
 coPair deq(moveQueue **F, moveQueue **R);
 int bulletExists(Tank *T);
 int isBounded(int x, int y, int h, int w);
-int isBaseBrick(char c, int x, int y, int h, int w);
+int isBaseBrick(char c, int x, int y, int h, int w, char shovel);
 int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty);
 int seeObj(Tank *T, gameState G, char dir, int tx, int ty);
 int tileFree(int x,int y,gameState G);
