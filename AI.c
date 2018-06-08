@@ -393,8 +393,13 @@ char chooseMove(Tank *T, gameState G)
     int h=G.height,w=G.width,targetSelect;
     char stackMove=0,m,shootMod;
 
-    if ((bulletExists(T)==0)&& (seeRivalTank(T,G)||seeObj(T,G,T->direction,w/2-4,h/2)))
-         return SHOOT;
+    if ((bulletExists(T)==0))
+        {
+            if (seeRivalTank(T,G))
+                return SHOOT;
+            if (seeObj(T,G,T->direction+UP,w/2-2,h-4))
+                return SHOOT;
+        }
 
     if (dif==HARD)
     {
