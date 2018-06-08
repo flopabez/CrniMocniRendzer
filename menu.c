@@ -17,10 +17,7 @@ void LoadMenu(Button *buttons) {
 	}
 }
 
-int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
-	
-	// Stavi ovo u main:
-	//		Button *buttons=malloc(BUTTON_NUM*sizeof(Button));
+int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable) {
 
 	int ret = 0;
 	static int time = 0;
@@ -37,7 +34,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	//Mouseover
 	for (int i = 0; i < BUTTON_NUM; i++) {
 		buttons[i].click = 0;
-		if (i == 1) {
+		if (i == 1 && enable==0) {
 			buttons[i].state = 2;
 		} else if ((mouse_x > buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1)) && (mouse_x < (buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) + (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE)) && (mouse_y > buttons[i].yPos) && (mouse_y < buttons[i].yPos + BUTTON_H * BUTTON_SCALE)) {
 			buttons[i].state = 1;
@@ -76,7 +73,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons) {
 	return ret;
 }
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable) {
 	Button *buttons = malloc(6 * sizeof(Button));
 	LoadMenu(buttons);
 	SDL_Event event;
@@ -95,9 +92,12 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE) ret = 6;
 				break;
+			case SDL_QUIT:
+				ret = 6;
+				break;
 			}
 		}
-		ret = MainMenu(renderer, sprites, buttons);
+		ret = MainMenu(renderer, sprites, buttons, enable);
 		SDL_Delay(1. / FPS * 1000);
 	}
 	return ret;
