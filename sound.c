@@ -41,6 +41,22 @@ void PlayIt() {
 	}
 }
 
+void PlayMenu() {
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) printf("Error: %s\n", Mix_GetError);
+	static Mix_Music *music = NULL;
+
+	if (!music) {
+		music = Mix_LoadMUS("../resursi/Fallen_Down.mp3");
+		if (!music) {
+			printf("Can't find file 'Fallen_Down.mp3'!\n");
+			return;
+		}
+	}
+	if (!Mix_PlayingMusic()) Mix_PlayMusic(music, -1);
+	else Mix_HaltMusic();
+}
+
+
 void Bang() {
 	static Mix_Chunk *bang = NULL;
 	if (!bang) {
@@ -51,7 +67,7 @@ void Bang() {
 		}
 	}
 	Mix_PlayChannel(-1, bang, 0);
-	printf("BANG!\n");
+	//printf("BANG!\n");
 }
 
 void Boom() {
@@ -64,7 +80,31 @@ void Boom() {
 		}
 	}
 	Mix_PlayChannel(-1, boom, 0);
-	printf("BOOM!\n");
+	//printf("BOOM!\n");
+}
+
+void OverButton() {
+	static Mix_Chunk *menu_move = NULL;
+	if (!menu_move) {
+		menu_move = Mix_LoadWAV("../resursi/menu_move.wav");
+		if (!menu_move) {
+			printf("Can't find file 'menu_move.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, menu_move, 0);
+}
+
+void ClickButton() {
+	static Mix_Chunk *click = NULL;
+	if (!click) {
+		click = Mix_LoadWAV("../resursi/click.wav");
+		if (!click) {
+			printf("Can't find file 'click.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, click, 0);
 }
 /*void MakeSound() {
 
