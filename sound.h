@@ -1,8 +1,9 @@
 #pragma once
 
 void PlayIt();
-void PlayMenu();
-void Bang();
-void Boom();
-void OverButton();
-void ClickButton();
+void PlayMenuMusic();
+void BangSound();
+void BoomSound();
+void OverButtonSound();
+void ClickButtonSound();
+void BaseBoomSound();

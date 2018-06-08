@@ -5,6 +5,7 @@
 
 #include "menu.h"
 #include "strukture.h"
+#include "sound.h"
 
 void LoadMenu(Button *buttons) {
 	int offset_array[BUTTON_NUM] = {5, 6, 9, 0, 2, 23};
@@ -37,9 +38,13 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 		if (i == 1 && enable==0) {
 			buttons[i].state = 2;
 		} else if ((mouse_x > buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1)) && (mouse_x < (buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) + (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE)) && (mouse_y > buttons[i].yPos) && (mouse_y < buttons[i].yPos + BUTTON_H * BUTTON_SCALE)) {
+			if (buttons[i].state == 0) OverButtonSound();
 			buttons[i].state = 1;
 			buttons[i].click = mouse_press%8;
-			if (buttons[i].click) ret = i+1;
+			if (buttons[i].click) {
+				ret = i + 1;
+				ClickButtonSound();
+			}
 		}
 		else {
 			buttons[i].state = 0;
@@ -78,6 +83,7 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 	LoadMenu(buttons);
 	SDL_Event event;
 	int ret = 0;
+	PlayMenuMusic();
 	while (ret == 0) {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -100,5 +106,6 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 		ret = MainMenu(renderer, sprites, buttons, enable);
 		SDL_Delay(1. / FPS * 1000);
 	}
+	PlayMenuMusic();
 	return ret;
 }

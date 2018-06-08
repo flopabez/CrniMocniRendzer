@@ -41,7 +41,7 @@ void PlayIt() {
 	}
 }
 
-void PlayMenu() {
+void PlayMenuMusic() {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) printf("Error: %s\n", Mix_GetError);
 	static Mix_Music *music = NULL;
 
@@ -57,7 +57,7 @@ void PlayMenu() {
 }
 
 
-void Bang() {
+void BangSound() {
 	static Mix_Chunk *bang = NULL;
 	if (!bang) {
 		bang = Mix_LoadWAV("../resursi/bang.wav");
@@ -70,7 +70,7 @@ void Bang() {
 	//printf("BANG!\n");
 }
 
-void Boom() {
+void BoomSound() {
 	static Mix_Chunk *boom = NULL;
 	if (!boom) {
 		boom = Mix_LoadWAV("../resursi/big_boom.wav");
@@ -83,7 +83,7 @@ void Boom() {
 	//printf("BOOM!\n");
 }
 
-void OverButton() {
+void OverButtonSound() {
 	static Mix_Chunk *menu_move = NULL;
 	if (!menu_move) {
 		menu_move = Mix_LoadWAV("../resursi/menu_move.wav");
@@ -95,7 +95,7 @@ void OverButton() {
 	Mix_PlayChannel(-1, menu_move, 0);
 }
 
-void ClickButton() {
+void ClickButtonSound() {
 	static Mix_Chunk *click = NULL;
 	if (!click) {
 		click = Mix_LoadWAV("../resursi/click.wav");
@@ -106,9 +106,30 @@ void ClickButton() {
 	}
 	Mix_PlayChannel(-1, click, 0);
 }
-/*void MakeSound() {
 
-}*/
+void PowerUpSound() {
+	static Mix_Chunk *powerup = NULL;
+	if (!powerup) {
+		powerup = Mix_LoadWAV("../resursi/powerup.wav");
+		if (!powerup) {
+			printf("Can't find file 'powerup.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, powerup, 0);
+}
+
+void BaseBoomSound() {
+	static Mix_Chunk *base_boom = NULL;
+	if (!base_boom) {
+		base_boom = Mix_LoadWAV("../resursi/base_boom.wav");
+		if (!base_boom) {
+			printf("Can't find file 'base_boom.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, base_boom, 0);
+}
 
 /*
 
