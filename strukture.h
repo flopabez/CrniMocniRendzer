@@ -25,6 +25,7 @@ struct listNode {
 };
 
 struct Tank {
+	char dif;
 	int xPos, yPos, width, score;
 	char earnedLives, pickup;
 	char direction, speed;

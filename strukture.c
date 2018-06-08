@@ -73,7 +73,10 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			tenkic->yPos -= tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->yPos += tenkic->speed;
-			if (temp) (*tenkic).yPos = (*temp).yPos + (*temp).width;
+			if (temp) {
+				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				(*tenkic).yPos = (*temp).yPos + (*temp).width;
+			}
 			else {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);
 				int newY = (*tenkic).yPos - (*tenkic).speed;
@@ -95,7 +98,10 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			tenkic->xPos -= tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->xPos += tenkic->speed;
-			if (temp) (*tenkic).xPos = (*temp).xPos + (*temp).width;
+			if (temp) {
+				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				(*tenkic).xPos = (*temp).xPos + (*temp).width;
+			}
 			else {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
 				int newX = (*tenkic).xPos - (*tenkic).speed;
@@ -117,7 +123,10 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			tenkic->yPos += tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->yPos -= tenkic->speed;
-			if (temp) (*tenkic).yPos = (*temp).yPos - (*temp).width;
+			if (temp) {
+				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				(*tenkic).yPos = (*temp).yPos - (*temp).width;
+			}
 			else {
 				int limit = ((*tenkic).xPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).xPos%MAP_SCALE != 0);//isto kao case 0
 				int newY = (*tenkic).yPos + (*tenkic).speed;//isto kao case 0, samo drugi smer
@@ -139,7 +148,10 @@ void Move(struct gameState* state, struct Tank* tenkic, char direction) {
 			tenkic->xPos += tenkic->speed;
 			struct Tank* temp = tankCollision(state, tenkic);
 			tenkic->xPos -= tenkic->speed;
-			if (temp) (*tenkic).xPos = (*temp).xPos - (*temp).width;
+			if (temp) {
+				if (tenkic->bot) tenkic->move = (tenkic->move + 2) % 4;
+				(*tenkic).xPos = (*temp).xPos - (*temp).width;
+			}
 			else {
 				int limit = ((*tenkic).yPos + (*tenkic).width - 1) / MAP_SCALE + ((*tenkic).yPos%MAP_SCALE != 0);
 				int newX = (*tenkic).xPos + (*tenkic).speed;

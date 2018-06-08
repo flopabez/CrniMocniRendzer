@@ -39,7 +39,7 @@ int main() {
 		switch (ggez) {
 		case 1:;
 			printf("%d", ggez);
-			state = initGame(0);
+			state = initGame(2);
 			printf("%d", ggez);
 			break;
 		case 3:
@@ -87,7 +87,7 @@ int main() {
 				switch (ggez) {
 				case 1:;
 					free(state);
-					state = initGame(0);
+					state = initGame(2);
 					free(player);
 					player = spawnTank(state, 0, 2, 0);
 					free(wrap);
