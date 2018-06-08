@@ -25,7 +25,7 @@ int main() {
 	state->time = 0;
 	state->pickup = 0;
 	state->shovel = 0;
-	state->dif = 0;
+	state->dif = 2;
 	state->killCount = 20;
 	state->stage = 0;
 	
@@ -42,6 +42,7 @@ int main() {
 	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
 	SDL_FreeSurface(surface);
 
+	if(!sprites) printf("Can't find file 'sprites.png'");
 
 	struct Tank* player = spawnTank(state, 0, 2, 0);
 
@@ -55,8 +56,9 @@ int main() {
 	doMenu(window, renderer, sprites);
 	char ggez = 0;
 	float delay = 1. / FPS * 1000;
-	spawnTank(state, 4, 0, 1);
-
+	struct Tank* bot = spawnTank(state, 1, 0, 1);
+	bot->pickup = 1;
+	state->timeStop = 10 * 24;
 
 	while (ggez == 0) {
 
@@ -77,6 +79,7 @@ int main() {
 		updateBullets(state);
 		if (state->timeStop == 0) updateBots(state);
 		doRender(state, renderer, sprites); // updateovanje gamestatea
+	
 
 
 		state->time++;
