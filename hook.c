@@ -25,7 +25,7 @@ int processEvents(SDL_Window * window, struct movementWrapper * wrap, struct gam
 				fireBullet(state, wrap->tenkic);
 				break;
 			case SDLK_ESCAPE:
-				done = 1;
+				done = -1;
 				break;
 			case SDLK_w:
 			case SDLK_UP:
