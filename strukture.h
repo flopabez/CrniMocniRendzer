@@ -67,6 +67,10 @@ struct Level {
 };
 
 
+int botCount(struct gameState* state);
+struct gameState* initGame();
+void freeGame(struct gameState* gameState);
+struct gameState* initGame(int difficulty);
 void updatePowerUps(struct gameState* state);
 void powerUp(struct gameState* state);
 void setBase(struct gameState* state, char type);
