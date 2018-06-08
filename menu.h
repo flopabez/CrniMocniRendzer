@@ -27,3 +27,6 @@ void LoadMenu(Button *buttons);
 int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable);
 
 int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable);
+
+int doOptions(SDL_Window * window, struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites);
+
