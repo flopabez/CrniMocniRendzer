@@ -4,29 +4,50 @@
 
 #include "graphics.h"
 
+//#include <SDL_ttf.h>
 //#include "sound.h"
 
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
+	
 	if (gameState->time == 1) PlayIt();
 	int xofs = (WINDOW_H - gameState->width / 4 * BLOCK_X) / 2;
 	int yofs = (WINDOW_H - gameState->height / 4 * BLOCK_X) / 2;
-	/*
-	stavi ovo u struct gameState:
-	int xoffset, yoffset;
-
-	stavi ovo u main:
-	state->yoffset = (WINDOW_H-state->height/4*BLOCK_X)/2;
-	state->xoffset = (WINDOW_H -state->width / 4 * BLOCK_X) / 2;
-	*/
-
 
 	//gameState->time++;
 	//set the drawing color to gray
 	SDL_SetRenderDrawColor(renderer, 99, 99, 99, 0);
 
-	//Clear the screen (to blue)
+	//Clear the screen (to gray)
 	SDL_RenderClear(renderer);
+
+	int temp = gameState->score, letter_num=0;
+	while (temp) {
+		temp = temp / 10;
+		letter_num++;
+	}
+
+	/*/Write Score
+	static TTF_Font *font;
+	if (!font) {
+		font = TTF_OpenFont("../resursi/RosesareFF0000.ttf", 20);
+		if (!font) {
+			printf("Can't find font 'RosesareFF0000.ttf\n'");
+		}
+	}
+	char score[20];
+	sprintf(score, "Score: %d", gameState->score);
+
+	SDL_Color font_color = { 255,255,255,0 };
+	int font_h = (yofs * 9 / 10 < BLOCK_X / 2) ? yofs * 9 / 10 : BLOCK_X / 2;
+	int font_w = (((yofs * 9 / 10) * 5 / 7 < BLOCK_X / 2  ) ? (yofs * 9 / 10) * 5 / 7 : BLOCK_X / 2)*(8 + letter_num);
+	SDL_Rect font_rect = { xofs, (yofs- font_h)/2, font_w, font_h };
+	SDL_Surface *textSurface = TTF_RenderText_Solid(font, score, font_color);
+	SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+	SDL_FreeSurface(textSurface);
+	textSurface = NULL;
+	SDL_RenderCopy(renderer, text, NULL, &font_rect);
+	//*/
 
 	//Draw map background
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
@@ -42,7 +63,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	for (int i = 0; i < 20; i++) {
 		SDL_Rect tank_mark_loc = { xGUI + (BLOCK_X / 2)*(i % 2), yGUI + (i / 2)*(BLOCK_X / 2), BLOCK_X / 2, BLOCK_X / 2 };
-		SDL_Rect tank_mark_sloc = { 328 + 8 * 1/*(gameState->tanksleft>i)*/, 192, 8, 8 };
+		SDL_Rect tank_mark_sloc = { 328 + 8 * (gameState->tanksleft>i), 192, 8, 8 };
 		SDL_RenderCopy(renderer, sprites, &tank_mark_sloc, &tank_mark_loc);
 	}
 
@@ -177,7 +198,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	}
 	//*/
 
-
+	//SDL_DestroyTexture(text);
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
 }
