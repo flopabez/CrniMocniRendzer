@@ -85,9 +85,9 @@ int isBounded(int x, int y, int h, int w)
     return (y>=0&&y<h&&x>=0&&x<w);
 }
 //Checks if the given tile is part of the brick wall surrounding the base.
-int isBaseBrick(char c, int x, int y, int h, int w)
+int isBaseBrick(char c, int x, int y, int h, int w, char shovel)
 {
-    return (isBounded(x,y,h,w)&&(c==BRICK&&y<h&&y>=h-6&&x>=(w/2-6)&&x<=(w/2+5)));
+    return (isBounded(x,y,h,w)&&(c==BRICK||(shovel&&c==METAL))&&y<h&&y>=h-6&&x>=(w/2-6)&&x<=(w/2+5));
 }
 
 //Checks if it's possible to see point [ty][tx] from point [sy][sx], assuming a limited line of sight distance and ignoring the base's brick wall.
@@ -100,7 +100,7 @@ int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty)
     {
         char c=(G.terrain)[y][x];
         if (y>=ty&&y<=ty+3&&x>=tx&&x<=tx+3) return 1;
-        if (!(c==EMPTY||c==WATER||c==FOREST||c==BASE||c==ICE||isBaseBrick(c,x,y,h,w))) return 0;
+        if (!(c==EMPTY||c==WATER||c==FOREST||c==BASE||c==ICE||isBaseBrick(c,x,y,h,w,G.shovel))) return 0;
         x+=dCoord[orientation][1];
         y+=dCoord[orientation][0];
     }
@@ -175,7 +175,7 @@ int tileFree(int x, int y, gameState G)
     {
         if (isBounded(x+j,y+i,h,w)==0) return 0;
         char c=G.terrain[y+i][x+j];
-        baseWall=isBaseBrick(c,x+j,y+i,h,w);
+        baseWall=isBaseBrick(c,x+j,y+i,h,w,G.shovel);
         //if (baseWall==1) printf("Yeet\n");
         if (c!=EMPTY&&c!=FOREST&&c!=ICE&&c!=BASE&&baseWall==0) return 0;
     }
@@ -425,7 +425,7 @@ int tileFreeTank(int x, int y, gameState G, Tank *T)
             ty=((Tank*)(tankList->data))->yPos/MAP_SCALE;
             if (tx>=x&&tx<=x+3&&ty>=y&&ty<=y+3&&((Tank*)(tankList->data))!=T)
             {
-                //printf("Tank conflict: %d %d | %d %d\n",y,x,ty,tx);
+                printf("Tank conflict: %d %d | %d %d\n",y,x,ty,tx);
                 return 0;
             }
             tankList=tankList->next;
@@ -445,6 +445,9 @@ int tileFreeTank(int x, int y, gameState G, Tank *T)
     }
     return 0;
 }
+
+
+
 
 char getMove(Tank *T)
 {
