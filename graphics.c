@@ -4,8 +4,11 @@
 
 #include "graphics.h"
 
+//#include "sound.h"
+
 void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *sprites)
 {
+	if (gameState->time == 1) PlayIt();
 	int xofs = (WINDOW_H - gameState->width / 4 * BLOCK_X) / 2;
 	int yofs = (WINDOW_H - gameState->height / 4 * BLOCK_X) / 2;
 	/*
@@ -111,7 +114,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		struct Tank *enemy = (struct Tank*)etank_wrapper->data;
 		if (!(gameState->time % 2)) enemy->frame = (enemy->frame + 1) % 2;
 		SDL_Rect rect = { xofs + enemy->xPos, yofs + enemy->yPos, BLOCK_X, BLOCK_X };
-		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2 -128*enemy->pickup* (gameState->time % 2), 64 + (enemy->bot-1) * 16 + (enemy->hitPoints>1) * 128 + (enemy->hitPoints>1)*(((gameState->time % 4) - enemy->hitPoints + 1)>0)*(-128) + 128*(enemy->bot!=4)*enemy->pickup* (gameState->time % 2), 16, 16 };
+		SDL_Rect dest = { 128 + enemy->frame * 16 + enemy->direction * 16 * 2 -128*enemy->pickup* (gameState->time % 2), 64 + (enemy->bot-1) * 16 + (enemy->hitPoints>1) * 128 - 128* (enemy->hitPoints>1)*(enemy->hitPoints<4)*!(gameState->time%enemy->hitPoints) + 128*(enemy->bot!=4)*enemy->pickup* (gameState->time % 2), 16, 16 };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
 		if (enemy->shield) {
 			SDL_Rect shield_sprite = { 256 * (gameState->time % 2) * 16, 144, 16, 16 };
@@ -164,6 +167,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	struct listNode *booms = gameState->explosions;
 	while (booms->data) {
 		Explosion *exp = (struct Bullet*)booms->data;
+		//if (exp->time == 0 && exp->size == 1) Boom();
 		SDL_Rect rect = { xofs+exp->xPos - (BLOCK_X/2*(exp->size + 1)), yofs+exp->yPos - (BLOCK_X / 2 * (exp->size + 1)), BLOCK_X*(exp->size + 1), BLOCK_X*(exp->size + 1) };
 		SDL_Rect dest = { 256 + exp->size*48 + 16*(exp->time / 2)*(exp->size+1), 128, 16*(exp->size+1), 16*(exp->size + 1) };
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
