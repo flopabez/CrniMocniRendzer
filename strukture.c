@@ -351,10 +351,10 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = metak->xPos;
 
 				insertBefore(&state->explosions, boom);
-				free(metak);
-				removeNode(bulletshell);
 				break;
 			}
+			free(metak);
+			removeNode(bulletshell);
 		}
 		bulletshell = (*bulletshell).next;
 	}
@@ -450,10 +450,10 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = metak->xPos;
 
 				insertBefore(&state->explosions, boom);
-				free(metak);
-				removeNode(bulletshell);
 				break;
 			}
+			free(metak);
+			removeNode(bulletshell);
 		}
 		bulletshell = (*bulletshell).next;
 	}
