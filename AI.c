@@ -84,8 +84,9 @@ int seeLine(int sx,int sy, char orientation, gameState G, int tx, int ty)
     int i;
     int x=sx,y=sy;
     int h=G.height,w=G.width;
-    int limit=h;
-    if (limit<w) limit=w;
+    //int limit=h;
+    //if (limit<w) limit=w;
+    int  limit=20;
     for (i=0;i<limit&&isBounded(x,y,h,w);i++)
     {
         char c=(G.terrain)[y][x];
@@ -207,6 +208,7 @@ tankMovesStack* genMoveList(Tank *T,gameState G, char chaseMode)
         for (j=0;j<4;j++)
         {
             i=randM[j];
+            //i=j;
             nx=dCoord[i][1]+P.x;
             ny=dCoord[i][0]+P.y;
             if (tileFree(nx,ny,G)&&vis[ny][nx]==0&&pred[ny][nx].x==-1)
@@ -245,6 +247,7 @@ tankMovesStack* genMoveList(Tank *T,gameState G, char chaseMode)
         targetPair.x=rand()%w;
         targetPair.y=rand()%h;
     }
+    //printf("Tank coords: %d %d\nTarget coords: %d %d\nTank difficulty: %d\nFirst move: %d\nPaths left: %d\n\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE,targetPair.y,targetPair.x,T->dif,moveLook(T->mList),T->pathDone-1);
 
 
     #define VERT 1
@@ -303,7 +306,7 @@ int canPathfind(Tank *T, gameState G, char dif)
     }
 }
 
-int tileFreeTank(int x, int y, gameState G, Tank *T)
+/*int tileFreeTank(int x, int y, gameState G, Tank *T)
 {
     int tx,ty;
     struct listNode* tankList;
@@ -324,7 +327,7 @@ int tileFreeTank(int x, int y, gameState G, Tank *T)
 
     }
     return 0;
-}
+}*/
 
 
 
@@ -344,11 +347,14 @@ char getMove(Tank *T)
 //Generates a random legal move.
 char randMove(Tank *T, gameState G)
 {
+    int nx,ny;
     char m;
     do
     {
         m=getMove(T);
-    } while (tileFree(T->xPos/MAP_SCALE+dCoord[m][1],T->yPos/MAP_SCALE+dCoord[m][0],G)==0);
+        nx=T->xPos/MAP_SCALE+dCoord[m][1];
+        ny=T->yPos/MAP_SCALE+dCoord[m][0];
+    } while (tileFree(nx,ny,G)==0&&tankCollision(&G,T)==NULL);
     return m;
 }
 
@@ -387,65 +393,105 @@ char seeRivalTank(Tank *T, gameState G)
     return 0;
 }
 
+char tanksCollide(Tank* T, gameState G, char dir)
+{
+    int r=0;
+    int speed=T->speed;
+    if (speed<0) speed=0-speed;
+    int x=T->xPos;
+    int y=T->yPos;
+    int newx=x+speed*dCoord[dir][1];
+    int newy=y+speed*dCoord[dir][0];
+    T->xPos=newx;
+    T->yPos=newy;
+    if (tankCollision(&G,T)) r=1;
+    if (isBounded(newx/MAP_SCALE,newy/MAP_SCALE,G.height,G.width)==0) r=1;
+    if (tileFree(newx/MAP_SCALE,newy/MAP_SCALE,G)==0) r=1;
+    T->xPos=x;
+    T->yPos=y;
+    return r;
+}
+
+#define EASY_PATH_NUM 3
+#define MEDIUM_PATH_NUM 2
+#define HARD_PATH_NUM 1
+
 char chooseMove(Tank *T, gameState G)
 {
+    if (T->inAir<0) printf("%d %d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE,T->inAir),T->inAir=0;
     int dif=T->dif;
     int h=G.height,w=G.width,targetSelect;
-    char stackMove=0,m,shootMod;
+    int by=h-4;
+    int bx=w/2-2;
+    char stackMove=0,m,shootMod,chaseMode=0,pathnum;
 
     if ((bulletExists(T)==0))
         {
             if (seeRivalTank(T,G))
                 return SHOOT;
-            if (seeObj(T,G,T->direction+UP,w/2-2,h-4))
-                return SHOOT;
+            if ((seeObj(T,G,T->direction+UP,w/2-2,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-1)))
+              return SHOOT;
         }
 
-    if (dif==HARD)
+    switch (dif)
     {
-        if (G.playerTanks&&G.playerTanks->data)
-        {
-            T->mList=genMoveList(T,G,T->kamikaze);
-        }
-        else T->mList=genMoveList(T,G,0);
-        T->pathDone=1;
-    }
-    else
-    if (dif==MEDIUM)
-    {
-        if (T->pathDone==0&&T->yPos/MAP_SCALE>h/2) T->pathDone=1;
-        T->mList=genMoveList(T,G,0);
-    }
-    else
-    {
-        if (T->pathDone==0) T->pathDone=1;
-        T->mList=genMoveList(T,G,2);
-    }
-
-    if (T->mList)
-    {
-        m=moveLook(T->mList);
-        stackMove=1;
-    }
-    else m=randMove(T,G);
-
-    //Sometimes our tank will just randomly shoot instead of moving. We now determine the likelihood of that.
-    switch(dif)
-    {
-    case MEDIUM:
-        shootMod=MEDIUM_SHOOTCHANCE;
-        break;
     case HARD:
+        if (G.playerTanks&&G.playerTanks->data) chaseMode=T->kamikaze;
+        /*T->mList=genMoveList(T,G,chaseMode);
+        T->pathDone=1;
+        */
+        pathnum=HARD_PATH_NUM;
         shootMod=HARD_SHOOTCHANCE;
         break;
+    case MEDIUM:
+        /*if (T->pathDone==0&&T->yPos/MAP_SCALE>h/3)
+        {
+        T->pathDone=1;
+        T->mList=genMoveList(T,G,0);
+        }*/
+
+        pathnum=MEDIUM_PATH_NUM;
+        shootMod=MEDIUM_SHOOTCHANCE;
+        break;
     default:
+        /*if (T->pathDone==0)
+        {
+        T->pathDone=1;
+        T->mList=genMoveList(T,G,2);
+        }*/
+        pathnum=EASY_PATH_NUM;
         shootMod=EASY_SHOOTCHANCE;
         break;
     }
+
+    if (T->mList&&tanksCollide(T,G,T->mList->stackMove))
+    {
+        while (T->mList) movePop(&(T->mList));
+        T->pathDone=0;
+    }
+
+    if (T->pathDone==0) T->pathDone=pathnum;
+
+
+    if (T->mList==NULL)
+    {
+        if (T->pathDone==1)
+        {
+            T->mList=genMoveList(T,G,chaseMode);
+            T->pathDone=pathnum;
+            //stackMove=1;
+        }
+        else
+        {
+            T->mList=genMoveList(T,G,2);
+            T->pathDone--;
+        }
+    }
+
     //We attempt to shoot randomly.
     if (rand()%shootMod==0&&bulletExists(T)==0&&isBounded(T->xPos/MAP_SCALE+dCoord[T->direction][1],T->yPos/MAP_SCALE+dCoord[T->direction][0],h,w)) return SHOOT;
     //if we got here that means we didn't fire a bullet, so now we finally return the move we're supposed to make.
-    if (stackMove) m=movePop(&(T->mList));
+    m=movePop(&(T->mList));
     return m;
 }
 
