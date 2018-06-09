@@ -41,6 +41,10 @@ void PlayIt() {
 	}
 }
 
+void ShutUp() {
+	if (Mix_PlayingMusic()) Mix_HaltMusic();
+}
+
 void PlayMenuMusic() {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) printf("Error: %s\n", Mix_GetError);
 	static Mix_Music *music = NULL;
