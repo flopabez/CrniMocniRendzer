@@ -528,7 +528,7 @@ char** get_map(int i,int map_h,int map_w)
 	 fgets(string,30,fmaps);
 	 string[strlen(string) - 1] = '\0';
 	 int num = atoi(string);
-	 if (i < num)
+	 if (i <= num)
 	 {
 		 for (int j = 0;j < i;j++)
 			 fgets(string, 30, fmaps);
