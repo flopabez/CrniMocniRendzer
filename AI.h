@@ -27,3 +27,4 @@ char pickMove(Tank *T, gameState G);
 char *randarr_m();
 char getMove(struct Tank* T);
 char seeRivalTank(Tank *T, gameState G);
+char tanksCollide(Tank* T, gameState G, char dir);
