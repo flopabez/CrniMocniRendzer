@@ -358,9 +358,9 @@ char randMove(Tank *T, gameState G)
     return m;
 }
 
-#define EASY_SHOOTCHANCE 40
-#define MEDIUM_SHOOTCHANCE 15
-#define HARD_SHOOTCHANCE 10
+#define EASY_SHOOTCHANCE 20
+#define MEDIUM_SHOOTCHANCE 10
+#define HARD_SHOOTCHANCE 5
 /*
 How AI works:
 First, the tank checks if it sees either the player or the base and has a free bullet. If yes, it fires.
@@ -439,7 +439,7 @@ char tanksCollide(Tank* T, gameState G, char dir)
 
 char chooseMove(Tank *T, gameState G)
 {
-    if (T->inAir<0) printf("%d %d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE,T->inAir),T->inAir=0;
+    //if (T->inAir<0) printf("%d %d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE,T->inAir),T->inAir=0;
     int dif=T->dif;
     int h=G.height,w=G.width,targetSelect;
     int by=h-4;
@@ -449,7 +449,7 @@ char chooseMove(Tank *T, gameState G)
 
     char stackMove=0,m,shootMod,chaseMode=0,pathnum;
 
-    if ((bulletExists(T)==0))
+    if (T->inAir==0)
         {
             if (seeRivalTank(T,G))
                 return SHOOT;
