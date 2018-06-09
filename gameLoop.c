@@ -202,7 +202,6 @@ int main() {
 		//uslovno spawnovanje tenkova
 
 		if (state->killCount == 0 && botCount(state) == 0) {
-			getchar();
 			state->stage++;
 			//freeMap(state);
 			free(state->pickup);
