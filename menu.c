@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 #include "menu.h"
 #include "strukture.h"
@@ -145,12 +146,8 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 	return ret;
 }
 
-OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
+void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
 	Button *buttons = malloc(7 * sizeof(Button));
-	OptionsReturnStructure ret;
-	ret.dif = 1;
-	ret.height = 13;
-	ret.width = 13;
 
 	LoadOptions(buttons);
 	SDL_Event event;
@@ -190,7 +187,7 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 		for (int i = 0; i < 6; i++) {
 			char first = 0;
 			
-			if ((i == 0 && ret.dif ==0) || (i == 1 && ret.dif == 2) || (i == 2 && ret.height == 15) || (i == 3 && ret.height == 3) || (i == 4 && ret.width == 3) || (i == 5 && ret.width == 15)) {
+			if ((i == 0 && ret->dif ==0) || (i == 1 && ret->dif == 2) || (i == 2 && ret->height == 15) || (i == 3 && ret->height == 3) || (i == 4 && ret->width == 3) || (i == 5 && ret->width == 15)) {
 				buttons[i].state = 2;
 				buttons[i].click = 0;
 			}
@@ -203,22 +200,22 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 				if ((buttons[i].click !=0) && (first != 0)) {
 					switch (i) {
 					case 0:
-						ret.dif--;
+						ret->dif--;
 						break;
 					case 1:
-						ret.dif++;
+						ret->dif++;
 						break;
 					case 2:
-						ret.height++;
+						ret->height++;
 						break;
 					case 3:
-						ret.height--;
+						ret->height--;
 						break;
 					case 4:
-						ret.width--;
+						ret->width--;
 						break;
 					case 5:
-						ret.width++;
+						ret->width++;
 						break;
 					case 6:
 						done = 1;
@@ -279,23 +276,39 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 
 		int difoffset[3] = { 6,0,5 };
 		SDL_Rect diflocation = { 98 , BUTTON_Y+5 - 2*BUTTON_SPACEING + BLOCK_X, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
-		SDL_Rect difsprite_loc = { 228 + ret.dif *48, 281, 48, BUTTON_H };
+		SDL_Rect difsprite_loc = { 228 + ret->dif *48, 281, 48, BUTTON_H };
 		SDL_RenderCopy(renderer, sprites, &difsprite_loc, &diflocation);
 
 		char map[15][15] = { 0 };
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				if ((i >= ret.height) || (j >= ret.width)) map[i][j] = 1;
+				if ((i >= ret->height) || (j >= ret->width)) map[i][j] = 1;
 				SDL_Rect square_loc = { (WINDOW_W- BLOCK_X/2-16* 7 * BUTTON_SCALE - 8)+j*7 * BUTTON_SCALE + 20, BUTTON_Y + 20 - 3 * BUTTON_SPACEING + (16 - i) *7 * BUTTON_SCALE + BLOCK_X,7 * BUTTON_SCALE,7*BUTTON_SCALE};
 				SDL_Rect square_sloc = { 272 + map[i][j] * 7, 0, 7, 7 };
 				SDL_RenderCopy(renderer, sprites, &square_sloc, &square_loc);
 			}
 		}
 
+		static TTF_Font *font;
+		if (!font) {
+			font = TTF_OpenFont("petar.ttf", 20);
+			if (!font) {
+				printf("Can't find font 'RosesareFF0000.ttf\n'");
+			}
+		}
+
+		SDL_Color font_color = { 255,255,255,0 };
+		SDL_Rect font_rect = { 500, 500, 100, 20};
+		SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
+		SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+		SDL_FreeSurface(textSurface);
+		textSurface = NULL;
+		SDL_RenderCopy(renderer, text, NULL, &font_rect);
+
+
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1. / FPS * 1000);
 	}
 	
-	return ret;
 }

@@ -33,5 +33,5 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 
 int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable);
 
-OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
+void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
 
