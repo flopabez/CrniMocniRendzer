@@ -14,10 +14,10 @@ int main() {
 	SDL_Texture* sprites = NULL;
 	SDL_Renderer* renderer = NULL;//inicijalizacija rendera i tekstura za crtanje
 	SDL_Init(SDL_INIT_VIDEO);
-	window = SDL_CreateWindow("Map Builder", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W, WINDOW_H, 0);//kreiranje prozora
+	window = SDL_CreateWindow("Battle City", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W, WINDOW_H, 0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
 	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
-	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
+	surface = IMG_Load("./sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
 	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
 	SDL_FreeSurface(surface);
 	if (!sprites) printf("Can't find file 'sprites.png'");
@@ -200,8 +200,7 @@ int main() {
 			//freeMap(state);
 			free(state->pickup);
 			state->pickup = 0;
-			generate_random_map(13, 13);
-			state->terrain = read_map(&(state->height), &(state->width), "random_map");
+			state->terrain = get_map(state->stage, settings->height, settings->width);
 			player->yPos = (state->height - 10)*MAP_SCALE;
 			player->xPos = (state->width / 2 - 2)* MAP_SCALE;
 			state->killCount = 20;

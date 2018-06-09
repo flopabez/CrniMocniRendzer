@@ -4,6 +4,7 @@
 #include "graphics.h"
 #include "mapgen.h"
 #include "menu.h"
+#include "sound.h"
 
 void setBase(struct gameState* state, char type) {
 	for (int i = state->width / 2 - 4; i < state->width / 2 + 4; i++) {
@@ -174,6 +175,7 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 
 	if ((*tenkic).inAir == 0 || (*tenkic).inAir == 1 && (*tenkic).upgrade > 1) {
 		(*tenkic).inAir++;
+		BangSound();
 		struct Bullet* new = (struct Bullet*)malloc(sizeof(struct Bullet));
 		(*new).source = tenkic;
 		(*new).direction = (*tenkic).direction;
@@ -751,6 +753,7 @@ void powerUp(struct gameState* state) {
 				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
+						state->killCount--;
 						free(temp->data);
 						temp->data = 0;
 						removeNode(temp);
@@ -780,6 +783,7 @@ void powerUp(struct gameState* state) {
 				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
+						state->killCount--;
 						free(temp->data);
 						temp->data = 0;
 						removeNode(temp);
