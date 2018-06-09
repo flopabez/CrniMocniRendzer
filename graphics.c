@@ -24,9 +24,9 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	//Write Score
 	static TTF_Font *font;
 	if (!font) {
-		font = TTF_OpenFont("./resursi/RosesareFF0000.ttf", 20);
+		font = TTF_OpenFont("./resursi/RosesareFF0000.ttf", 40);
 		if (!font) {
-			printf("Can't find font 'RosesareFF0000.ttf\n'");
+			printf("Error: %s\n", TTF_GetError());
 		}
 	}
 	SDL_Color font_color = { 255,255,255,0 };
@@ -119,8 +119,8 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 				letter_num++;
 			}
 
-			int font_h = (yofs * 9 / 20 < BLOCK_X / 4) ? yofs * 9 / 20 : BLOCK_X / 4;
-			int font_w = (((yofs * 9 / 20) * 5 / 7 < BLOCK_X / 4) ? (yofs * 9 / 20) * 5 / 7 : BLOCK_X / 4)*(11 + letter_num);
+			int font_h = (yofs * 9 / 20 < BLOCK_X / 4) ? yofs * 9 / 20 : BLOCK_X / 2;
+			int font_w = (((yofs * 9 / 20) * 5 / 7 < BLOCK_X / 4) ? (yofs * 9 / 20) * 5 / 7 : BLOCK_X / 2)*(11 + letter_num);
 			SDL_Rect font_rect = { xofs + playerOffset, (yofs - font_h) / 2, font_w, font_h };
 			SDL_Surface *textSurface = TTF_RenderText_Solid(font, score, font_color);
 			SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
