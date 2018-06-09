@@ -94,9 +94,16 @@ char** allocate_map(int map_h, int map_w)//funkcija za alokaciju memorije za map
 
 void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big,int type)
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_SetRenderDrawColor(renderer, 75,75,75,75);
 	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0 ,0);
+	SDL_Rect bg = { 0 , 0 , map_w*  BLOCK_X/4, map_h * BLOCK_X /4};
+	SDL_RenderFillRect(renderer, &bg);
+	SDL_Texture* ins = NULL;
+	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
+	surface = IMG_Load("Uputstvo.png");//nece biti ista lokacija fajla vrvtno na kraju
+	ins = SDL_CreateTextureFromSurface(renderer, surface);
 	for (int i = 0;i<map_h;i++) {
 		for (int j = 0;j<map_w;j++) {
 			if (!map[i][j]) continue;//nista za prazan blok
@@ -143,6 +150,11 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 		SDL_RenderCopy(renderer, sprites, &dest, &rect);
 		SDL_RenderCopy(renderer, sprites, &dest2, &rect);//dodavanje brusha u renderer
 	}
+	SDL_Rect rect = { map_w*BLOCK_X/4, 0, 159, 575};
+	SDL_Rect dest2 = { 0, 0, 159, 575 };
+	//SDL_Rect dest = { 256,(type - 1) * 16, 16, 16 };
+//	SDL_RenderCopy(renderer, ins, &dest, &rect);
+	SDL_RenderCopy(renderer, ins, &dest2, &rect);
 
 	SDL_RenderPresent(renderer);//iscrtavanje, odnosno renderovanje
 }
