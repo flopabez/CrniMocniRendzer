@@ -3,6 +3,7 @@
 #include "strukture.h"
 #include "graphics.h"
 #include "mapgen.h"
+#include "menu.h"
 
 void setBase(struct gameState* state, char type) {
 	for (int i = state->width / 2 - 4; i < state->width / 2 + 4; i++) {
@@ -795,7 +796,7 @@ void powerUp(struct gameState* state) {
 	}
 }
 
-struct gameState* initGame(int difficulty) {
+struct gameState* initGame(OptionsReturnStructure* settings) {
 
 	struct gameState* state = (struct gameState*)malloc(sizeof(struct gameState));
 	state->explosions = newNode(0);
@@ -807,11 +808,12 @@ struct gameState* initGame(int difficulty) {
 	state->time = 0;
 	state->pickup = 0;
 	state->shovel = 0;
-	state->dif = difficulty;
+	state->dif = settings->dif;
 	state->killCount = 20;
 	state->stage = 0;
-	generate_random_map(13, 13);
-	state->terrain = read_map(&(state->height), &(state->width), "random_map");
+	state->height = settings->height;
+	state->width = settings->width;
+	state->terrain = get_map(1, settings->height, settings->width);
 
 	return state;
 }

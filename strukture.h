@@ -4,7 +4,7 @@
 #include "AIstruct.h"
 #define FPS 24
 #define MAP_SCALE 12
-
+#include "menu.h"
 
 
 struct Pickup {
@@ -66,9 +66,8 @@ struct gameState {
 void freeMap(struct gameState* gameState);
 int baseHitDetection(struct gameState* state);
 int botCount(struct gameState* state);
-struct gameState* initGame();
 void freeGame(struct gameState* gameState);
-struct gameState* initGame(int difficulty);
+struct gameState* initGame(void* settings);
 void updatePowerUps(struct gameState* state);
 void powerUp(struct gameState* state);
 void setBase(struct gameState* state, char type);

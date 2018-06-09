@@ -43,7 +43,7 @@ int main() {
 		switch (done) {
 		case 1:;
 			freeGame(state);
-			state = initGame(settings->dif);
+			state = initGame(settings);
 			player = spawnTank(state, 0, 2, 0);
 			wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 			wrap->down = 0;
@@ -97,7 +97,7 @@ int main() {
 					freeGame(state);
 					//free(player);
 					//free(wrap);
-					state = initGame(settings->dif);
+					state = initGame(settings);
 					player = spawnTank(state, 0, 2, 0);
 					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 					wrap->down = 0;
@@ -154,7 +154,7 @@ int main() {
 					freeGame(state);
 					//free(player);
 					//free(wrap);
-					state = initGame(settings->dif);
+					state = initGame(settings);
 					player = spawnTank(state, 0, 2, 0);
 					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 					wrap->down = 0;
@@ -186,12 +186,14 @@ int main() {
 		//provera za game over
 		doRender(state, renderer, sprites); //renderovanje
 		
+		
 		struct Tank* check = 0;
-		if (!(state->killCount <= botCount(state) ||state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
+		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
 			check = spawnTank(state, 1 + random(4), random(2), 1);
 		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - state->dif);
-		spawnDelay--;
+		if (spawnDelay) spawnDelay--;
 		//uslovno spawnovanje tenkova
+
 
 		if (state->killCount == 0 && botCount(state) == 0) {
 			state->stage++;
