@@ -153,7 +153,7 @@ void show_score()
 		i++;
 	}
 	fclose(fscore);
-	system("pause");
+	//system("pause");
 }
 
 struct score** read_score()
