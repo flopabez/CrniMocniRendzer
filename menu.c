@@ -304,12 +304,19 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			char* string1[20];
 			sprintf(string1, "Map Size %d x %d",ret->width,ret->height);
 			SDL_Color font_color = { 0,0,0,0 };
-			SDL_Rect font_rect = { (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8)+50, BUTTON_Y + 20 - 3 * BUTTON_SPACEING + BLOCK_X+20, 20*(13+(ret->height>9)+ (ret->width>9)), 30 };
+			SDL_Rect font_rect = { (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8)+82 + (ret->height<10) * 10 + (ret->width<10)*10,  BUTTON_Y + 5 - 2 * BUTTON_SPACEING + 6, 20*(13+(ret->height>9)+ (ret->width>9)), 30 };
 			SDL_Surface *textSurface = TTF_RenderText_Solid(font, string1, font_color);
 			SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
 			SDL_FreeSurface(textSurface);
 			textSurface = NULL;
 			SDL_RenderCopy(renderer, text, NULL, &font_rect);
+
+			SDL_Rect font_rect2 = { 98 , BUTTON_Y + 5 - 2 * BUTTON_SPACEING+6 , 48 * BUTTON_SCALE, 30 };
+			SDL_Surface *textSurface2 = TTF_RenderText_Solid(font, "Bot Difficulty", font_color);
+			SDL_Texture *text2 = SDL_CreateTextureFromSurface(renderer, textSurface2);
+			SDL_FreeSurface(textSurface2);
+			textSurface2 = NULL;
+			SDL_RenderCopy(renderer, text2, NULL, &font_rect2);
 		}
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
