@@ -540,6 +540,7 @@ char** get_map(int i,int map_h,int map_w)
 		 generate_random_map(map_h / 4, map_w / 4);
 		 map = read_map("random_map");
 	 }
+	fclose(fmaps);
 	 return map;
 }
 
