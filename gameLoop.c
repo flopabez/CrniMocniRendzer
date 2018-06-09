@@ -6,7 +6,7 @@
 #include "scores.h"
 #include "sound.h"
 
-
+#undef main
 
 int main() {
 
@@ -27,10 +27,10 @@ int main() {
 	srand(time(0));
 
 	struct gameState* state = 0;
-	char difficulty = 0;
-	char bmY = 13 * 4;
-	char bmX = 13 * 4;
-	//podesavanja igre
+	OptionsReturnStructure* settings = (OptionsReturnStructure*)malloc(sizeof(OptionsReturnStructure));
+	settings->dif = 1;
+	settings->height = 13 * 4;
+	settings->width = 13 * 4;
 
 	struct Tank* player = 0;
 	struct movementWrapper* wrap = 0;
@@ -43,7 +43,7 @@ int main() {
 		switch (done) {
 		case 1:;
 			freeGame(state);
-			state = initGame(difficulty);
+			state = initGame(settings->dif);
 			player = spawnTank(state, 0, 2, 0);
 			wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 			wrap->down = 0;
@@ -55,14 +55,11 @@ int main() {
 		case 2:;
 			done = 1;
 			break;
-		case 3:;
-			OptionsReturnStructure opt = doOptions(window, renderer, sprites);
-			difficulty = opt.dif;
-			bmY = opt.height;
-			bmX = opt.width;
+		case 3:
+			doOptions(settings, window, renderer, sprites);
 			break;
 		case 4:
-			build_map(window, renderer, sprites, surface, bmY/4, bmX/4);
+			build_map(window, renderer, sprites, surface, settings->height, settings->width);
 			break;
 		case 5:
 			show_score();
@@ -100,7 +97,7 @@ int main() {
 					freeGame(state);
 					//free(player);
 					//free(wrap);
-					state = initGame(difficulty);
+					state = initGame(settings->dif);
 					player = spawnTank(state, 0, 2, 0);
 					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 					wrap->down = 0;
@@ -112,14 +109,11 @@ int main() {
 				case 2:;
 					done = 1;
 					break;
-				case 3:;
-					OptionsReturnStructure opt = doOptions(window, renderer, sprites);
-					difficulty = opt.dif;
-					bmY = opt.height;
-					bmX = opt.width;
+				case 3:
+					doOptions(settings, window, renderer, sprites);
 					break;
 				case 4:
-					build_map(window, renderer, sprites, surface, bmY / 4, bmX / 4);
+					build_map(window, renderer, sprites, surface, settings->height, settings->width);
 					break;
 				case 5:
 					show_score();
@@ -160,7 +154,7 @@ int main() {
 					freeGame(state);
 					//free(player);
 					//free(wrap);
-					state = initGame(difficulty);
+					state = initGame(settings->dif);
 					player = spawnTank(state, 0, 2, 0);
 					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
 					wrap->down = 0;
@@ -172,14 +166,11 @@ int main() {
 				case 2:;
 					done = 1;
 					break;
-				case 3:;
-					OptionsReturnStructure opt = doOptions(window, renderer, sprites);
-					difficulty = opt.dif;
-					bmY = opt.height;
-					bmX = opt.width;
+				case 3:
+					doOptions(settings, window, renderer, sprites);
 					break;
 				case 4:
-					build_map(window, renderer, sprites, surface, bmY / 4, bmX / 4);
+					build_map(window, renderer, sprites, surface, settings->height, settings->width);
 					break;
 				case 5:
 					show_score();
