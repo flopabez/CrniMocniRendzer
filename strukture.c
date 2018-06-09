@@ -3,7 +3,7 @@
 #include "strukture.h"
 #include "graphics.h"
 #include "mapgen.h"
-#include "menu.h"
+
 #include "sound.h"
 
 void setBase(struct gameState* state, char type) {
@@ -753,6 +753,13 @@ void powerUp(struct gameState* state) {
 				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
+						Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+						boom->size = 1;
+						boom->time = 0;
+						boom->yPos = ((struct Tank*)temp->data)->yPos;
+						boom->xPos = ((struct Tank*)temp->data)->xPos;
+						insertBefore(&state->explosions, boom);
+
 						state->killCount--;
 						free(temp->data);
 						temp->data = 0;
@@ -783,6 +790,13 @@ void powerUp(struct gameState* state) {
 				case 4:;
 					struct listNode* temp = tenkic->team ? state->playerTanks : state->enemyTanks;
 					while (temp->data) {
+						Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+						boom->size = 1;
+						boom->time = 0;
+						boom->yPos = ((struct Tank*)temp->data)->yPos;
+						boom->xPos = ((struct Tank*)temp->data)->xPos;
+						insertBefore(&state->explosions, boom);
+
 						state->killCount--;
 						free(temp->data);
 						temp->data = 0;
