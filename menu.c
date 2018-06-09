@@ -9,7 +9,7 @@
 #include "strukture.h"
 #include "sound.h"
 
-#define MIN_SIZE 5
+#define MIN_SIZE 7
 
 void LoadMenu(Button *buttons) {
 	int offset_array[BUTTON_NUM] = {5, 6, 9, 0, 2, 23};
@@ -295,15 +295,17 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 
 		static TTF_Font *font;
 		if (!font) {
-			font = TTF_OpenFont("RosesareFF0000.ttf", 20);
+			font = TTF_OpenFont("./resursi/RosesareFF0000.ttf", 40);
 			if (!font) {
 				printf("Error: %s\n",TTF_GetError());
 			}
 		}
 		if (font) {
+			char* string1[20];
+			sprintf(string1, "Map Size %d x %d",ret->width,ret->height);
 			SDL_Color font_color = { 0,0,0,0 };
-			SDL_Rect font_rect = { WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8, 500, 200, 40 };
-			SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
+			SDL_Rect font_rect = { (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8)+50, BUTTON_Y + 20 - 3 * BUTTON_SPACEING + BLOCK_X+20, 20*(13+(ret->height>9)+ (ret->width>9)), 30 };
+			SDL_Surface *textSurface = TTF_RenderText_Solid(font, string1, font_color);
 			SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
 			SDL_FreeSurface(textSurface);
 			textSurface = NULL;
