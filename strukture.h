@@ -63,7 +63,7 @@ struct gameState {
 };
 
 
-
+void freeMap(struct gameState* gameState);
 int baseHitDetection(struct gameState* state);
 int botCount(struct gameState* state);
 struct gameState* initGame();

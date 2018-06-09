@@ -315,7 +315,7 @@ void hitDetection(struct gameState* state) {
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
-				//removeNode(state->explosions);
+				removeNode(state->explosions);
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
 				boom->size = 1;
 				boom->time = 0;
@@ -325,9 +325,10 @@ void hitDetection(struct gameState* state) {
 
 				if ((*tenkic).lives >= 0) respawn(state,tenkic);
 				else {
-					if ((*metak).source->bot == 0)
+					if ((*metak).source->bot == 0) {
 						(*metak).source->score += (*tenkic).score;
-
+						state->killCount--;
+					}
 
 					if (tenkic->pickup) {
 						state->pickup = (struct Pickup*)malloc(sizeof(struct Pickup));
@@ -414,7 +415,7 @@ void hitDetection(struct gameState* state) {
 			if ((*tenkic).hitPoints == 0) {
 				(*tenkic).lives--;
 
-				//removeNode(state->explosions);
+				removeNode(state->explosions);
 				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
 				boom->size = 1;
 				boom->time = 0;
@@ -424,9 +425,10 @@ void hitDetection(struct gameState* state) {
 
 				if ((*tenkic).lives >= 0) respawn(state, tenkic);
 				else {
-					if ((*metak).source->bot == 0)
+					if ((*metak).source->bot == 0) {
 						(*metak).source->score += (*tenkic).score;
-
+						state->killCount--;
+					}
 
 					if (tenkic->pickup) {
 						state->pickup = (struct Pickup*)malloc(sizeof(struct Pickup));
@@ -810,10 +812,19 @@ struct gameState* initGame(int difficulty) {
 	return state;
 }
 
-void freeGame(struct gameState* gameState){
-	for (int i = 0; i < gameState->height; i++)
+void freeMap(struct gameState* gameState) {
+	if (gameState == 0) return;
+	for (int i = 0; i < gameState->height; i++) {
+		gameState->terrain[i][gameState->width - 1] = 0;
 		free(gameState->terrain[i]);
+	}
 	free(gameState->terrain);
+}
+
+void freeGame(struct gameState* gameState){
+	if (gameState == 0) return;
+
+	//freeMap(gameState);
 	free(gameState->pickup);
 	void* temp;
 	while (gameState->playerTanks->next != NULL)
