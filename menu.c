@@ -9,6 +9,8 @@
 #include "strukture.h"
 #include "sound.h"
 
+#define MIN_SIZE 5
+
 void LoadMenu(Button *buttons) {
 	int offset_array[BUTTON_NUM] = {5, 6, 9, 0, 2, 23};
 	for (int i = 0; i < BUTTON_NUM; i++) {
@@ -152,6 +154,8 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 	LoadOptions(buttons);
 	SDL_Event event;
 	int done=0;
+	ret->height = ret->height/4;
+	ret->width = ret->width / 4;
 
 	
 	while (!done) {
@@ -187,7 +191,7 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 		for (int i = 0; i < 6; i++) {
 			char first = 0;
 			
-			if ((i == 0 && ret->dif ==0) || (i == 1 && ret->dif == 2) || (i == 2 && ret->height == 15) || (i == 3 && ret->height == 3) || (i == 4 && ret->width == 3) || (i == 5 && ret->width == 15)) {
+			if ((i == 0 && ret->dif <=0) || (i == 1 && ret->dif >= 2) || (i == 2 && ret->height >= 15) || (i == 3 && ret->height <= MIN_SIZE) || (i == 4 && ret->width <= MIN_SIZE) || (i == 5 && ret->width >= 15)) {
 				buttons[i].state = 2;
 				buttons[i].click = 0;
 			}
@@ -289,28 +293,26 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			}
 		}
 
-		TTF_Font *font=NULL;
-		if (font==NULL) {
-			font = TTF_OpenFont("slkscr.ttf", 20);
+		static TTF_Font *font;
+		if (!font) {
+			font = TTF_OpenFont("RosesareFF0000.ttf", 20);
 			if (!font) {
 				printf("Error: %s\n",TTF_GetError());
 			}
 		}
-
-		SDL_Color font_color = { 255,255,255,0 };
-		SDL_Rect font_rect = { 500, 500, 100, 20 };
-		SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
-		SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
-		SDL_FreeSurface(textSurface);
-		textSurface = NULL;
-		SDL_RenderCopy(renderer, text, NULL, &font_rect);
-
+		if (font) {
+			SDL_Color font_color = { 0,0,0,0 };
+			SDL_Rect font_rect = { WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8, 500, 200, 40 };
+			SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
+			SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+			SDL_FreeSurface(textSurface);
+			textSurface = NULL;
+			SDL_RenderCopy(renderer, text, NULL, &font_rect);
+		}
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1. / FPS * 1000);
 	}
-	
+	ret->height = ret->height * 4;
+	ret->width = ret->width * 4;
 }
-/*
-
-*/
