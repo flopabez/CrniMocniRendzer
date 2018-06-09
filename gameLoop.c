@@ -214,17 +214,6 @@ int main() {
 		}
 		//prelazenje mape
 
-
-		struct listNode* temp = state->enemyTanks;
-		system("cls");
-		while(temp->data) {
-			printf("%d\n", ((struct Tank*)temp->data)->inAir);
-			temp = temp->next;
-		}
-		player->shield = 24;
-
-
-
 		state->time++;
 		SDL_Delay(delay);
 
