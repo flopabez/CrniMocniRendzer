@@ -48,7 +48,7 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 	for (int i = 0; i < 20; i++) {
 		SDL_Rect tank_mark_loc = { xGUI + (BLOCK_X / 2)*(i % 2), yGUI + (i / 2)*(BLOCK_X / 2), BLOCK_X / 2, BLOCK_X / 2 };
-		SDL_Rect tank_mark_sloc = { 328 + 8 * 1/*(gameState->tanksleft>i)*/, 192, 8, 8 };
+		SDL_Rect tank_mark_sloc = { 328 + 8 * (gameState->killCount>i), 192, 8, 8 };
 		SDL_RenderCopy(renderer, sprites, &tank_mark_sloc, &tank_mark_loc);
 	}
 
