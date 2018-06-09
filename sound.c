@@ -10,21 +10,21 @@ void PlayIt() {
 	static Mix_Chunk *pause =NULL;
 	static Mix_Chunk *unpause = NULL;
 	if (!music) {
-		music = Mix_LoadMUS("../resursi/Spider_Dance.mp3");
+		music = Mix_LoadMUS("./resursi/Spider_Dance.mp3");
 		if (!music) {
 			printf("Can't find file 'Spider_Dance.mp3'!\n");
 			return;
 		}
 	}
 	if (!pause) {
-		pause = Mix_LoadWAV("../resursi/pause.wav");
+		pause = Mix_LoadWAV("./resursi/pause.wav");
 		if (!pause) {
 			printf("Can't find file 'pause.wav'!\n");
 			return;
 		}
 	}
 	if (!unpause) {
-		unpause = Mix_LoadWAV("../resursi/unpause.wav");
+		unpause = Mix_LoadWAV("./resursi/unpause.wav");
 		if (!unpause) {
 			printf("Can't find file 'unpause.wav'!\n");
 			return;
@@ -46,7 +46,7 @@ void PlayMenuMusic() {
 	static Mix_Music *music = NULL;
 
 	if (!music) {
-		music = Mix_LoadMUS("../resursi/Fallen_Down.mp3");
+		music = Mix_LoadMUS("./resursi/Fallen_Down.mp3");
 		if (!music) {
 			printf("Can't find file 'Fallen_Down.mp3'!\n");
 			return;
@@ -60,7 +60,7 @@ void PlayMenuMusic() {
 void BangSound() {
 	static Mix_Chunk *bang = NULL;
 	if (!bang) {
-		bang = Mix_LoadWAV("../resursi/bang.wav");
+		bang = Mix_LoadWAV("./resursi/bang.wav");
 		if (!bang) {
 			printf("Can't find file 'bang.wav'!\n");
 			return;
@@ -73,7 +73,7 @@ void BangSound() {
 void BoomSound() {
 	static Mix_Chunk *boom = NULL;
 	if (!boom) {
-		boom = Mix_LoadWAV("../resursi/big_boom.wav");
+		boom = Mix_LoadWAV("./resursi/big_boom.wav");
 		if (!boom) {
 			printf("Can't find file 'big_boom.wav'!\n");
 			return;
@@ -86,7 +86,7 @@ void BoomSound() {
 void OverButtonSound() {
 	static Mix_Chunk *menu_move = NULL;
 	if (!menu_move) {
-		menu_move = Mix_LoadWAV("../resursi/menu_move.wav");
+		menu_move = Mix_LoadWAV("./resursi/menu_move.wav");
 		if (!menu_move) {
 			printf("Can't find file 'menu_move.wav'!\n");
 			return;
@@ -98,7 +98,7 @@ void OverButtonSound() {
 void ClickButtonSound() {
 	static Mix_Chunk *click = NULL;
 	if (!click) {
-		click = Mix_LoadWAV("../resursi/click.wav");
+		click = Mix_LoadWAV("./resursi/click.wav");
 		if (!click) {
 			printf("Can't find file 'click.wav'!\n");
 			return;
@@ -110,7 +110,7 @@ void ClickButtonSound() {
 void PowerUpSound() {
 	static Mix_Chunk *powerup = NULL;
 	if (!powerup) {
-		powerup = Mix_LoadWAV("../resursi/powerup.wav");
+		powerup = Mix_LoadWAV("./resursi/powerup.wav");
 		if (!powerup) {
 			printf("Can't find file 'powerup.wav'!\n");
 			return;
@@ -122,7 +122,7 @@ void PowerUpSound() {
 void BaseBoomSound() {
 	static Mix_Chunk *base_boom = NULL;
 	if (!base_boom) {
-		base_boom = Mix_LoadWAV("../resursi/base_boom.wav");
+		base_boom = Mix_LoadWAV("./resursi/base_boom.wav");
 		if (!base_boom) {
 			printf("Can't find file 'base_boom.wav'!\n");
 			return;

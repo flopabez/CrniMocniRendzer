@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL_mixer.h>
-//#include <SDL_ttf.h>
+#include <SDL_ttf.h>
 
 #include "menu.h"
 #include "strukture.h"
@@ -161,8 +161,8 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 				if (window) {
 					SDL_DestroyWindow(window);
 					window = NULL;
-					done = 1;
 				}
+				done = 1;
 				break;
 
 			case SDL_KEYDOWN:
@@ -289,6 +289,22 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			}
 		}
 
+		TTF_Font *font=NULL;
+		if (font==NULL) {
+			font = TTF_OpenFont("slkscr.ttf", 20);
+			if (!font) {
+				printf("Error: %s\n",TTF_GetError());
+			}
+		}
+
+		SDL_Color font_color = { 255,255,255,0 };
+		SDL_Rect font_rect = { 500, 500, 100, 20 };
+		SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
+		SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+		SDL_FreeSurface(textSurface);
+		textSurface = NULL;
+		SDL_RenderCopy(renderer, text, NULL, &font_rect);
+
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1. / FPS * 1000);
@@ -296,19 +312,5 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 	
 }
 /*
-static TTF_Font *font;
-if (!font) {
-font = TTF_OpenFont("petar.ttf", 20);
-if (!font) {
-printf("Can't find font 'RosesareFF0000.ttf\n'");
-}
-}
 
-SDL_Color font_color = { 255,255,255,0 };
-SDL_Rect font_rect = { 500, 500, 100, 20};
-SDL_Surface *textSurface = TTF_RenderText_Solid(font, "IT'S ALIVE!", font_color);
-SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
-SDL_FreeSurface(textSurface);
-textSurface = NULL;
-SDL_RenderCopy(renderer, text, NULL, &font_rect);
 */
