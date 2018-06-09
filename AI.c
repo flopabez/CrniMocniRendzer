@@ -126,7 +126,7 @@ int seeObj(Tank *T, gameState G, char dir, int tx, int ty)
         break;
     }
     if ((isBounded(x1,y1,h,w)&&isBounded(x2,y2,h,w))==0) return 0;
-    return (seeLine(x1,y1,dir,G,tx,ty)||seeLine(y2,x2,dir,G,tx,ty));
+    return (seeLine(x1,y1,dir,G,tx,ty)||seeLine(x2,y2,dir,G,tx,ty));
 }
 
 
