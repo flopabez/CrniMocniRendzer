@@ -155,3 +155,20 @@ void show_score()
 	fclose(fscore);
 	system("pause");
 }
+
+struct score** read_score()
+{
+	decrypt();
+	FILE* fscore = fopen("highscores.txt", "r");
+	struct score* list[20];
+	char c;
+	char name[30], number[20];
+	int i = 0;
+	while ((c = fscanf(fscore, "%s %s ", name, number)) != EOF)
+	{
+		insert_score(&list, name, number,i);
+		i++;
+	}
+	fclose(fscore);
+	return list;
+}
