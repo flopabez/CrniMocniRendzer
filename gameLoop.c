@@ -32,6 +32,9 @@ int main() {
 	char bmX = 13 * 4;
 	//podesavanja igre
 
+	struct Tank* player = 0;
+	struct movementWrapper* wrap = 0;
+
 	char done = 0;
 	while (done != 1) {
 
@@ -41,6 +44,13 @@ int main() {
 		case 1:;
 			freeGame(state);
 			state = initGame(difficulty);
+			player = spawnTank(state, 0, 2, 0);
+			wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
+			wrap->down = 0;
+			wrap->up = 0;
+			wrap->left = 0;
+			wrap->right = 0;
+			wrap->tenkic = player;
 			break;
 		case 2:;
 			done = 1;
@@ -52,7 +62,7 @@ int main() {
 			bmX = opt.width;
 			break;
 		case 4:
-			build_map(window, bmY, bmX);
+			build_map(window, renderer, sprites, surface, bmY/4, bmX/4);
 			break;
 		case 5:
 			show_score();
@@ -65,14 +75,6 @@ int main() {
 	}
 	//MainMenu
 
-	struct Tank* player = spawnTank(state, 0, 2, 0);
-	struct movementWrapper* wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
-	wrap->down = 0;
-	wrap->up = 0;
-	wrap->left = 0;
-	wrap->right = 0;
-	wrap->tenkic = player;
-	//inicijalizacija igraca
 
 	float delay = 1. / FPS * 1000;
 	int spawnDelay = 0; // 24 * (4 - state->dif);
@@ -95,8 +97,16 @@ int main() {
 				switch (done) {
 				case 1:;
 					freeGame(state);
-					state = 0;
+					//free(player);
+					//free(wrap);
 					state = initGame(difficulty);
+					player = spawnTank(state, 0, 2, 0);
+					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
+					wrap->down = 0;
+					wrap->up = 0;
+					wrap->left = 0;
+					wrap->right = 0;
+					wrap->tenkic = player;
 					break;
 				case 2:;
 					done = 1;
@@ -108,7 +118,7 @@ int main() {
 					bmX = opt.width;
 					break;
 				case 4:
-					build_map(window, bmY, bmX);
+					build_map(window, renderer, sprites, surface, bmY / 4, bmX / 4);
 					break;
 				case 5:
 					show_score();
@@ -147,8 +157,16 @@ int main() {
 				switch (done) {
 				case 1:;
 					freeGame(state);
-					state = 0;
+					//free(player);
+					//free(wrap);
 					state = initGame(difficulty);
+					player = spawnTank(state, 0, 2, 0);
+					wrap = (struct movementWrapper*)malloc(sizeof(struct movementWrapper));
+					wrap->down = 0;
+					wrap->up = 0;
+					wrap->left = 0;
+					wrap->right = 0;
+					wrap->tenkic = player;
 					break;
 				case 2:;
 					done = 1;
@@ -160,7 +178,7 @@ int main() {
 					bmX = opt.width;
 					break;
 				case 4:
-					build_map(window, bmY, bmX);
+					build_map(window, renderer, sprites, surface, bmY / 4, bmX / 4);
 					break;
 				case 5:
 					show_score();
@@ -172,7 +190,6 @@ int main() {
 
 			}
 			done = 0;
-			getchar();
 		}
 		//provera za game over
 		doRender(state, renderer, sprites); //renderovanje
@@ -187,7 +204,7 @@ int main() {
 		if (state->killCount == 0 && botCount(state) == 0) {
 			getchar();
 			state->stage++;
-			freeMap(state);
+			//freeMap(state);
 			free(state->pickup);
 			state->pickup = 0;
 			generate_random_map(13, 13);
