@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "scores.h"
 #include "sound.h"
+#include <SDL_ttf.h>
 
 #undef main
 
@@ -17,12 +18,13 @@ int main() {
 	window = SDL_CreateWindow("Battle City", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W, WINDOW_H, 0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
 	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
-	surface = IMG_Load("./sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
+	surface = IMG_Load("./resursi/sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
 	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
 	SDL_FreeSurface(surface);
 	if (!sprites) printf("Can't find file 'sprites.png'");
 	//inicijalizacija prozora
 
+	TTF_Init();
 
 	srand(time(0));
 
@@ -39,7 +41,6 @@ int main() {
 	while (done != 1) {
 
 		done = doMenu(window, renderer, sprites, state != 0);
-
 		switch (done) {
 		case 1:;
 			freeGame(state);
