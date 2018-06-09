@@ -189,7 +189,7 @@ int main() {
 		
 		struct Tank* check = 0;
 		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
-			check = spawnTank(state, 1 + random(4), random(2), 1);
+				check = spawnTank(state, 1 + ((random(5) <= settings->dif) ? random(4) : 0), random(2), 1);
 		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - state->dif);
 		if (spawnDelay) spawnDelay--;
 		//uslovno spawnovanje tenkova
