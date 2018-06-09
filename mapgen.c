@@ -92,7 +92,7 @@ char** allocate_map(int map_h, int map_w)//funkcija za alokaciju memorije za map
 	return map;
 }
 
-void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big,int type)
+void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, SDL_Texture* ins,char ** map, int map_h, int map_w, int x_brush, int y_brush,int time,int big,int type)
 {
 	SDL_SetRenderDrawColor(renderer, 75,75,75,75);
 	SDL_RenderClear(renderer);
@@ -100,10 +100,7 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int m
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0 ,0);
 	SDL_Rect bg = { 0 , 0 , map_w*  BLOCK_X/4, map_h * BLOCK_X /4};
 	SDL_RenderFillRect(renderer, &bg);
-	SDL_Texture* ins = NULL;
-	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
-	surface = IMG_Load("Uputstvo.png");//nece biti ista lokacija fajla vrvtno na kraju
-	ins = SDL_CreateTextureFromSurface(renderer, surface);
+	
 	for (int i = 0;i<map_h;i++) {
 		for (int j = 0;j<map_w;j++) {
 			if (!map[i][j]) continue;//nista za prazan blok
@@ -190,7 +187,10 @@ void clear_base(char **map, int map_h, int map_w)
 int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_h, int map_w/*,char** mapx*/)
 {
 	SDL_Event event;   
-
+	SDL_Texture* ins = NULL;
+	SDL_Surface *xsurface = NULL;//slika sa koje ce se uzimati teksture
+	xsurface = IMG_Load("Uputstvo.png");//nece biti ista lokacija fajla vrvtno na kraju
+	ins = SDL_CreateTextureFromSurface(renderer, xsurface);
 	int time = 0;//vreme sluzi za animaciju vode
 	if (surface == NULL)
 	{
@@ -225,7 +225,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 		set_map_area(map, 0, map_w - 4, map_h, map_w, 7, 1);
 		set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, 11, 1);
 		SDL_Delay(15);//delay za normalnu animaciju vode
-		render_map(renderer, sprites, map, map_h, map_w, x, y, time, big, type);
+		render_map(renderer, sprites,ins, map, map_h, map_w, x, y, time, big, type);
 		while (SDL_PollEvent(&event)) //petlja koja se aktivira tek kada naidje komanda
 		{
 			switch (event.type) //tip komande, ovde nam treba pritisnuto dugme
@@ -319,7 +319,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 					if (draw)
 						set_map_area(map, x, y, map_h, map_w, type, big);
 					break;
-				case SDLK_ESCAPE: done = 1;
+				case SDLK_ESCAPE:case SDLK_RETURN: done = 1;
 				default:break;
 				}break;
 			
