@@ -179,13 +179,10 @@ int build_map(SDL_Window* window,int map_height, int map_width/*,char** mapx*/)
 {
 	int map_h = 4 * map_height;
 	int map_w = 4 * map_width;//sirina i duzina se salju u blokovima od 4x4
-	SDL_Event event;
-	//SDL_Window *window;    
+	SDL_Event event;   
 	SDL_Texture* sprites = NULL;
 	SDL_Renderer* renderer=NULL;//inicijalizacija rendera i tekstura za crtanje
 	int time = 0;//vreme sluzi za animaciju vode
-	SDL_Init(SDL_INIT_VIDEO);
-	//window = SDL_CreateWindow("Map Builder",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,BLOCK_X/4*map_w, BLOCK_X/4*map_h,0);//kreiranje prozora
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
 	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
 	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
@@ -313,7 +310,7 @@ int build_map(SDL_Window* window,int map_height, int map_width/*,char** mapx*/)
 								big = 1;
 							}
 							break;
-				case SDLK_0:
+				case SDLK_0:case SDLK_BACKQUOTE:
 					type = EMPTY;
 					if (draw)
 						set_map_area(map, x, y, map_h, map_w, type, big);
@@ -326,12 +323,11 @@ int build_map(SDL_Window* window,int map_height, int map_width/*,char** mapx*/)
 			}
 		}
 	}
-	SDL_DestroyWindow(window);//gasenje prozora
-	SDL_Quit();
 	char* extension = ".bin";
 	char* folder = "Maps\\";
 	char* file_name[50];
 	char* filename[50];
+	printf("Unesite ime mape:\n");
 	scanf("%s", file_name);
 	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
 	FILE* fmap = fopen(filename, "wb");
