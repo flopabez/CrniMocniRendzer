@@ -5,6 +5,7 @@
 #include "strukture.h"
 
 typedef struct Tank Tank;
+typedef struct Bullet Bullet;
 typedef struct gameState gameState;
 
 
@@ -27,4 +28,5 @@ char pickMove(Tank *T, gameState G);
 char *randarr_m();
 char getMove(struct Tank* T);
 char seeRivalTank(Tank *T, gameState G);
+char seeRivalBullet(Tank *T, gameState G);
 char tanksCollide(Tank* T, gameState G, char dir);
