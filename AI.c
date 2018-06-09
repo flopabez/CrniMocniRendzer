@@ -378,6 +378,7 @@ char seeRivalTank(Tank *T, gameState G)
 {
     int ty,tx;
     Tank *cT;
+    int dif=T->dif;
     struct listNode *tList;
     if (T->team) tList=G.playerTanks;
     else tList=G.enemyTanks;
@@ -389,6 +390,26 @@ char seeRivalTank(Tank *T, gameState G)
         tx=cT->xPos/MAP_SCALE;
         if (seeObj(T,G,T->direction,tx,ty)) return 1;
         tList=tList->next;
+    }
+    return 0;
+}
+
+char seeRivalBullet(Tank *T, gameState G)
+{
+    if (G.dif<MEDIUM)  return 0;
+    int by,bx;
+    Bullet *cB;
+    struct listNode *bList;
+    if (T->team) bList=G.playerBullets;
+    else bList=G.enemyBullets;
+
+    while (bList&&bList->data)
+    {
+        cB=(Bullet*)(bList->data);
+        by=cB->yPos/MAP_SCALE;
+        bx=cB->xPos/MAP_SCALE;
+        if (seeObj(T,G,T->direction,bx,by)) return 1;
+        bList=bList->next;
     }
     return 0;
 }
@@ -423,11 +444,16 @@ char chooseMove(Tank *T, gameState G)
     int h=G.height,w=G.width,targetSelect;
     int by=h-4;
     int bx=w/2-2;
+
+
+
     char stackMove=0,m,shootMod,chaseMode=0,pathnum;
 
     if ((bulletExists(T)==0))
         {
             if (seeRivalTank(T,G))
+                return SHOOT;
+            if (seeRivalBullet(T,G))
                 return SHOOT;
             if ((seeObj(T,G,T->direction+UP,w/2-2,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-1)))
               return SHOOT;
