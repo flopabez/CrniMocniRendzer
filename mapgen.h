@@ -24,7 +24,7 @@ char** allocate_map(int map_h, int map_w);
 
 void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, char ** map, int map_h, int map_w, int x_brush, int y_brush, int time, int big, int type);
 void create_base(char** map, int map_h, int map_w);
-int build_map(SDL_Window* window,int map_height, int map_width/*,char** mapx*/);
+int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_height, int map_width/*,char** mapx*/);
 void clear_base(char **map, int map_h, int map_w);
 int random(int max);
 int generate_random_map(int map_height, int map_width);

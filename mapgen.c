@@ -175,19 +175,19 @@ void clear_base(char **map, int map_h, int map_w)
 
 
 
-int build_map(SDL_Window* window,int map_height, int map_width/*,char** mapx*/)
+int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_height, int map_width/*,char** mapx*/)
 {
 	int map_h = 4 * map_height;
 	int map_w = 4 * map_width;//sirina i duzina se salju u blokovima od 4x4
 	SDL_Event event;   
-	SDL_Texture* sprites = NULL;
-	SDL_Renderer* renderer=NULL;//inicijalizacija rendera i tekstura za crtanje
+	//SDL_Texture* sprites = NULL;
+	//SDL_Renderer* renderer=NULL;//inicijalizacija rendera i tekstura za crtanje
 	int time = 0;//vreme sluzi za animaciju vode
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
-	SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
-	surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
-	sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
-	SDL_FreeSurface(surface);
+//	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);//kreiranje renderera i biranje prozora u koji renderuje
+	//SDL_Surface *surface = NULL;//slika sa koje ce se uzimati teksture
+	//surface = IMG_Load("sprites.png");//nece biti ista lokacija fajla vrvtno na kraju
+	//sprites = SDL_CreateTextureFromSurface(renderer, surface);//od slike pravi teksturu
+	//SDL_FreeSurface(surface);
 	if (surface == NULL)
 	{
 		printf("Cannot find sprites.png!\n\n");
