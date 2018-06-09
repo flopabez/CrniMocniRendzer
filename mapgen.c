@@ -14,7 +14,7 @@ void set_map_area(char** map, int x, int y, int map_h, int map_w, int type,int b
 void create_base(char** map, int map_h, int map_w);
 void clear_base(char **map,int map_h,int map_w);
 
-char** read_map(int* map_h, int* map_w, char* file_name)//fja za ucitavanje mape iz fajla u matricu
+char** read_map( char* file_name)//fja za ucitavanje mape iz fajla u matricu
 {
 	char** map=NULL;
 	char* extension = ".bin";
@@ -24,11 +24,12 @@ char** read_map(int* map_h, int* map_w, char* file_name)//fja za ucitavanje mape
 	FILE* fmap = fopen(filename, "rb");
 	if (fmap == NULL)
 		return 0;
-	fscanf(fmap, "%d", map_h);
-	fscanf(fmap, "%d", map_w);
-	map = allocate_map(*map_h, *map_w);
-	for (int i = 0;i < (*map_h);i++)
-		for (int j = 0;j <(*map_w);j++)
+	int map_h, map_w;
+	fscanf(fmap, "%d", &map_h);
+	fscanf(fmap, "%d",&map_w);
+	map = allocate_map(map_h, map_w);
+	for (int i = 0;i < (map_h);i++)
+		for (int j = 0;j <(map_w);j++)
 			fscanf(fmap, "%d",(int*)&map[i][j]);
 	fclose(fmap);
 	return map;
@@ -517,4 +518,30 @@ void generate_tiles(char** map, int map_h, int map_w, int x, int y, int type)
 		}
 	return;
 }
+
+
+char** get_map(int i,int map_h,int map_w)
+{
+	char** map;
+	FILE* fmaps = fopen("Maps\\maplist.txt", "r");
+	char string[30];
+	 fgets(string,30,fmaps);
+	 string[strlen(string) - 1] = '\0';
+	 int num = atoi(string);
+	 if (i < num)
+	 {
+		 for (int j = 0;j < i;j++)
+			 fgets(string, 30, fmaps);
+		 string[strlen(string) - 1] = '\0';
+		 map = read_map(string);
+	 }
+	 else
+	 {
+		 generate_random_map(map_h / 4, map_w / 4);
+		 map = read_map("random_map");
+	 }
+	 return map;
+}
+
+
 

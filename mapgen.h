@@ -14,14 +14,14 @@
 #define BLOCK_X 48
 
 void generate_path(char** map, int map_h, int map_w);
-char** read_map( int* map_h, int* map_w, char* file_name);
+char** read_map( char* file_name);
 void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
 void set_map_area(char** map, int x, int y, int map_h, int map_w, int type, int big);
 void reset_map(char** map, int map_h, int map_w);
 void print_map(char** map, int map_h, int map_w);
 void deallocate_map(char** map, int map_h);
 char** allocate_map(int map_h, int map_w);
-
+char** get_map(int i, int map_h, int map_w);
 void render_map(SDL_Renderer* renderer, SDL_Texture* sprites,SDL_Texture* ins, char ** map, int map_h, int map_w, int x_brush, int y_brush, int time, int big, int type);
 void create_base(char** map, int map_h, int map_w);
 int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_h, int map_w/*,char** mapx*/);
