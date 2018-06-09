@@ -189,12 +189,12 @@ void fireBullet(struct gameState* state, struct Tank* tenkic) {
 			(*new).xPos = (*tenkic).xPos - (*new).width + MAP_SCALE / 2;
 			break;
 		case 2:
-			(*new).yPos = (*tenkic).yPos + (*tenkic).width   - MAP_SCALE;//
+			(*new).yPos = (*tenkic).yPos + (*tenkic).width   - MAP_SCALE - 1;//dodao sam -1
 			(*new).xPos = (*tenkic).xPos + ((*tenkic).width - (*new).width) / 2;
 			break;
 		case 3:
 			(*new).yPos = (*tenkic).yPos + ((*tenkic).width - (*new).width) / 2;
-			(*new).xPos = (*tenkic).xPos + (*tenkic).width   - MAP_SCALE; //
+			(*new).xPos = (*tenkic).xPos + (*tenkic).width   - MAP_SCALE - 1; //ovde isto
 			break;
 		}
 		if ((*tenkic).team) insertBefore(&(*state).enemyBullets, new);
@@ -617,6 +617,10 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	default: break;
 	}
 
+	if (tankCollision(state, new)) {
+		free(new);
+		return 0;
+	}
 	new->dif = random(10);
 	switch (state->dif) {
 	case 0:

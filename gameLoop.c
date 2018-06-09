@@ -82,6 +82,7 @@ int main() {
 	done = 0;
 	//promenljive igre
 
+
 	while (done == 0) {
 
 		char moving = wrap->up || wrap->down || wrap->left || wrap->right;
@@ -194,10 +195,10 @@ int main() {
 		//provera za game over
 		doRender(state, renderer, sprites); //renderovanje
 		
-
-		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
-			spawnTank(state, 1 + random(4), random(2), 1);
-		if (spawnDelay == 0) spawnDelay = 24 * (4 - state->dif);
+		struct Tank* check = 0;
+		if (!(state->killCount <= botCount(state) ||state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
+			check = spawnTank(state, 1 + random(4), random(2), 1);
+		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - state->dif);
 		spawnDelay--;
 		//uslovno spawnovanje tenkova
 
