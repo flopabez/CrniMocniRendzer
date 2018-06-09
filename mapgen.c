@@ -384,9 +384,9 @@ int generate_random_map(int map_height, int map_width)
 	}
 	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
 	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
+	clear_base(map, map_h, map_w);
 	generate_path(map, map_h, map_w);
 	create_base(map, map_h, map_w);
-	clear_base(map, map_h, map_w);
 	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//oslobadjanje spawn pointova
 	//build_map(map_height, map_width,map);
 	print_map_file(map, map_h, map_w, fmap);
@@ -445,7 +445,7 @@ void generate_path(char** map, int map_h, int map_w)
 	}
 	x = 0;
 	y = map_w - 4;
-	xpath = map_h - 12;
+	xpath = map_h - 10;
 	ypath = (int)map_w / 2 - 2;
 	while (x < xpath || y > ypath)
 	{
