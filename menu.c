@@ -20,13 +20,37 @@ void LoadMenu(Button *buttons) {
 }
 
 void LoadOptions(Button *buttons) {
-	for (int i = 0; i < 2; i++) {
+	int i=0;
+	for (i; i < 2; i++) {
 		buttons[i].offset = 0;
-		buttons[i].xPos = (WINDOW_W-BUTTON_H * BUTTON_SCALE - 2 * (13 * BUTTON_SCALE))/2 + i*2*(13*BUTTON_SCALE);
-		buttons[i].yPos = BUTTON_Y + BUTTON_SPACEING;
+		buttons[i].xPos = (16 * 7 * BUTTON_SCALE + 8 - BLOCK_X*5 / 2- 2 * (13 * BUTTON_SCALE))/2 + (i%2)*2*(13*BUTTON_SCALE);
+		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE + BLOCK_X;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
+	for (i; i < 4; i++) {
+		buttons[i].offset = 0;
+		buttons[i].xPos = ((WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8) - BUTTON_H * BUTTON_SCALE - 8)+20;
+		buttons[i].yPos = (WINDOW_H - BUTTON_H * BUTTON_SCALE)/2 + ((i % 2) *2 * 13 * BUTTON_SCALE)-6* BUTTON_SCALE + BLOCK_X;
+		buttons[i].state = 0;
+		buttons[i].click = 0;
+	}
+	for (i; i < 6; i++) {
+		buttons[i].offset = 0;
+		buttons[i].xPos = (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8) + (16 * 7 * BUTTON_SCALE - 38 * BUTTON_SCALE) / 2 + (i % 2) * 2 * (13 * BUTTON_SCALE);
+		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE-11* BUTTON_SCALE+BLOCK_X;
+		buttons[i].state = 0;
+		buttons[i].click = 0;
+	}
+	for (i; i < 7; i++) {
+		buttons[i].offset = 23;
+		buttons[i].xPos = (16 * 7 * BUTTON_SCALE + 8 - BLOCK_X * 5 / 2 - 2 * (13 * BUTTON_SCALE)) / 2-50;
+		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + 2 * 4 * BUTTON_H * BUTTON_SCALE - 11 * BUTTON_SCALE + BLOCK_X;;
+		buttons[i].state = 0;
+		buttons[i].click = 0;
+	}
+
+	
 }
 
 int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable) {
@@ -122,11 +146,12 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 }
 
 OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites) {
-	Button *buttons = malloc(2 * sizeof(Button));
+	Button *buttons = malloc(7 * sizeof(Button));
 	OptionsReturnStructure ret;
 	ret.dif = 1;
-	ret.height = 13 * 4;
-	ret.width = 13 * 4;
+	ret.height = 13;
+	ret.width = 13;
+
 	LoadOptions(buttons);
 	SDL_Event event;
 	int done=0;
@@ -162,10 +187,10 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 
 		//Mouseover
 		
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 6; i++) {
 			char first = 0;
 			
-			if ((i == 0 && ret.dif ==0) || (i == 1 && ret.dif == 2)) {
+			if ((i == 0 && ret.dif ==0) || (i == 1 && ret.dif == 2) || (i == 2 && ret.height == 15) || (i == 3 && ret.height == 3) || (i == 4 && ret.width == 3) || (i == 5 && ret.width == 15)) {
 				buttons[i].state = 2;
 				buttons[i].click = 0;
 			}
@@ -176,13 +201,50 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 
 				buttons[i].click = mouse_press % 8;
 				if ((buttons[i].click !=0) && (first != 0)) {
-					if (!i) ret.dif--;
-					else ret.dif++;
+					switch (i) {
+					case 0:
+						ret.dif--;
+						break;
+					case 1:
+						ret.dif++;
+						break;
+					case 2:
+						ret.height++;
+						break;
+					case 3:
+						ret.height--;
+						break;
+					case 4:
+						ret.width--;
+						break;
+					case 5:
+						ret.width++;
+						break;
+					case 6:
+						done = 1;
+						break;
+					}
 					ClickButtonSound();
 				}
 			}
 			else {
 				buttons[i].click = 0;
+				buttons[i].state = 0;
+			}
+		}
+
+		for (int i = 6; i < 7; i++) {
+			buttons[i].click = 0;
+			if ((mouse_x > buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1)) && (mouse_x < (buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) + (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE)) && (mouse_y > buttons[i].yPos) && (mouse_y < buttons[i].yPos + BUTTON_H * BUTTON_SCALE)) {
+				if (buttons[i].state == 0) OverButtonSound();
+				buttons[i].state = 1;
+				buttons[i].click = mouse_press % 8;
+				if (buttons[i].click) {
+					done = 1;
+					ClickButtonSound();
+				}
+			}
+			else {
 				buttons[i].state = 0;
 			}
 		}
@@ -202,16 +264,33 @@ OptionsReturnStructure doOptions(SDL_Window * window, SDL_Renderer *renderer, SD
 		SDL_RenderFillRect(renderer, &bg);
 
 		//Draw buttons
-		for (int i = 0; i<2; i++) {
+		for (int i = 0; i<6; i++) {
 			SDL_Rect location = { buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) - buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_H - 2 * buttons[i].offset)*BUTTON_SCALE + 2 * buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
-			SDL_Rect sprite_loc = { 228 +buttons[i].state*BUTTON_H, 294 + i * BUTTON_H, BUTTON_H - 2 * buttons[i].offset, BUTTON_H };
+			SDL_Rect sprite_loc = { 228+ (i%4/2)*3*BUTTON_H +buttons[i].state*BUTTON_H, 294 + (i%2) * BUTTON_H, BUTTON_H, BUTTON_H };
 			SDL_RenderCopy(renderer, sprites, &sprite_loc, &location);
 		}
 
+		for (int i = 6; i<7; i++) {
+			SDL_Rect vlocation = { buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) - buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE + 2 * buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
+			SDL_Rect vsprite_loc = { 0 + buttons[i].offset + buttons[i].state*BUTTON_W, 256 + 5 * BUTTON_H, BUTTON_W - 2 * buttons[i].offset, BUTTON_H };
+			//SDL_Rect vsprite_loc = { 23,321,30,13 };
+			SDL_RenderCopy(renderer, sprites, &vsprite_loc, &vlocation);
+		}
+
 		int difoffset[3] = { 6,0,5 };
-		SDL_Rect diflocation = { (WINDOW_W- 48 * BUTTON_SCALE)/2 , BUTTON_Y, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
+		SDL_Rect diflocation = { 98 , BUTTON_Y+5 - 2*BUTTON_SPACEING + BLOCK_X, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
 		SDL_Rect difsprite_loc = { 228 + ret.dif *48, 281, 48, BUTTON_H };
 		SDL_RenderCopy(renderer, sprites, &difsprite_loc, &diflocation);
+
+		char map[15][15] = { 0 };
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if ((i >= ret.height) || (j >= ret.width)) map[i][j] = 1;
+				SDL_Rect square_loc = { (WINDOW_W- BLOCK_X/2-16* 7 * BUTTON_SCALE - 8)+j*7 * BUTTON_SCALE + 20, BUTTON_Y + 20 - 3 * BUTTON_SPACEING + (16 - i) *7 * BUTTON_SCALE + BLOCK_X,7 * BUTTON_SCALE,7*BUTTON_SCALE};
+				SDL_Rect square_sloc = { 272 + map[i][j] * 7, 0, 7, 7 };
+				SDL_RenderCopy(renderer, sprites, &square_sloc, &square_loc);
+			}
+		}
 
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
