@@ -134,24 +134,24 @@ int main() {
 		//hvatanje inputa i paljenje menija
 
 		if (done  && (done != cheatString->data)) insertBefore(&cheatString, (void*)done);
-		char CCount = 0;
+		char CCount = 1;
 		int cheatCode = 0;
 		struct listNode* temp = cheatString;
 		while (temp->next) {
-			if (cheatCode == 2263) {
+			if (cheatCode == 3728) {
 				state->killCount = 0;
 				while (state->enemyTanks->next) removeNode(state->enemyTanks);
 				while (cheatString->next) removeNode(cheatString);
 				break;
 			}
-			if (cheatCode == 2123) {
+			if (cheatCode == 3551) {
 				setBase(state, 2);
 				while (cheatString->next) removeNode(cheatString);
 				break;
 			}
 			cheatCode += CCount*(char)(temp->data);
 			CCount++;
-			if (CCount == 8) {
+			if (CCount == 12) {
 				removeNode(temp);
 				break;
 			}
