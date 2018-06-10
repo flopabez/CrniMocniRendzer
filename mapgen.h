@@ -29,7 +29,7 @@ void clear_base(char **map, int map_h, int map_w);
 int random(int max);
 int generate_random_map(int map_height, int map_width);
 void print_map_file(char** map, int map_h, int map_w, FILE* fmap);
-
+void add_map(char* name, int map_h, int map_w);
 
 
 #endif

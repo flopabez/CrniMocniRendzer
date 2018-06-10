@@ -9,7 +9,7 @@
 
 void generate_new_key()
 {
-	FILE* fkey = fopen("key.bin", "rb");
+	FILE* fkey = fopen("resursi\\key.bin", "rb");
 	char key[10000];
 	for (int i = 0;i < 9999;i++)
 		key[i] = 1+ random(20);
@@ -20,7 +20,7 @@ void generate_new_key()
 
 char* read_key()
 {
-	FILE* key = fopen("key.bin", "rb");
+	FILE* key = fopen("resursi\\key.bin", "rb");
 	char* k=(char*)malloc(sizeof(char)*10000);
 	fscanf(key, "%s", k);
 	fclose(key);
@@ -28,12 +28,12 @@ char* read_key()
 }
 int encrypt()
 {
-	FILE *fp1 = fopen("highscores.txt", "r");
+	FILE *fp1 = fopen("resursi\\highscores.txt", "r");
 	if (fp1 == NULL)
 	{
 		return 0;
 	}
-	FILE *fp2 = fopen("pp2.bin", "wb");
+	FILE *fp2 = fopen("resursi\\pp2.bin", "wb");
 	if (fp2 == NULL)
 	{
 		return 0;
@@ -59,12 +59,12 @@ int encrypt()
 
 int decrypt()
 {
-	FILE* fp1 = fopen("pp2.bin", "rb");
+	FILE* fp1 = fopen("resursi\\pp2.bin", "rb");
 	if (fp1 == NULL)
 	{
 		return 0;
 	}
-	FILE* fp2 = fopen("highscores.txt", "w");
+	FILE* fp2 = fopen("resursi\\highscores.txt", "w");
 	if (fp2 == NULL)
 	{
 		return 0;
@@ -102,10 +102,18 @@ void insert_score(struct score** list, char* name,int score,int pos)
 	list[pos] = temp;
 }
 
+void free_list(struct score** list, int size)
+{
+	int pos = 0;
+	for(int pos=0;pos<size;pos++)
+	{
+		free(list[pos]);
+	}
+}
 
 void update_score(int score)
 {
-	char* key = read_key();
+	//char* key = read_key();
 	char new_name[30];
 	char number[20];
 	char name[30];
@@ -114,7 +122,7 @@ void update_score(int score)
 	scanf("%s", new_name);
 	int not_inserted = 1;
 	decrypt();
-	FILE* fscore = fopen("highscores.txt", "r");
+	FILE* fscore = fopen("resursi\\highscores.txt", "r");
 	int i = 0;
 	char c;
 	while( (c=fscanf(fscore,"%s %s ",name ,number))!=EOF && i<19)
@@ -132,9 +140,10 @@ void update_score(int score)
 	}
 
 	fclose(fscore);
-	FILE * new_fscore = fopen("highscores.txt", "w");
+	FILE * new_fscore = fopen("resursi\\highscores.txt", "w");
 	for(int j=0;j<i;j++)
 		fprintf(new_fscore, "%s %d ", list[j]->name, list[j]->score);
+	free_list(list,i);
 	fclose(new_fscore);
 	encrypt();
 }
@@ -143,7 +152,7 @@ void update_score(int score)
 void show_score()
 {
 	decrypt();
-	FILE* fscore = fopen("highscores.txt", "r");
+	FILE* fscore = fopen("resursi\\highscores.txt", "r");
 	char c;
 	char name[30], number[20];
 	int i = 1;
@@ -159,7 +168,7 @@ void show_score()
 struct score** read_score()
 {
 	decrypt();
-	FILE* fscore = fopen("highscores.txt", "r");
+	FILE* fscore = fopen("resursi\\highscores.txt", "r");
 	struct score* list[20];
 	char c;
 	char name[30], number[20];

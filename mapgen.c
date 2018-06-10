@@ -5,7 +5,7 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include "mapgen.h"
-
+#include "scores.h"
 
 
 void generate_tiles(char** map, int map_h, int map_w, int x,int y, int type);
@@ -184,6 +184,28 @@ void clear_base(char **map, int map_h, int map_w)
 	set_map_area(map, map_h - 4, map_w / 2 - 8, map_h, map_w,  FOREST * (map[map_h - 4][map_w / 2 -8] == FOREST) + ICE * (map[map_h - 4][map_w / 2 - 8] == ICE), 1);
 }
 
+void add_map(char* name, int map_h, int map_w)
+{
+	struct score* list[100];
+	int i = 1;
+	char string[40];
+	char c;
+	FILE* fmaps = fopen("Maps\\maplist.txt", "r");
+	while (fgets(string, 40, fmaps) && i<100)
+	{
+		insert_score(list, string, 0, i);
+		i++;
+	}
+	fclose(fmaps);
+	snprintf(string, 40, "%d %d %s\n", map_h, map_w, name);
+	insert_score(list, string, 0, 0);
+	fmaps = fopen("Maps\\maplist.txt", "w");
+	for (int j = 0;j < i;j++)
+		fprintf(fmaps, "%s", list[j]->name);
+	fclose(fmaps);
+	free_list(list,i);
+}
+
 
 
 int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_h, int map_w/*,char** mapx*/)
@@ -191,8 +213,9 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 	SDL_Event event;   
 	SDL_Texture* ins = NULL;
 	SDL_Surface *xsurface = NULL;//slika sa koje ce se uzimati teksture
-	xsurface = IMG_Load("Uputstvo.png");//nece biti ista lokacija fajla vrvtno na kraju
+	xsurface = IMG_Load("resursi\\Uputstvo.png");//nece biti ista lokacija fajla vrvtno na kraju
 	ins = SDL_CreateTextureFromSurface(renderer, xsurface);
+
 	int time = 0;//vreme sluzi za animaciju vode
 	if (surface == NULL)
 	{
@@ -344,6 +367,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 			printf("Error creating file!\n");
 			return 0;
 		}
+		add_map(file_name,map_h,map_w);
 		set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
 		set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
 		set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//skidanje vrednosti spawna jer su to realno prazna polja
@@ -351,6 +375,8 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 		fclose(fmap);
 	}
 	deallocate_map(map, map_h);
+	SDL_DestroyTexture(ins);
+	SDL_FreeSurface(xsurface);
 	return 1;
 }
 
