@@ -135,6 +135,18 @@ void BaseBoomSound() {
 	Mix_PlayChannel(-1, base_boom, 0);
 }
 
+void PickUpSound() {
+	static Mix_Chunk *powerup = NULL;
+	if (!powerup) {
+		powerup = Mix_LoadWAV("./resursi/powerup.wav");
+		if (!powerup) {
+			printf("Can't find file 'powerup.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, powerup, 0);
+}
+
 /*
 
 | SDL_INIT_AUDIO
