@@ -314,7 +314,7 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = tenkic->xPos;
 				insertBefore(&state->explosions, boom);
 
-				if ((*tenkic).lives >= 0) respawn(state,tenkic);
+				if ((*tenkic).lives >= 0) respawn(state, tenkic);
 				else {
 					if ((*metak).source->bot == 0) {
 						(*metak).source->score += (*tenkic).score;
@@ -428,7 +428,7 @@ void hitDetection(struct gameState* state) {
 						state->pickup->type = random(6);
 					}
 
-					free(tenkic);
+					if (tenkic->bot) free(tenkic);
 					removeNode(tankshell);
 					free(metak);
 					removeNode(bulletshell);
@@ -697,7 +697,7 @@ void updatePowerUps(struct gameState* state) {
 	while (temp->data) {
 		struct Tank* tenkic = temp->data;
 		if (tenkic->bot == 0) {
-			if ((tenkic->earnedLives + 1) * 200 < tenkic->score) {
+			if ((tenkic->earnedLives + 1) * 40 < tenkic->score) {
 				tenkic->earnedLives++;
 				tenkic->lives++;
 			}
