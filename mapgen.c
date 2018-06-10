@@ -560,7 +560,7 @@ char** get_map(int map_num,int map_h,int map_w)
 	char c;
 	//int num;
 	//fscanf(fmaps, "%d\n", &num);
-	while((c=fscanf(fmaps,"%d %d %s\n",&h,&w,string))!=EOF)
+	while((c=fscanf(fmaps,"%d %d %s\n",&h,&w,string))!=EOF && c)
 	 {
 		if (h == map_h && w == map_w)
 		{
