@@ -20,4 +20,6 @@ void Loading(SDL_Renderer *renderer, SDL_Texture *sprites);
 
 void GameOver(SDL_Renderer *renderer, SDL_Texture *sprites);
 
+void NextStage(struct gameState *gameState, SDL_Renderer *renderer);
+
 #endif /* graphics_h */

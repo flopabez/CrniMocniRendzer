@@ -236,3 +236,30 @@ void GameOver(SDL_Renderer *renderer, SDL_Texture *sprites) {
 	}
 	return;
 }
+
+void NextStage(struct gameState *gameState, SDL_Renderer *renderer) {
+
+	//set the drawing color to gray
+	SDL_SetRenderDrawColor(renderer, 99, 99, 99, 0);
+
+	//Clear the screen (to gray)
+	SDL_RenderClear(renderer);
+
+	SDL_Texture	*text = NULL;
+	TTF_Font* font = NULL;
+
+	font = TTF_OpenFont("resursi\\RosesareFF0000.ttf", 40);
+	SDL_Color foreground = { 0, 0, 0 };
+	SDL_Rect dest;
+	char* string1[20];
+	sprintf(string1, "Stage: %d", gameState->stage);
+	SDL_Surface* text_surf = TTF_RenderText_Solid(font, string1, foreground);
+	text = SDL_CreateTextureFromSurface(renderer, text_surf);
+	dest.x = (WINDOW_W- text_surf->w)/2;
+	dest.y = (WINDOW_H- text_surf->h)/2;
+	dest.w = text_surf->w;
+	dest.h = text_surf->h;
+	SDL_RenderCopy(renderer, text, NULL, &dest);
+	SDL_RenderPresent(renderer);
+	SDL_Delay(1000);
+}
