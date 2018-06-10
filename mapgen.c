@@ -532,9 +532,10 @@ char** get_map(int map_num,int map_h,int map_w)
 	int h, w;
 	int i=1;
 	int found = 0;
+	char c;
 	//int num;
 	//fscanf(fmaps, "%d\n", &num);
-	while(fscanf(fmaps,"%d %d %s\n",&h,&w,string))
+	while((c=fscanf(fmaps,"%d %d %s\n",&h,&w,string))!=EOF)
 	 {
 		if (h == map_h && w == map_w)
 		{
