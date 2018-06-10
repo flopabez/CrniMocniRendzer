@@ -318,6 +318,7 @@ void hitDetection(struct gameState* state) {
 					respawn(state, tenkic);
 					free(metak);
 					removeNode(bulletshell);
+					brake;
 				}
 				else {
 					if ((*metak).source->bot == 0) {
@@ -422,6 +423,7 @@ void hitDetection(struct gameState* state) {
 					respawn(state, tenkic);
 					free(metak);
 					removeNode(bulletshell);
+					brake;
 				}
 				else {
 					if ((*metak).source->bot == 0) {
