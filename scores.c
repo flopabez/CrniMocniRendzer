@@ -5,7 +5,11 @@
 #include "scores.h"
 #include <SDL_ttf.h>
 #include<SDL_image.h>
+#include "graphics.h"
 //122
+#define BLOCK_X 48
+#define WINDOW_W BLOCK_X * (16+2)
+#define WINDOW_H BLOCK_X * 16
 void highscore(SDL_Window* window,SDL_Renderer* renderer)
 {
 	struct score** list;
@@ -63,9 +67,9 @@ void highscore(SDL_Window* window,SDL_Renderer* renderer)
 
 
 
-char* string_input() {
-	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL;
+char* string_input(SDL_Window* window,SDL_Renderer* renderer) {
+	//SDL_Window* window = NULL;
+	//SDL_Renderer* renderer = NULL;
 	//SDL_Texture *texture = NULL;
 	SDL_Texture	*text = NULL;
 	TTF_Font* font = NULL;
@@ -81,16 +85,16 @@ char* string_input() {
 		return 0;
 	}
 
-	window = SDL_CreateWindow("Unesite ime", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 380,60, 0);
-	if (!window) {
+	//window = SDL_CreateWindow("Unesite ime", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 380,60, 0);
+	//if (!window) {
 
-		return 0;
-	}
-
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if (!renderer) {
-		return 0;
-	}
+	//	return 0;
+	//}
+//
+	//renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+//	if (!renderer) {
+	//	return 0;
+	//}
 
 	//texture = SDL_CreateTextureFromSurface(renderer, buffer);
 
@@ -111,10 +115,10 @@ char* string_input() {
 
 	TTF_CloseFont(font);
 
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	window = NULL;
-	renderer = NULL;
+	//SDL_DestroyRenderer(renderer);
+	//SDL_DestroyWindow(window);
+	//window = NULL;
+	//renderer = NULL;
 	return input;
 }
 
@@ -126,13 +130,18 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 	SDL_Rect dest;
 
 	// Clear the window to white
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-	
+	SDL_SetRenderDrawColor(renderer, 30, 30, 30, 30);
+	dest.x = WINDOW_W / 2 - 12 * 16;// - (text_surf->w / 2.0f);
+	dest.y = WINDOW_H / 2 - 36;
+	dest.w = 15 * 25;
+	dest.h = 40;
+	SDL_RenderFillRect(renderer, &dest);
+	SDL_RenderPresent(renderer);
 	int run = 1;
 	while (run) {
 		// Event loop
 		while (SDL_PollEvent(&e) != 0) {
-			SDL_RenderClear(renderer);
+			//SDL_RenderClear(renderer);
 			switch (e.type)
 			{
 			case SDL_QUIT:
@@ -160,8 +169,11 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 				break;
 			}
 		}
-
-
+		dest.x = WINDOW_W / 2 - 12 * 16;// - (text_surf->w / 2.0f);
+		dest.y = WINDOW_H / 2 - 36;
+		dest.w = 15 * 25;
+		dest.h = 40;
+		SDL_RenderFillRect(renderer, &dest);
 		// Render texture
 		//SDL_RenderCopy(renderer, texture, NULL, NULL);
 
@@ -171,8 +183,8 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 			SDL_Surface* text_surf = TTF_RenderText_Solid(font, input, foreground);
 			text = SDL_CreateTextureFromSurface(renderer, text_surf);
 
-			dest.x = 10;// - (text_surf->w / 2.0f);
-			dest.y = 20;
+			dest.x = WINDOW_W / 2 - 12 * 15;// - (text_surf->w / 2.0f);
+			dest.y = WINDOW_H / 2 - 24;
 			dest.w = text_surf->w;
 			dest.h = text_surf->h;
 			SDL_RenderCopy(renderer, text, NULL, &dest);
@@ -293,7 +305,7 @@ void free_list(struct score** list, int size)
 	}
 }
 
-void update_score(int score)
+void update_score(int score,SDL_Window* window,SDL_Renderer* renderer)
 {
 	//char* key = read_key();
 	char* new_name;
@@ -301,13 +313,13 @@ void update_score(int score)
 	char name[30];
 	struct score* list[20];
 	int val;
-	new_name = string_input();
+	new_name = string_input(window,renderer);
 	int not_inserted = 1;
 	decrypt();
 	FILE* fscore = fopen("resursi\\highscores.txt", "r");
 	int i = 0;
 	char c;
-	while( (c=fscanf(fscore,"%s %d ",name ,val))!=EOF && i<19)
+	while( (c=fscanf(fscore,"%s %d ",name ,&val))!=EOF && i<19)
 	{
 		//val = atoi(number);
 			if ( score < val)
