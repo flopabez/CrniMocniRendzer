@@ -203,6 +203,10 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	}
 	//*/
 
+	SDL_Rect loading_loc = { WINDOW_W / 2-12*16+90, (WINDOW_H - 18 * LOAD_SCALE) / 4, 34 * LOAD_SCALE * 1.5, 18 * LOAD_SCALE*1.5 };
+	SDL_Rect loading_sloc = { 288 , 183 + (gameState->time%900/300 == 1) * 32, 34, 18 };
+	SDL_RenderCopy(renderer, sprites, &loading_sloc, &loading_loc);
+
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
 }
@@ -223,15 +227,10 @@ void Loading(SDL_Renderer *renderer, SDL_Texture *sprites) {
 }
 
 void GameOver(SDL_Renderer *renderer, SDL_Texture *sprites) {
-/*	//set the drawing color to black
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
-	//Clear the screen (to black)
-	SDL_RenderClear(renderer);
-*/
 	FailSound();
 	for (int i = 0; i < 3; i++) {
-		SDL_Rect loading_loc = { (WINDOW_W - 34 * LOAD_SCALE) / 2, (WINDOW_H - 18 * LOAD_SCALE) / 4, 34 * LOAD_SCALE, 18 * LOAD_SCALE };
+		SDL_Rect loading_loc = { WINDOW_W / 2 - 12 * 16 + 90, (WINDOW_H - 18 * LOAD_SCALE) / 4, 34 * LOAD_SCALE * 1.5, 18 * LOAD_SCALE*1.5 };
 		SDL_Rect loading_sloc = { 288 , 183 + (i == 1) * 32, 34, 18 };
 		SDL_RenderCopy(renderer, sprites, &loading_sloc, &loading_loc);
 
