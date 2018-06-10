@@ -76,12 +76,12 @@ int main() {
 
 
 	float delay = 1. / FPS * 1000 - 8;
-	int spawnDelay = 0; // 24 * (4 - state->dif);
+	int spawnDelay = 0;
+	int maxDelay = 24 * (4 - state->dif);
 	char maxOnscreen = 3 + settings->dif;
 	done = 0;
 	//promenljive igre
 
-	struct listNode* cheatString = newNode(0);
 
 	while (done != 1) {
 		
@@ -98,6 +98,9 @@ int main() {
 
 				switch (done) {
 				case 1:;
+					maxDelay = 24 * (4 - state->dif);
+					maxOnscreen = 3 + settings->dif;
+					spawnDelay = 0;
 					freeGame(state);
 					//free(player);
 					//free(wrap);
@@ -134,34 +137,45 @@ int main() {
 		}
 		//hvatanje inputa i paljenje menija
 
-		if (done  && (done != cheatString->data)) insertBefore(&cheatString, (void*)done);
-		char CCount = 1;
-		int cheatCode = 0;
-		struct listNode* temp = cheatString;
-		while (temp->next) {
-			if (cheatCode == 3728) {
-				state->killCount = 0;
-				while (state->enemyTanks->next) removeNode(state->enemyTanks);
-				while (cheatString->next) removeNode(cheatString);
-				break;
-			}
-			if (cheatCode == 3551) {
-				setBase(state, 2);
-				while (cheatString->next) removeNode(cheatString);
-				break;
-			}
-			if (cheatCode == 2080) {
-				state->timeStop = 10 * 24;
-				while (cheatString->next) removeNode(cheatString);
-				break;
-			}
-			cheatCode += CCount*(char)(temp->data);
-			CCount++;
-			if (CCount == 12) {
+		switch (done) {
+		case 'y':;
+			spawnDelay = 0;
+			state->killCount = 0;
+			while (state->enemyTanks->next) removeNode(state->enemyTanks);
+			break;
+		case 'u':;
+			player->shield = 24 * 10; break;
+		case 'i':;
+			state->timeStop = 24 * 10; break;
+		case 'o':;
+			state->shovel = 24 * 20;
+			setBase(state, 2);
+			break;
+		case 'p':;
+			player->upgrade += player->upgrade == 3 ? 0 : 1; break;
+		case '[':;
+			struct listNode* temp = player->team ? state->playerTanks : state->enemyTanks;
+			while (temp->data) {
+				Explosion* boom = (Explosion*)malloc(sizeof(Explosion));
+				boom->size = 1;
+				boom->time = 0;
+				boom->yPos = ((struct Tank*)temp->data)->yPos;
+				boom->xPos = ((struct Tank*)temp->data)->xPos;
+				insertBefore(&state->explosions, boom);
+
+				state->killCount--;
+				free(temp->data);
+				temp->data = 0;
 				removeNode(temp);
-				break;
 			}
-			temp = temp->next;
+			break;
+		case ']':;
+			player->lives++; break;
+		case 'h':;
+			maxDelay = 0;
+			maxOnscreen = 100;
+			break;
+		default: break;
 		}
 
 
@@ -191,6 +205,9 @@ int main() {
 
 				switch (done) {
 				case 1:;
+					maxDelay = 24 * (4 - state->dif);
+					maxOnscreen = 3 + settings->dif;
+					spawnDelay = 0;
 					freeGame(state);
 					//free(player);
 					//free(wrap);
@@ -232,7 +249,7 @@ int main() {
 		struct Tank* check = 0;
 		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
 				check = spawnTank(state, 1 + ((random(5) <= settings->dif) ? random(4) : 0), random(2), 1);
-		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - settings->dif);
+		if (spawnDelay == 0 && check) spawnDelay = maxDelay;
 		if (spawnDelay) spawnDelay--;
 		//uslovno spawnovanje tenkova
 

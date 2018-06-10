@@ -21,8 +21,29 @@ char processEvents(SDL_Window * window, struct movementWrapper * wrap, struct ga
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
 
-			case SDLK_BACKQUOTE:
-				done = '`';
+			case SDLK_F1:
+				done = 'y';
+				break;
+			case SDLK_F2:
+				done = 'u';
+				break;
+			case SDLK_F3:
+				done = 'i';
+				break;
+			case SDLK_F4:
+				done = 'o';
+				break;
+			case SDLK_F5:
+				done = 'p';
+				break;
+			case SDLK_F6:
+				done = '[';
+				break;
+			case SDLK_F7:
+				done = ']';
+				break;
+			case SDLK_F8:
+				done = 'h';
 				break;
 			case SDLK_SPACE:
 				fireBullet(state, wrap->tenkic);
