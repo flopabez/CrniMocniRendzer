@@ -1,0 +1,49 @@
+---Korisnicko uputstvo za Battle Tank---
+
+Osnovna Pravila:
+-Poenta igre Battle Tank je preci sto vise nivoa dok ne izgubite.
+Gubite u trenutku kada vam neprijatelj unisti bazu koja je zasticena
+zidom, ili ako izgubite sve zivote vaseg tenka kojih ima 3. Nivo je predjen
+kada se unisti odredjen broj neprijateljskih tenkova.
+
+Meni:
+-U meniju je moguce pokretanje nove igre, nastavak prethodne igre,
+pokretanje map editora i menjanje opcija kao sto su velicina mape
+i tezina igre.
+
+Kontrole:
+Igra:
+-A,W,S,D ili strelice za pomeranje vaseg tenka
+-Space bar za pucanje u smeru trenutnog kretanja
+Map editor:
+-A,W,S,D ili strelice za pomeranje cetkice
+-Space za aktiviranje/deaktiviranje cetkice
+-F za menjanje velicine cetkice
+-R za resetovanje mape na pocetno stanje
+-Brojevi od 0 do 5 sluze za biranje cetkice:
+--0 Prazno: Mogu da prodju meci i tenkovi
+--1 Zid od cigle: Tenk ne moze da predje preko zida, ali moze da ga unisti metak
+--2 Zid od metala: Tenk ne moze da predje preko zida i ne moze da ga unisti metak
+osim ako nije treci nivo
+--3 Voda: Tenk ne moze da predje preko vode ali metak moze
+--4 Suma: Mogu da prodju meci i tenkovi, ali ih suma skriva
+--5 Magla: Mogu da prodju meci i tenkovi, ali su meci sakriveni u magli
+
+Power-up-ovi:
+-U igri je moguce pokupiti odredjene power-up-ove za tenka:
+--Granata: Unistava sve neprijateljske tenkove na mapi
+--Slem: Daje privremeni stit igracu od metkova
+--Lopata: Popravlja zid oko baze i cini ga privremeno neunistivim
+--Zvezda: povecava nivo jacine igracevog tenka
+---Prvi nivo: Igracev metak leti brze
+---Drugi nivo: Igrac moze da ima ispaljena dva metka u isto vreme
+---Treci nivo: Igracev metak moze da unistava metalne zidove i 
+duplo brze unistava zidove od cigle
+--Tenk: Dodaje jos jedan zivot igracevom tenku
+--Stoperica: Privremeno zamrzava sve neprijateljske tenkove
+
+Vrste neprijateljskih tenkova:
+-Osnovni: Ima 1HP, sporo se krece
+-Brzi: Ima 1HP, krece se brze od igraca
+-Jaki: Ima 1HP, krece se normalno ali ima metak treceg nivoa(bez rusenja metala)
+-Oklopni: Ima 4HP-a, normalno se krece
