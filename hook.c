@@ -3,10 +3,10 @@
 #include < SDL.h >
 #include < SDL_image.h >
 
-int processEvents(SDL_Window * window, struct movementWrapper * wrap, struct gameState* state) {
+char processEvents(SDL_Window * window, struct movementWrapper * wrap, struct gameState* state) {
 
 	SDL_Event event;
-	int done = 0;
+	char done = 0;
 
 	while (SDL_PollEvent(&event)) {
 
@@ -23,29 +23,34 @@ int processEvents(SDL_Window * window, struct movementWrapper * wrap, struct gam
 
 			case SDLK_SPACE:
 				fireBullet(state, wrap->tenkic);
+				done = ' ';
 				break;
 			case SDLK_ESCAPE:
-				done = -1;
+				done = 2;
 				break;
 			case SDLK_w:
 			case SDLK_UP:
 				wrap->up = 1;
 				wrap->tenkic->direction = 0;
+				done = 'w';
 				break;
 			case SDLK_a:
 			case SDLK_LEFT:
 				wrap->left = 1;
 				wrap->tenkic->direction = 1;
+				done = 'a';
 				break;
 			case SDLK_s:
 			case SDLK_DOWN:
 				wrap->down = 1;
 				wrap->tenkic->direction = 2;
+				done = 's';
 				break;
 			case SDLK_d:
 			case SDLK_RIGHT:
 				wrap->right = 1;
 				wrap->tenkic->direction = 3;
+				done = 'd';
 				break;
 			}
 			break;

@@ -6,6 +6,7 @@
 #include "scores.h"
 #include "sound.h"
 #include <SDL_ttf.h>
+#include <time.h>
 
 #undef main
 
@@ -74,21 +75,22 @@ int main() {
 	//MainMenu
 
 
-	float delay = 1. / FPS * 1000;
+	float delay = 1. / FPS * 1000 - 6;
 	int spawnDelay = 0; // 24 * (4 - state->dif);
 	char maxOnscreen = 3 + state->dif;
 	done = 0;
 	//promenljive igre
 
+	struct listNode* cheatString = newNode(0);
 
-	while (done == 0) {
+	while (done != 1) {
 
 		char moving = wrap->up || wrap->down || wrap->left || wrap->right;
 		if (!(state->time % 2) && moving) player->frame = (player->frame + 1) % 2;
 		//animacija igracevog tenka
 
 		done = processEvents(window, wrap, state);
-		if (done == -1) {
+		if (done == 2) {
 			while (done != 1) {
 
 				done = doMenu(window, renderer, sprites, state != 0);
@@ -129,6 +131,26 @@ int main() {
 		}
 		//hvatanje inputa i paljenje menija
 
+		if (done  && (done != cheatString->data)) insertBefore(&cheatString, (void*)done);
+		char CCount = 0;
+		int cheatCode = 0;
+		struct listNode* temp = cheatString;
+		while (temp->next) {
+			if (cheatCode == 2263) {
+				state->killCount = 0;
+				while (state->enemyTanks->next) removeNode(state->enemyTanks);
+				while (cheatString->next) removeNode(cheatString);
+				break;
+			}
+			cheatCode += CCount*(char)(temp->data);
+			CCount++;
+			if (CCount == 8) {
+				removeNode(temp);
+				break;
+			}
+			temp = temp->next;
+		}
+
 		if (wrap->up && player->direction == 0) Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
 		if (wrap->down && player->direction == 2) Move(state, player, 2);
@@ -142,7 +164,7 @@ int main() {
 		updateBullets(state); //kretanje metkova
 		if (state->playerTanks->data == 0 || baseHitDetection(state)) {
 			//ovde treba render gameOver
-			SDL_Delay(5 * 1000);
+			update_score(player->score);
 			done = 0;
 			freeGame(state);
 			state = 0;
