@@ -6,7 +6,7 @@
 
 void destroyMoves(Tank *T)
 {
-    while (T->mList) movePop(T->mList);
+    while (T->mList) movePop(&(T->mList));
 }
 
 void movePush(tankMovesStack **S, char m)
