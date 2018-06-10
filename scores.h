@@ -17,4 +17,5 @@ void show_score();
 void free_list(struct score** list,int size);
 struct score** read_score();
 char* string_input();
+void highscore(SDL_Window* window, SDL_Renderer* renderer);
 #endif

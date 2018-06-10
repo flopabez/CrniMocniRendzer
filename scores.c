@@ -6,6 +6,60 @@
 #include <SDL_ttf.h>
 #include<SDL_image.h>
 //122
+void highscore(SDL_Window* window,SDL_Renderer* renderer)
+{
+	struct score** list;
+	list = read_score();
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+		return 0;
+	}
+
+	if (TTF_Init() < 0) {
+		return 0;
+	}
+	//SDL_Renderer* renderer = NULL;
+	SDL_Texture	*text = NULL;
+	TTF_Font* font = NULL;
+	//renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	font = TTF_OpenFont("resursi\\RosesareFF0000.ttf", 36);
+	SDL_Color foreground = { 255,255, 255 };
+	SDL_Rect dest;
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+	SDL_Surface* text_surf = TTF_RenderText_Solid(font, "Highscores:", foreground);
+	text = SDL_CreateTextureFromSurface(renderer, text_surf);
+	dest.x = 10;// - (text_surf->w / 2.0f);
+	dest.y = 10;
+	dest.w = text_surf->w;
+	dest.h = text_surf->h;
+	SDL_RenderCopy(renderer, text, NULL, &dest);
+		for (int i = 0;i < 20 && list[i]!=NULL;i++)
+		{
+			char* string;
+			string = malloc(sizeof(char) * 30);
+			//strcpy(string, list[i]->name);
+			//strcat(string, itoa(list[i]->score));
+			SDL_Color foreground = { 255-(255*(i==2 || i==1)),255-(255 * (i == 1 || i==0)), 255-(255 * (i == 2 || i==0)) };
+			snprintf(string, 30, "%d.%s:%d", i + 1, list[i]->name, list[i]->score);
+			SDL_Surface* text_surf = TTF_RenderText_Solid(font, string, foreground);
+			text = SDL_CreateTextureFromSurface(renderer, text_surf);
+			dest.x = 10;// - (text_surf->w / 2.0f);
+			dest.y = 10+50 * (i + 1);
+			dest.w = text_surf->w;
+			dest.h = text_surf->h;
+			SDL_RenderCopy(renderer, text, NULL, &dest);
+			SDL_RenderPresent(renderer);
+			SDL_FreeSurface(text_surf);
+			SDL_DestroyTexture(text);
+		}
+		// Update window
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1000*5);
+		TTF_CloseFont(font);
+	//SDL_DestroyRenderer(renderer);
+}
+
+
 
 char* string_input() {
 	SDL_Window* window = NULL;
@@ -295,15 +349,18 @@ struct score** read_score()
 {
 	decrypt();
 	FILE* fscore = fopen("resursi\\highscores.txt", "r");
-	struct score* list[20];
+	struct score** list;
+	list = (struct score**)malloc(sizeof(struct score*) * 20);
 	char c;
-	char name[30], number[20];
+	char name[30];
+	int number;
 	int i = 0;
-	while ((c = fscanf(fscore, "%s %s ", name, number)) != EOF)
+	while ((c = fscanf(fscore, "%s %d ", name, &number)) != EOF)
 	{
-		insert_score(&list, name, number,i);
+		insert_score(list, name, number,i);
 		i++;
 	}
+	list[i] = NULL;
 	fclose(fscore);
 	return list;
 }
