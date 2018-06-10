@@ -358,8 +358,6 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 		char* folder = "Maps\\";
 		char* file_name;
 		char* filename[50];
-		printf("Unesite ime mape:\n");
-		//scanf("%s", file_name);
 		file_name=string_input();
 		snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
 		FILE* fmap = fopen(filename, "wb");
