@@ -135,7 +135,15 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 	dest.y = WINDOW_H / 2 - 36;
 	dest.w = 15 * 25;
 	dest.h = 40;
+	SDL_Color foreground = { 255,255, 255 };
 	SDL_RenderFillRect(renderer, &dest);
+	SDL_Surface* text_surf = TTF_RenderText_Solid(font, "ENTER YOUR NAME:", foreground);
+	text = SDL_CreateTextureFromSurface(renderer, text_surf);
+	dest.x = WINDOW_W / 2 - 12 * 15;// - (text_surf->w / 2.0f);
+	dest.y = WINDOW_H / 2 - 64;
+	dest.w = text_surf->w;
+	dest.h = text_surf->h;
+	SDL_RenderCopy(renderer, text, NULL, &dest);
 	SDL_RenderPresent(renderer);
 	int run = 1;
 	while (run) {
@@ -169,15 +177,23 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 				break;
 			}
 		}
+		
 		dest.x = WINDOW_W / 2 - 12 * 16;// - (text_surf->w / 2.0f);
 		dest.y = WINDOW_H / 2 - 36;
 		dest.w = 15 * 25;
 		dest.h = 40;
 		SDL_RenderFillRect(renderer, &dest);
+		SDL_Surface* text_surf = TTF_RenderText_Solid(font, "ENTER YOUR NAME:", foreground);
+		text = SDL_CreateTextureFromSurface(renderer, text_surf);
+		dest.x = WINDOW_W / 2 - 12 * 15;// - (text_surf->w / 2.0f);
+		dest.y = WINDOW_H / 2 - 64;
+		dest.w = text_surf->w;
+		dest.h = text_surf->h;
+		SDL_RenderCopy(renderer, text, NULL, &dest);
 		// Render texture
 		//SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-		SDL_Color foreground = { 255,255, 255 };
+		
 
 		if (strlen(input) > 0) {
 			SDL_Surface* text_surf = TTF_RenderText_Solid(font, input, foreground);
