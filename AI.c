@@ -455,10 +455,8 @@ char chooseMove(Tank *T, gameState G)
 
     if (T->inAir==0)
         {
-            if (seeRivalTank(T,G))
-                return SHOOT;
-            if (seeRivalBullet(T,G))
-                return SHOOT;
+            if (seeRivalTank(T,G)) return SHOOT;
+            if (seeRivalBullet(T,G)) return SHOOT;
             if ((seeObj(T,G,T->direction+UP,w/2-2,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-4))||(seeObj(T,G,T->direction+UP,w/2+1,h-1)))
               return SHOOT;
         }
@@ -530,6 +528,10 @@ char pickMove(Tank *T, gameState G)
 {
     //if (T->kamikaze) return chooseMoveDJ(T,G);
       //  else return chooseMove(T,G);
-      if (T->inAir<0) printf("%d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE),T->inAir=0;
+      if (T->inAir<0)
+      {
+        //printf("%d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE),
+        T->inAir=0;
+      }
       return chooseMove(T,G);
 }
