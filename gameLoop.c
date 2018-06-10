@@ -40,7 +40,6 @@ int main() {
 
 	char done = 0;
 	while (done != 1) {
-
 		done = doMenu(window, renderer, sprites, state != 0);
 		switch (done) {
 		case 1:;
@@ -92,6 +91,7 @@ int main() {
 
 		done = processEvents(window, wrap, state);
 		if (done == 2) {
+			PlayMenuMusic();
 			while (done != 1) {
 
 				done = doMenu(window, renderer, sprites, state != 0);
@@ -128,6 +128,7 @@ int main() {
 				}
 
 			}
+			PlayIt();
 			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
@@ -158,7 +159,7 @@ int main() {
 			temp = temp->next;
 		}
 
-		if (wrap->up && player->direction == 0) Move(state, player, 0);
+		if (wrap->up && player->direction == 0)	Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
 		if (wrap->down && player->direction == 2) Move(state, player, 2);
 		if (wrap->right && player->direction == 3) Move(state, player, 3);
@@ -171,10 +172,12 @@ int main() {
 		updateBullets(state); //kretanje metkova
 		if (state->playerTanks->data == 0 || baseHitDetection(state)) {
 			//ovde treba render gameOver
-			update_score(100*player->score);
+			if (baseHitDetection(state)) BaseBoomSound();
+			update_score(100*player->score,window,renderer);
 			done = 0;
 			freeGame(state);
 			state = 0;
+			PlayMenuMusic();
 			while (done != 1) {
 
 				done = doMenu(window, renderer, sprites, state != 0);
@@ -211,6 +214,7 @@ int main() {
 				}
 
 			}
+			PlayIt();
 			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
