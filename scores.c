@@ -33,7 +33,8 @@ void highscore(SDL_Window* window,SDL_Renderer* renderer)
 	dest.w = text_surf->w;
 	dest.h = text_surf->h;
 	SDL_RenderCopy(renderer, text, NULL, &dest);
-		for (int i = 0;i < 20 && list[i]!=NULL;i++)
+	int i = 0;
+		for (i = 0;i < 20 && list[i]!=NULL;i++)
 		{
 			char* string;
 			string = malloc(sizeof(char) * 30);
@@ -56,6 +57,7 @@ void highscore(SDL_Window* window,SDL_Renderer* renderer)
 		SDL_RenderPresent(renderer);
 		SDL_Delay(1000*5);
 		TTF_CloseFont(font);
+		free_list(list,i);
 	//SDL_DestroyRenderer(renderer);
 }
 
