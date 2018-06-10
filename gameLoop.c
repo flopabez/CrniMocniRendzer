@@ -74,7 +74,7 @@ int main() {
 	//MainMenu
 
 
-	float delay = 1. / FPS * 1000 - 6;
+	float delay = 1. / FPS * 1000 - 8;
 	int spawnDelay = 0; // 24 * (4 - state->dif);
 	char maxOnscreen = 3 + settings->dif;
 	done = 0;
@@ -83,8 +83,7 @@ int main() {
 	struct listNode* cheatString = newNode(0);
 
 	while (done != 1) {
-
-
+		
 		char moving = wrap->up || wrap->down || wrap->left || wrap->right;
 		if (!(state->time % 2) && moving) player->frame = (player->frame + 1) % 2;
 		//animacija igracevog tenka
@@ -165,6 +164,7 @@ int main() {
 		if (wrap->right && player->direction == 3) Move(state, player, 3);
 		//kretanje igracevog tenka
 		if (state->timeStop == 0) updateBots(state); //trosenje poteza botova
+
 
 		powerUp(state); //kolizija sa pickup-ovima i njihovo dodeljivanje
 		updatePowerUps(state); //regulise pravila pickup-ova
