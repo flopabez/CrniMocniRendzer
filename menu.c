@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "strukture.h"
 #include "sound.h"
+#include "scores.h"
 
 #define MIN_SIZE 7
 
@@ -61,10 +62,10 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 	int ret = 0;
 	static int time = 0;
 	time++;
-	//set the drawing color to gray
+	//set the drawing color to blue
 	SDL_SetRenderDrawColor(renderer, 65, 106, 204, 0);
 
-	//Clear the screen (to gray)
+	//Clear the screen (to blue)
 	SDL_RenderClear(renderer);
 
 	int mouse_x, mouse_y;
@@ -270,7 +271,7 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			SDL_Rect sprite_loc = { 228+ (i%4/2)*3*BUTTON_H +buttons[i].state*BUTTON_H, 294 + (i%2) * BUTTON_H, BUTTON_H, BUTTON_H };
 			SDL_RenderCopy(renderer, sprites, &sprite_loc, &location);
 		}
-
+		
 		for (int i = 6; i<7; i++) {
 			SDL_Rect vlocation = { buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) - buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE + 2 * buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
 			SDL_Rect vsprite_loc = { 0 + buttons[i].offset + buttons[i].state*BUTTON_W, 256 + 5 * BUTTON_H, BUTTON_W - 2 * buttons[i].offset, BUTTON_H };
@@ -318,10 +319,147 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			textSurface2 = NULL;
 			SDL_RenderCopy(renderer, text2, NULL, &font_rect2);
 		}
+
 		//We are done drawing, "present" or show to the screen what we've drawn
 		SDL_RenderPresent(renderer);
+
 		SDL_Delay(1. / FPS * 1000);
 	}
 	ret->height = ret->height * 4;
 	ret->width = ret->width * 4;
+}
+
+void Highscore(SDL_Window* window, SDL_Renderer* renderer, SDL_Texture *sprites)
+{
+	Button *buttons = malloc(sizeof(Button));
+
+	buttons[0].offset = 23;
+	buttons[0].xPos = BUTTON_X + buttons[0].offset;
+	buttons[0].yPos = BUTTON_Y + 6 * BUTTON_SPACEING-14;
+	buttons[0].state = 0;
+	buttons[0].click = 0;
+
+	SDL_Event event;
+	int done = 0;
+
+	struct score** list;
+	list = read_score();
+
+	if (TTF_Init() < 0) return 0;
+	
+	
+	SDL_Texture	*text = NULL;
+	TTF_Font* font = NULL;
+	
+	font = TTF_OpenFont("resursi\\RosesareFF0000.ttf", 40);
+	SDL_Color foreground = { 0, 0, 0 };
+	SDL_Rect dest;
+	//set the drawing color to blue
+	SDL_SetRenderDrawColor(renderer, 65, 106, 204, 0);
+
+	//Clear the screen (to blue)
+	SDL_RenderClear(renderer);
+
+	//Draw Logo
+	SDL_Rect logo_loc = { (WINDOW_W - 170 * 4) / 2, BLOCK_X, 170 * 4, 25 * 4 };
+	SDL_Rect logo_sloc = { 228, 256, 170, 25 };
+	SDL_RenderCopy(renderer, sprites, &logo_sloc, &logo_loc);
+
+	SDL_Rect pow_loc = { (WINDOW_W + 170 * 4 + 16) / 2, BLOCK_X, 16 * 3, 32 * 3 };
+	SDL_Rect pow_sloc = { 384, 302, 16, 32 };
+	SDL_RenderCopy(renderer, sprites, &pow_sloc, &pow_loc);
+
+	//Draw background
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+	SDL_Rect bg = { BLOCK_X / 2 , BLOCK_X * 4 , WINDOW_W - BLOCK_X, WINDOW_H - BLOCK_X * 4.5 };
+	SDL_RenderFillRect(renderer, &bg);
+
+	int i = 0;
+	for (i = 0; i < 10 && list[i] != NULL; i++)
+	{
+		char* string;
+		string = malloc(sizeof(char) * 30);
+		//strcpy(string, list[i]->name);
+		//strcat(string, itoa(list[i]->score));
+		SDL_Color foreground = { 0,0,0};
+		if (i == 0) {
+			foreground.r = 255;
+			foreground.g = 215;
+			foreground.b = 0;
+		} else if (i == 1) {
+			foreground.r = 192;
+			foreground.g = 192;
+			foreground.b = 192;
+		} else if (i == 2) {
+			foreground.r = 205;
+			foreground.g = 127;
+			foreground.b = 50;
+		}
+		snprintf(string, 30, "%d.%s:%d", i + 1, list[i]->name, list[i]->score);
+		SDL_Surface* text_surf = TTF_RenderText_Solid(font, string, foreground);
+		text = SDL_CreateTextureFromSurface(renderer, text_surf);
+		dest.x = BLOCK_X / 2+10;// - (text_surf->w / 2.0f); 
+		dest.y = BLOCK_X * 4 + 10 + 50 * (i);
+		dest.w = text_surf->w;
+		dest.h = text_surf->h;
+		SDL_RenderCopy(renderer, text, NULL, &dest);
+		SDL_FreeSurface(text_surf);
+		SDL_DestroyTexture(text);
+	}
+
+	// Update window
+	while (!done) {
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+			case SDL_WINDOWEVENT_CLOSE:
+				if (window) {
+					SDL_DestroyWindow(window);
+					window = NULL;
+				}
+				done = 1;
+				break;
+
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_ESCAPE) done = 1;
+				break;
+			case SDL_QUIT:
+				done = 1;
+				break;
+			}
+		}
+
+		int mouse_x, mouse_y;
+		int mouse_press = SDL_GetMouseState(&mouse_x, &mouse_y);
+
+		//Mouseover
+
+		buttons[0].click = 0;
+		if ((mouse_x > buttons[0].xPos + buttons[0].offset*(BUTTON_SCALE - 1)) && (mouse_x < (buttons[0].xPos + buttons[0].offset*(BUTTON_SCALE - 1) + (BUTTON_W - 2 * buttons[0].offset)*BUTTON_SCALE)) && (mouse_y > buttons[0].yPos) && (mouse_y < buttons[0].yPos + BUTTON_H * BUTTON_SCALE)) {
+			if (buttons[0].state == 0) OverButtonSound();
+			buttons[0].state = 1;
+			buttons[0].click = mouse_press % 8;
+			if (buttons[0].click) {
+				done = 1;
+				ClickButtonSound();
+			}
+		}
+		else {
+			buttons[0].state = 0;
+		}
+
+		//Draw buttons
+		
+		SDL_Rect location = { buttons[0].xPos + buttons[0].offset*(BUTTON_SCALE - 1) - buttons[0].click, buttons[0].yPos - buttons[0].click, (BUTTON_W - 2 * buttons[0].offset)*BUTTON_SCALE + 2 * buttons[0].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[0].click };
+		SDL_Rect sprite_loc = { 0 + buttons[0].offset + buttons[0].state*BUTTON_W, 256 + 5 * BUTTON_H, BUTTON_W - 2 * buttons[0].offset, BUTTON_H };
+		SDL_RenderCopy(renderer, sprites, &sprite_loc, &location);
+		
+
+		SDL_RenderPresent(renderer);
+		SDL_Delay(1. / FPS * 1000);
+	}
+
+	// Update window
+	TTF_CloseFont(font);
+	free_list(list, i);
+	//SDL_DestroyRenderer(renderer);
 }

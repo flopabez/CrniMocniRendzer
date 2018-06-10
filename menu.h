@@ -35,3 +35,5 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 
 void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
 
+void Highscore(SDL_Window* window, SDL_Renderer* renderer, SDL_Texture *sprites);
+
