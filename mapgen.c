@@ -121,7 +121,7 @@ void render_map(SDL_Renderer* renderer, SDL_Texture* sprites, SDL_Texture* ins,c
 					if ((i == map_h - 10) && (map[i][j + 3] == 11))
 					{
 						SDL_Rect brect = { j*BLOCK_X / 4, i*BLOCK_X / 4, BLOCK_X, BLOCK_X };
-						SDL_Rect bdest = { 144, 0, 16, 16 };
+						SDL_Rect bdest = { 0, 0, 16, 16 };
 						SDL_RenderCopy(renderer, sprites, &bdest, &brect);//dodavanje brusha u renderer
 					}
 				}
