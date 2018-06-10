@@ -386,7 +386,7 @@ struct score** read_score()
 	char name[30];
 	int number;
 	int i = 0;
-	while ((c = fscanf(fscore, "%s %d ", name, &number)) != EOF)
+	while ((c = fscanf(fscore, "%s %d ", name, &number)) != EOF && c)
 	{
 		insert_score(list, name, number,i);
 		i++;
