@@ -8,7 +8,7 @@ typedef struct Tank Tank;
 typedef struct Bullet Bullet;
 typedef struct gameState gameState;
 
-
+void destroyMoves(Tank *T);
 void movePush(tankMovesStack **S, char m);
 char movePop(tankMovesStack **S);
 char moveLook(tankMovesStack *S);
