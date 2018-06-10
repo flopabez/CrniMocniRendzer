@@ -18,4 +18,6 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 
 void Loading(SDL_Renderer *renderer, SDL_Texture *sprites);
 
+void GameOver(SDL_Renderer *renderer, SDL_Texture *sprites);
+
 #endif /* graphics_h */
