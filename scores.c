@@ -307,9 +307,9 @@ void update_score(int score)
 	FILE* fscore = fopen("resursi\\highscores.txt", "r");
 	int i = 0;
 	char c;
-	while( (c=fscanf(fscore,"%s %s ",name ,number))!=EOF && i<19)
+	while( (c=fscanf(fscore,"%s %d ",name ,val))!=EOF && i<19)
 	{
-		val = atoi(number);
+		//val = atoi(number);
 			if ( score < val)
 			{
 				insert_score(list, name,val, i);i++;
