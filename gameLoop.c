@@ -54,6 +54,7 @@ int main() {
 			wrap->tenkic = player;
 			break;
 		case 2:;
+			PlayIt();
 			done = 1;
 			break;
 		case 3:
@@ -110,6 +111,7 @@ int main() {
 					wrap->tenkic = player;
 					break;
 				case 2:;
+					PlayIt();
 					done = 1;
 					break;
 				case 3:
@@ -202,6 +204,7 @@ int main() {
 					wrap->tenkic = player;
 					break;
 				case 2:;
+					PlayIt();
 					done = 1;
 					break;
 				case 3:
