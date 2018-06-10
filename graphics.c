@@ -78,10 +78,10 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 	SDL_RenderCopy(renderer, sprites, &lvl_sloc, &lvl_loc);
 
 	SDL_Rect lvl_dnum_loc = { xGUI, yGUI + BLOCK_X * 10, BLOCK_X / 2, BLOCK_X / 2 };
-	SDL_Rect lvl_dnum_sloc = { 289 + 8 * (0/*gameState->Stage/10*/), 200, 8, 8 };
+	SDL_Rect lvl_dnum_sloc = { 289 + 8 * (gameState->stage/10), 200, 8, 8 };
 	SDL_RenderCopy(renderer, sprites, &lvl_dnum_sloc, &lvl_dnum_loc);
 	SDL_Rect lvl_num_loc = { xGUI + BLOCK_X / 2, yGUI + BLOCK_X * 10, BLOCK_X / 2, BLOCK_X / 2 };
-	SDL_Rect lvl_num_sloc = { 289 + 8 * (1/*gameState->Stage%10*/), 200, 8, 8 };
+	SDL_Rect lvl_num_sloc = { 289 + 8 * (gameState->stage%10), 200, 8, 8 };
 	SDL_RenderCopy(renderer, sprites, &lvl_num_sloc, &lvl_num_loc);
 	////////////////////////////END OF GUI////////////////////////////////
 
@@ -202,10 +202,6 @@ void doRender(struct gameState *gameState, SDL_Renderer *renderer, SDL_Texture *
 		else booms = booms->next;
 	}
 	//*/
-
-	SDL_Rect loading_loc = { WINDOW_W / 2-12*16+90, (WINDOW_H - 18 * LOAD_SCALE) / 4, 34 * LOAD_SCALE * 1.5, 18 * LOAD_SCALE*1.5 };
-	SDL_Rect loading_sloc = { 288 , 183 + (gameState->time%900/300 == 1) * 32, 34, 18 };
-	SDL_RenderCopy(renderer, sprites, &loading_sloc, &loading_loc);
 
 	//We are done drawing, "present" or show to the screen what we've drawn
 	SDL_RenderPresent(renderer);
