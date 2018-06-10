@@ -149,6 +149,11 @@ int main() {
 				while (cheatString->next) removeNode(cheatString);
 				break;
 			}
+			if (cheatCode == 2080) {
+				state->timeStop = 10 * 24;
+				while (cheatString->next) removeNode(cheatString);
+				break;
+			}
 			cheatCode += CCount*(char)(temp->data);
 			CCount++;
 			if (CCount == 12) {
@@ -157,6 +162,7 @@ int main() {
 			}
 			temp = temp->next;
 		}
+
 
 		if (wrap->up && player->direction == 0)	Move(state, player, 0);
 		if (wrap->left && player->direction == 1) Move(state, player, 1);
