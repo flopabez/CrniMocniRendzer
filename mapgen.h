@@ -21,7 +21,7 @@ void reset_map(char** map, int map_h, int map_w);
 void print_map(char** map, int map_h, int map_w);
 void deallocate_map(char** map, int map_h);
 char** allocate_map(int map_h, int map_w);
-char** get_map(int i, int map_h, int map_w);
+char** get_map(int map_num, int map_h, int map_w);
 void render_map(SDL_Renderer* renderer, SDL_Texture* sprites,SDL_Texture* ins, char ** map, int map_h, int map_w, int x_brush, int y_brush, int time, int big, int type);
 void create_base(char** map, int map_h, int map_w);
 int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL_Surface* surface,int map_h, int map_w/*,char** mapx*/);

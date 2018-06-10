@@ -524,21 +524,35 @@ void generate_tiles(char** map, int map_h, int map_w, int x, int y, int type)
 }
 
 
-char** get_map(int i,int map_h,int map_w)
+char** get_map(int map_num,int map_h,int map_w)
 {
 	char** map;
 	FILE* fmaps = fopen("Maps\\maplist.txt", "r");
-	char string[30];
-	 fgets(string,30,fmaps);
-	 string[strlen(string) - 1] = '\0';
-	 int num = atoi(string);
-	 if (i <= num)
+	char* string[30];
+	int h, w;
+	int i=1;
+	int found = 0;
+	//int num;
+	//fscanf(fmaps, "%d\n", &num);
+	while(fscanf(fmaps,"%d %d %s\n",&h,&w,string))
 	 {
-		 for (int j = 0;j < i;j++)
-			 fgets(string, 30, fmaps);
-		 string[strlen(string) - 1] = '\0';
-		 map = read_map(string);
+		if (h == map_h && w == map_w)
+		{
+			if (i == map_num)
+			{
+				found = 1;
+				break;
+			}
+			else
+				i++;
+		}
+		
 	 }
+
+	if (found)
+	{
+		map = read_map(string);
+	}
 	 else
 	 {
 		 generate_random_map(map_h / 4, map_w / 4);
