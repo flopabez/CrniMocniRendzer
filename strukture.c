@@ -314,7 +314,11 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = tenkic->xPos;
 				insertBefore(&state->explosions, boom);
 
-				if ((*tenkic).lives >= 0) respawn(state, tenkic);
+				if ((*tenkic).lives >= 0) {
+					respawn(state, tenkic);
+					free(metak);
+					removeNode(bulletshell);
+				}
 				else {
 					if ((*metak).source->bot == 0) {
 						(*metak).source->score += (*tenkic).score;
@@ -414,7 +418,11 @@ void hitDetection(struct gameState* state) {
 				boom->xPos = tenkic->xPos;
 				insertBefore(&state->explosions, boom);
 
-				if ((*tenkic).lives >= 0) respawn(state, tenkic);
+				if ((*tenkic).lives >= 0) {
+					respawn(state, tenkic);
+					free(metak);
+					removeNode(bulletshell);
+				}
 				else {
 					if ((*metak).source->bot == 0) {
 						(*metak).source->score += (*tenkic).score;
