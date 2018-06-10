@@ -641,7 +641,7 @@ struct Tank* spawnTank(struct gameState* state, char tankType, char spawnPoint, 
 	
 	
 
-	new->kamikaze = 0;
+	new->kamikaze = (random(10) == 0);
 	new->mList = 0;
 	new->move = 7;
 	new->moveDone = 0;
