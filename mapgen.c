@@ -67,7 +67,8 @@ void print_map_file(char** map, int map_h, int map_w,FILE* fmap)//funkcija za is
 void deallocate_map(char** map, int map_h)//funkcija za dealokaciju memorije mape
 {
 	for (int i = 0;i < map_h;i++)
-		free(map[i]);
+		if(map[i]!=NULL)
+			free(map[i]);
 	free(map);
 	return;
 }
@@ -202,7 +203,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 		exit(1);
 		return 0;
 	}
-	
+	int save = 0;
 	int x = 0;//pozicije "brusha"
 	int y = 0;
 	char** map;
@@ -320,7 +321,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 					if (draw)
 						set_map_area(map, x, y, map_h, map_w, type, big);
 					break;
-				case SDLK_ESCAPE:case SDLK_RETURN: done = 1;
+				case SDLK_RETURN:save = 1;case SDLK_ESCAPE: done = 1;
 				default:break;
 				}break;
 			
@@ -328,25 +329,28 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 			}
 		}
 	}
-	char* extension = ".bin";
-	char* folder = "Maps\\";
-	char* file_name[50];
-	char* filename[50];
-	printf("Unesite ime mape:\n");
-	scanf("%s", file_name);
-	snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
-	FILE* fmap = fopen(filename, "wb");
-	if (fmap == NULL)
-	{
-		printf("Error creating file!\n");
-		return 0;
+	if(save==1)
+	{ 
+		char* extension = ".bin";
+		char* folder = "Maps\\";
+		char* file_name[50];
+		char* filename[50];
+		printf("Unesite ime mape:\n");
+		scanf("%s", file_name);
+		snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
+		FILE* fmap = fopen(filename, "wb");
+		if (fmap == NULL)
+		{
+			printf("Error creating file!\n");
+			return 0;
+		}
+		set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
+		set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
+		set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//skidanje vrednosti spawna jer su to realno prazna polja
+		print_map_file(map, map_h, map_w, fmap);
+		fclose(fmap);
 	}
-	set_map_area(map, 0, 0, map_h, map_w, EMPTY, 1);
-	set_map_area(map, 0, map_w - 4, map_h, map_w, EMPTY, 1);
-	set_map_area(map, map_h - 10, map_w / 2 - 2, map_h, map_w, EMPTY, 1);//skidanje vrednosti spawna jer su to realno prazna polja
-	print_map_file(map, map_h, map_w, fmap);
 	deallocate_map(map, map_h);
-	fclose(fmap);
 	return 1;
 }
 
@@ -540,7 +544,7 @@ char** get_map(int i,int map_h,int map_w)
 		 generate_random_map(map_h / 4, map_w / 4);
 		 map = read_map("random_map");
 	 }
-	fclose(fmaps);
+	 fclose(fmaps);
 	 return map;
 }
 
