@@ -82,16 +82,20 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 			case SDL_QUIT:
 				return 0;
 			case SDL_KEYDOWN:
+				if (e.key.keysym.sym == SDLK_SPACE)
+					run=2;
 				if ((e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_ESCAPE) && strlen(input) > 0)
-					run = 0;
+					run = 0;break;
 				if (e.key.keysym.sym == SDLK_BACKSPACE && strlen(input) > 0)
 				{
 					input[strlen(input) - 1] = '\0';
+					run = 1;
 				}
 				break;
 			case SDL_TEXTINPUT:
-				if(strlen(input)<20)
+				if (strlen(input) < 20 && run == 1)
 				strcat(input, e.text.text);
+				run = 1;
 				//input += e.text.text;
 				break;
 			}
