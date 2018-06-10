@@ -64,7 +64,7 @@ int main() {
 			build_map(window, renderer, sprites, surface, settings->height, settings->width);
 			break;
 		case 5:
-			show_score();
+			highscore(window, renderer);
 			break;
 		case 6:
 			freeGame(state);
@@ -77,13 +77,14 @@ int main() {
 
 	float delay = 1. / FPS * 1000 - 6;
 	int spawnDelay = 0; // 24 * (4 - state->dif);
-	char maxOnscreen = 3 + state->dif;
+	char maxOnscreen = 3 + settings->dif;
 	done = 0;
 	//promenljive igre
 
 	struct listNode* cheatString = newNode(0);
 
 	while (done != 1) {
+
 
 		char moving = wrap->up || wrap->down || wrap->left || wrap->right;
 		if (!(state->time % 2) && moving) player->frame = (player->frame + 1) % 2;
@@ -119,7 +120,7 @@ int main() {
 					build_map(window, renderer, sprites, surface, settings->height, settings->width);
 					break;
 				case 5:
-					show_score();
+					highscore(window, renderer);
 					break;
 				case 6:
 					freeGame(state);
@@ -127,6 +128,7 @@ int main() {
 				}
 
 			}
+			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
 		//hvatanje inputa i paljenje menija
@@ -139,6 +141,11 @@ int main() {
 			if (cheatCode == 2263) {
 				state->killCount = 0;
 				while (state->enemyTanks->next) removeNode(state->enemyTanks);
+				while (cheatString->next) removeNode(cheatString);
+				break;
+			}
+			if (cheatCode == 2123) {
+				setBase(state, 2);
 				while (cheatString->next) removeNode(cheatString);
 				break;
 			}
@@ -164,7 +171,7 @@ int main() {
 		updateBullets(state); //kretanje metkova
 		if (state->playerTanks->data == 0 || baseHitDetection(state)) {
 			//ovde treba render gameOver
-			update_score(player->score);
+			update_score(100*player->score);
 			done = 0;
 			freeGame(state);
 			state = 0;
@@ -196,7 +203,7 @@ int main() {
 					build_map(window, renderer, sprites, surface, settings->height, settings->width);
 					break;
 				case 5:
-					show_score();
+					highscore(window, renderer);
 					break;
 				case 6:
 					freeGame(state);
@@ -204,6 +211,7 @@ int main() {
 				}
 
 			}
+			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
 		//provera za game over
@@ -213,7 +221,7 @@ int main() {
 		struct Tank* check = 0;
 		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
 				check = spawnTank(state, 1 + ((random(5) <= settings->dif) ? random(4) : 0), random(2), 1);
-		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - state->dif);
+		if (spawnDelay == 0 && check) spawnDelay = 24 * (4 - settings->dif);
 		if (spawnDelay) spawnDelay--;
 		//uslovno spawnovanje tenkova
 
