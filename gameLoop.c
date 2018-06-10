@@ -77,7 +77,7 @@ int main() {
 
 	float delay = 1. / FPS * 1000 - 8;
 	int spawnDelay = 0;
-	int maxDelay = 24 * (4 - state->dif);
+	int maxDelay = 24 * (4 - settings->dif);
 	char maxOnscreen = 3 + settings->dif;
 	done = 0;
 	//promenljive igre
@@ -98,7 +98,7 @@ int main() {
 
 				switch (done) {
 				case 1:;
-					maxDelay = 24 * (4 - state->dif);
+					maxDelay = 24 * (4 - settings->dif);
 					maxOnscreen = 3 + settings->dif;
 					spawnDelay = 0;
 					freeGame(state);
@@ -191,13 +191,13 @@ int main() {
 		updatePowerUps(state); //regulise pravila pickup-ova
 		hitDetection(state); //kolizija metkova sa okolinom
 		updateBullets(state); //kretanje metkova
+		doRender(state, renderer, sprites); //renderovanje
 		if (state->playerTanks->data == 0 || baseHitDetection(state)) {
 			//ovde treba render gameOver
 			if (baseHitDetection(state)) BaseBoomSound();
+			GameOver(renderer, sprites);
 			update_score(100*player->score,window,renderer);
 			done = 0;
-			freeGame(state);
-			state = 0;
 			PlayMenuMusic();
 			while (done != 1) {
 
@@ -205,7 +205,7 @@ int main() {
 
 				switch (done) {
 				case 1:;
-					maxDelay = 24 * (4 - state->dif);
+					maxDelay = 24 * (4 - settings->dif);
 					maxOnscreen = 3 + settings->dif;
 					spawnDelay = 0;
 					freeGame(state);
@@ -243,7 +243,6 @@ int main() {
 			done = 0;
 		}
 		//provera za game over
-		doRender(state, renderer, sprites); //renderovanje
 		
 		
 		struct Tank* check = 0;
