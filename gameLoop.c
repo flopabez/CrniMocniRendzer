@@ -127,7 +127,6 @@ int main() {
 				}
 
 			}
-			PlayIt();
 			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
@@ -220,7 +219,6 @@ int main() {
 				}
 
 			}
-			PlayIt();
 			maxOnscreen = 3 + settings->dif;
 			done = 0;
 		}
