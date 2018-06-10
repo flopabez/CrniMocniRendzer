@@ -3,8 +3,12 @@
 #include <time.h>
 #include "AI.h"
 
-/*tankMovesStack is the struct our search algorihms actually return - it's essentially the winning tankMoves* path, whose elements are in order removed and placed onto the stack. This is necessary
-because the first element of a tankMoves list is actually the last move we need to make.*/
+
+void destroyMoves(Tank *T)
+{
+    while (T->mList) movePop(T->mList);
+}
+
 void movePush(tankMovesStack **S, char m)
 {
     tankMovesStack *tS=(tankMovesStack*) (malloc(sizeof(tankMovesStack)));
@@ -378,7 +382,7 @@ char seeRivalTank(Tank *T, gameState G)
 {
     int ty,tx;
     Tank *cT;
-    int dif=T->dif;
+
     struct listNode *tList;
     if (T->team) tList=G.playerTanks;
     else tList=G.enemyTanks;
@@ -396,7 +400,7 @@ char seeRivalTank(Tank *T, gameState G)
 
 char seeRivalBullet(Tank *T, gameState G)
 {
-    if (G.dif<MEDIUM)  return 0;
+    if (T->dif<MEDIUM)  return 0;
     int by,bx;
     Bullet *cB;
     struct listNode *bList;
@@ -492,7 +496,7 @@ char chooseMove(Tank *T, gameState G)
 
     if (T->mList&&tanksCollide(T,G,T->mList->stackMove))
     {
-        while (T->mList) movePop(&(T->mList));
+        destroyMoves(T);
         T->pathDone=0;
     }
 
@@ -526,5 +530,6 @@ char pickMove(Tank *T, gameState G)
 {
     //if (T->kamikaze) return chooseMoveDJ(T,G);
       //  else return chooseMove(T,G);
+      if (T->inAir<0) printf("%d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE),T->inAir=0;
       return chooseMove(T,G);
 }
