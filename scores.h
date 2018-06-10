@@ -1,6 +1,9 @@
 #ifndef scores_h
 #define scores_h
 
+#include<SDL.h>
+#include<SDL_ttf.h>
+
 struct score
 {
 	int score;
@@ -17,5 +20,7 @@ void show_score();
 void free_list(struct score** list,int size);
 struct score** read_score();
 void highscore(SDL_Window* window, SDL_Renderer* renderer);
-void highscore(SDL_Window* window, SDL_Renderer* renderer);
+char* string_input(SDL_Window* window, SDL_Renderer* renderer, char* string);
+int loop(char* input, SDL_Renderer* renderer, SDL_Texture* text, TTF_Font* font, char* string);
+
 #endif

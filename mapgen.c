@@ -358,7 +358,7 @@ int build_map(SDL_Window* window,SDL_Renderer* renderer,SDL_Texture* sprites,SDL
 		char* folder = "Maps\\";
 		char* file_name;
 		char* filename[50];
-		file_name=string_input(window,renderer);
+		file_name=string_input(window,renderer,"ENTER MAP NAME:");
 		snprintf(filename, sizeof(filename), "%s%s%s", folder, file_name, extension);
 		FILE* fmap = fopen(filename, "wb");
 		if (fmap == NULL)

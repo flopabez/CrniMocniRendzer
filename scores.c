@@ -67,7 +67,7 @@ void highscore(SDL_Window* window,SDL_Renderer* renderer)
 
 
 
-char* string_input(SDL_Window* window,SDL_Renderer* renderer) {
+char* string_input(SDL_Window* window,SDL_Renderer* renderer,char* string) {
 	//SDL_Window* window = NULL;
 	//SDL_Renderer* renderer = NULL;
 	//SDL_Texture *texture = NULL;
@@ -106,7 +106,7 @@ char* string_input(SDL_Window* window,SDL_Renderer* renderer) {
 
 	// Start sending SDL_TextInput events
 	SDL_StartTextInput();
-	loop(input, renderer, text, font);
+	loop(input, renderer, text, font,string);
 		// wait before processing the next frame
 		
 
@@ -122,7 +122,8 @@ char* string_input(SDL_Window* window,SDL_Renderer* renderer) {
 	return input;
 }
 
-int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) {
+int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font,char* string)
+{
 
 	char* keys = SDL_GetKeyboardState(NULL);
 
@@ -137,7 +138,7 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 	dest.h = 40;
 	SDL_Color foreground = { 255,255, 255 };
 	SDL_RenderFillRect(renderer, &dest);
-	SDL_Surface* text_surf = TTF_RenderText_Solid(font, "ENTER YOUR NAME:", foreground);
+	SDL_Surface* text_surf = TTF_RenderText_Solid(font, string, foreground);
 	text = SDL_CreateTextureFromSurface(renderer, text_surf);
 	dest.x = WINDOW_W / 2 - 12 * 15;// - (text_surf->w / 2.0f);
 	dest.y = WINDOW_H / 2 - 64;
@@ -183,7 +184,7 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 		dest.w = 15 * 25;
 		dest.h = 40;
 		SDL_RenderFillRect(renderer, &dest);
-		SDL_Surface* text_surf = TTF_RenderText_Solid(font, "ENTER YOUR NAME:", foreground);
+		SDL_Surface* text_surf = TTF_RenderText_Solid(font, string, foreground);
 		text = SDL_CreateTextureFromSurface(renderer, text_surf);
 		dest.x = WINDOW_W / 2 - 12 * 15;// - (text_surf->w / 2.0f);
 		dest.y = WINDOW_H / 2 - 64;
@@ -329,7 +330,7 @@ void update_score(int score,SDL_Window* window,SDL_Renderer* renderer)
 	char name[30];
 	struct score* list[20];
 	int val;
-	new_name = string_input(window,renderer);
+	new_name = string_input(window,renderer,"ENTER YOUR NAME:");
 	int not_inserted = 1;
 	decrypt();
 	FILE* fscore = fopen("resursi\\highscores.txt", "r");
