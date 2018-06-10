@@ -9,3 +9,4 @@ void OverButtonSound();
 void ClickButtonSound();
 void BaseBoomSound();
 void PickUpSound();
+void FailSound();

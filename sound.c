@@ -147,6 +147,18 @@ void PickUpSound() {
 	Mix_PlayChannel(-1, powerup, 0);
 }
 
+void FailSound() {
+	static Mix_Chunk *fail = NULL;
+	if (!fail) {
+		fail = Mix_LoadWAV("./resursi/fail.wav");
+		if (!fail) {
+			printf("Can't find file 'fail.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, fail, 0);
+}
+
 /*
 
 | SDL_INIT_AUDIO
