@@ -828,7 +828,7 @@ struct gameState* initGame(OptionsReturnStructure* settings) {
 	state->shovel = 0;
 	state->dif = settings->dif;
 	state->killCount = 20;
-	state->stage = 0;
+	state->stage = 1;
 	state->height = settings->height;
 	state->width = settings->width;
 	state->terrain = get_map(1, settings->height, settings->width);
