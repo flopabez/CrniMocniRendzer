@@ -533,5 +533,6 @@ char pickMove(Tank *T, gameState G)
         //printf("%d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE),
         T->inAir=0;
       }
+    if (T->inAir>1) T->inAir=1;
       return chooseMove(T,G);
 }
