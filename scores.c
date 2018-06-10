@@ -70,7 +70,7 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 	SDL_Rect dest;
 
 	// Clear the window to white
-	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 200);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	
 	int run = 1;
 	while (run) {
@@ -105,7 +105,7 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 		// Render texture
 		//SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-		SDL_Color foreground = { 0, 0, 0 };
+		SDL_Color foreground = { 255,255, 255 };
 
 		if (strlen(input) > 0) {
 			SDL_Surface* text_surf = TTF_RenderText_Solid(font, input, foreground);
