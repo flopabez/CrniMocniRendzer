@@ -16,4 +16,5 @@ void update_score(int score);
 void show_score();
 void free_list(struct score** list,int size);
 struct score** read_score();
+char* string_input();
 #endif
