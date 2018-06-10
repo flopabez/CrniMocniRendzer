@@ -83,9 +83,13 @@ int loop(char* input,SDL_Renderer* renderer,  SDL_Texture* text,TTF_Font* font) 
 				return 0;
 			case SDL_KEYDOWN:
 				if (e.key.keysym.sym == SDLK_SPACE)
-					run=2;
+				{
+					run = 2;break;
+				}
 				if ((e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_ESCAPE) && strlen(input) > 0)
+				{
 					run = 0;break;
+				}
 				if (e.key.keysym.sym == SDLK_BACKSPACE && strlen(input) > 0)
 				{
 					input[strlen(input) - 1] = '\0';
