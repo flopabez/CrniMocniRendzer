@@ -461,10 +461,11 @@ char chooseMove(Tank *T, gameState G)
               return SHOOT;
         }
 
+    if (G.playerTanks&&G.playerTanks->data) chaseMode=T->kamikaze;
+
     switch (dif)
     {
     case HARD:
-        if (G.playerTanks&&G.playerTanks->data) chaseMode=T->kamikaze;
         /*T->mList=genMoveList(T,G,chaseMode);
         T->pathDone=1;
         */
@@ -533,6 +534,6 @@ char pickMove(Tank *T, gameState G)
         //printf("%d %d\n",T->yPos/MAP_SCALE,T->xPos/MAP_SCALE),
         T->inAir=0;
       }
-    if (T->inAir>1) T->inAir=1;
+      if (T->inAir>1) T->inAir=1;
       return chooseMove(T,G);
 }
