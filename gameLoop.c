@@ -254,6 +254,7 @@ int main() {
 
 
 		if (state->killCount == 0 && botCount(state) == 0) {
+			NextStage(state, renderer);
 			state->stage++;
 			//freeMap(state);
 			free(state->pickup);
