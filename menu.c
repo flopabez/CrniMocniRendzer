@@ -17,7 +17,7 @@ void LoadMenu(Button *buttons) {
 	for (int i = 0; i < BUTTON_NUM; i++) {
 		buttons[i].offset = offset_array[i];
 		buttons[i].xPos = BUTTON_X + buttons[i].offset;
-		buttons[i].yPos = BUTTON_Y + i * BUTTON_SPACEING;
+		buttons[i].yPos = 60+ BUTTON_Y + i * BUTTON_SPACEING;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
@@ -34,28 +34,28 @@ void LoadOptions(Button *buttons) {
 	for (i; i < 2; i++) {
 		buttons[i].offset = 0;
 		buttons[i].xPos = (16 * 7 * BUTTON_SCALE + 8 - BLOCK_X*5 / 2- 2 * (13 * BUTTON_SCALE))/2 + (i%2)*2*(13*BUTTON_SCALE);
-		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE + BLOCK_X;
+		buttons[i].yPos = 60 + BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE + BLOCK_X;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
 	for (i; i < 4; i++) {
 		buttons[i].offset = 0;
 		buttons[i].xPos = ((WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8) - BUTTON_H * BUTTON_SCALE - 8)+20;
-		buttons[i].yPos = (WINDOW_H - BUTTON_H * BUTTON_SCALE)/2 + ((i % 2) *2 * 13 * BUTTON_SCALE)-6* BUTTON_SCALE + BLOCK_X;
+		buttons[i].yPos = (60 + WINDOW_H - BUTTON_H * BUTTON_SCALE)/2 + ((i % 2) *2 * 13 * BUTTON_SCALE)-6* BUTTON_SCALE + BLOCK_X;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
 	for (i; i < 6; i++) {
 		buttons[i].offset = 0;
 		buttons[i].xPos = (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8) + (16 * 7 * BUTTON_SCALE - 38 * BUTTON_SCALE) / 2 + (i % 2) * 2 * (13 * BUTTON_SCALE);
-		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE-11* BUTTON_SCALE+BLOCK_X;
+		buttons[i].yPos = 60 + BUTTON_Y + 5 - BUTTON_SPACEING + (i / 2) * 4 * BUTTON_H * BUTTON_SCALE-11* BUTTON_SCALE+BLOCK_X;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
 	for (i; i < 7; i++) {
 		buttons[i].offset = 23;
 		buttons[i].xPos = (16 * 7 * BUTTON_SCALE + 8 - BLOCK_X * 5 / 2 - 2 * (13 * BUTTON_SCALE)) / 2-50;
-		buttons[i].yPos = BUTTON_Y + 5 - BUTTON_SPACEING + 2 * 4 * BUTTON_H * BUTTON_SCALE - 11 * BUTTON_SCALE + BLOCK_X;;
+		buttons[i].yPos = 60 + BUTTON_Y + 5 - BUTTON_SPACEING + 2 * 4 * BUTTON_H * BUTTON_SCALE - 11 * BUTTON_SCALE + BLOCK_X;;
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
@@ -91,7 +91,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 			buttons[i].click = mouse_press%8;
 			if (buttons[i].click && first) {
 				if (i == 6) {
-					*cheats = (*cheats+1)%2;
+					*cheats = 1;
 					if (*cheats) SecretSound();
 					else ClickButtonSound();
 				} else {
@@ -296,7 +296,7 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 		}
 
 		int difoffset[3] = { 6,0,5 };
-		SDL_Rect diflocation = { 98 , BUTTON_Y+5 - 2*BUTTON_SPACEING + BLOCK_X, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
+		SDL_Rect diflocation = { 98 ,60 + BUTTON_Y+5 - 2*BUTTON_SPACEING + BLOCK_X, 48*BUTTON_SCALE, BUTTON_H*BUTTON_SCALE};
 		SDL_Rect difsprite_loc = { 228 + ret->dif *48, 281, 48, BUTTON_H };
 		SDL_RenderCopy(renderer, sprites, &difsprite_loc, &diflocation);
 
@@ -304,7 +304,7 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
 				if ((i >= ret->height) || (j >= ret->width)) map[i][j] = 1;
-				SDL_Rect square_loc = { (WINDOW_W- BLOCK_X/2-16* 7 * BUTTON_SCALE - 8)+j*7 * BUTTON_SCALE + 20, BUTTON_Y + 20 - 3 * BUTTON_SPACEING + (16 - i) *7 * BUTTON_SCALE + BLOCK_X,7 * BUTTON_SCALE,7*BUTTON_SCALE};
+				SDL_Rect square_loc = { (WINDOW_W- BLOCK_X/2-16* 7 * BUTTON_SCALE - 8)+j*7 * BUTTON_SCALE + 20,60 + BUTTON_Y + 20 - 3 * BUTTON_SPACEING + (16 - i) *7 * BUTTON_SCALE + BLOCK_X,7 * BUTTON_SCALE,7*BUTTON_SCALE};
 				SDL_Rect square_sloc = { 272 + map[i][j] * 7, 0, 7, 7 };
 				SDL_RenderCopy(renderer, sprites, &square_sloc, &square_loc);
 			}
@@ -321,14 +321,14 @@ void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *r
 			char* string1[20];
 			sprintf(string1, "Map Size %d x %d",ret->width,ret->height);
 			SDL_Color font_color = { 0,0,0,0 };
-			SDL_Rect font_rect = { (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8)+82 + (ret->height<10) * 10 + (ret->width<10)*10,  BUTTON_Y + 5 - 2 * BUTTON_SPACEING + 6, 20*(13+(ret->height>9)+ (ret->width>9)), 30 };
+			SDL_Rect font_rect = { (WINDOW_W - BLOCK_X / 2 - 16 * 7 * BUTTON_SCALE - 8)+82 + (ret->height<10) * 10 + (ret->width<10)*10, 60+ BUTTON_Y + 5 - 2 * BUTTON_SPACEING + 6, 20*(13+(ret->height>9)+ (ret->width>9)), 30 };
 			SDL_Surface *textSurface = TTF_RenderText_Solid(font, string1, font_color);
 			SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
 			SDL_FreeSurface(textSurface);
 			textSurface = NULL;
 			SDL_RenderCopy(renderer, text, NULL, &font_rect);
 
-			SDL_Rect font_rect2 = { 98 , BUTTON_Y + 5 - 2 * BUTTON_SPACEING+6 , 48 * BUTTON_SCALE, 30 };
+			SDL_Rect font_rect2 = { 98 ,60 + BUTTON_Y + 5 - 2 * BUTTON_SPACEING+6 , 48 * BUTTON_SCALE, 30 };
 			SDL_Surface *textSurface2 = TTF_RenderText_Solid(font, "Bot Difficulty", font_color);
 			SDL_Texture *text2 = SDL_CreateTextureFromSurface(renderer, textSurface2);
 			SDL_FreeSurface(textSurface2);
@@ -351,7 +351,7 @@ void Highscore(SDL_Window* window, SDL_Renderer* renderer, SDL_Texture *sprites)
 
 	buttons[0].offset = 23;
 	buttons[0].xPos = BUTTON_X + buttons[0].offset;
-	buttons[0].yPos = BUTTON_Y + 6 * BUTTON_SPACEING-14;
+	buttons[0].yPos = 60 + BUTTON_Y + 6 * BUTTON_SPACEING-14;
 	buttons[0].state = 0;
 	buttons[0].click = 0;
 

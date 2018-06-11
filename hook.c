@@ -21,28 +21,28 @@ char processEvents(SDL_Window * window, struct movementWrapper * wrap, struct ga
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
 
-			case SDLK_F1:
+			case SDLK_1:
 				done = 'y';
 				break;
-			case SDLK_F2:
+			case SDLK_2:
 				done = 'u';
 				break;
-			case SDLK_F3:
+			case SDLK_3:
 				done = 'i';
 				break;
-			case SDLK_F4:
+			case SDLK_4:
 				done = 'o';
 				break;
-			case SDLK_F5:
+			case SDLK_5:
 				done = 'p';
 				break;
-			case SDLK_F6:
+			case SDLK_6:
 				done = '[';
 				break;
-			case SDLK_F7:
+			case SDLK_7:
 				done = ']';
 				break;
-			case SDLK_F8:
+			case SDLK_8:
 				done = 'h';
 				break;
 			case SDLK_SPACE:

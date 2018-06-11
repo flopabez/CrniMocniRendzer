@@ -252,7 +252,7 @@ void NextStage(struct gameState *gameState, SDL_Renderer *renderer) {
 	SDL_Color foreground = { 0, 0, 0 };
 	SDL_Rect dest;
 	char* string1[20];
-	sprintf(string1, "Stage: %d", gameState->stage);
+	sprintf(string1, "Stage: %d", gameState->stage+1);
 	SDL_Surface* text_surf = TTF_RenderText_Solid(font, string1, foreground);
 	text = SDL_CreateTextureFromSurface(renderer, text_surf);
 	dest.x = (WINDOW_W- text_surf->w)/2;
