@@ -8,9 +8,9 @@
 #include <SDL_ttf.h>
 #include <time.h>
 
-#undef main
 
-int main() {
+
+int main(int argc, char *argv[]) {
 
 	SDL_Window* window;
 	SDL_Texture* sprites = NULL;
