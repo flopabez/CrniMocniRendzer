@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
 
 				switch (done) {
 				case 1:;
+					cheats = 0;
 					maxDelay = 24 * (4 - settings->dif);
 					maxOnscreen = 3 + settings->dif;
 					spawnDelay = 0;
@@ -197,7 +198,7 @@ int main(int argc, char *argv[]) {
 			//ovde treba render gameOver
 			if (baseHitDetection(state)) BaseBoomSound();
 			GameOver(renderer, sprites);
-			update_score(100*player->score,window,renderer);
+			if (cheats == 0) update_score(100*player->score,window,renderer);
 			done = 0;
 			PlayMenuMusic();
 			while (done != 1) {
@@ -206,6 +207,7 @@ int main(int argc, char *argv[]) {
 
 				switch (done) {
 				case 1:;
+					cheats = 0;
 					maxDelay = 24 * (4 - settings->dif);
 					maxOnscreen = 3 + settings->dif;
 					spawnDelay = 0;
