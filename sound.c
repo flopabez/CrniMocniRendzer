@@ -159,6 +159,18 @@ void FailSound() {
 	Mix_PlayChannel(-1, fail, 0);
 }
 
+void SecretSound() {
+	static Mix_Chunk *secret = NULL;
+	if (!secret) {
+		secret = Mix_LoadWAV("./resursi/secret.wav");
+		if (!secret) {
+			printf("Can't find file 'secret.wav'!\n");
+			return;
+		}
+	}
+	Mix_PlayChannel(-1, secret, 0);
+}
+
 /*
 
 | SDL_INIT_AUDIO

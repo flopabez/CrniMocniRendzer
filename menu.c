@@ -21,6 +21,12 @@ void LoadMenu(Button *buttons) {
 		buttons[i].state = 0;
 		buttons[i].click = 0;
 	}
+
+	buttons[6].offset = 0;
+	buttons[6].xPos = (WINDOW_W + 170 * 4 + 16) / 2;
+	buttons[6].yPos = BLOCK_X;
+	buttons[6].state = 0;
+	buttons[6].click = 0;
 }
 
 void LoadOptions(Button *buttons) {
@@ -57,7 +63,7 @@ void LoadOptions(Button *buttons) {
 	
 }
 
-int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable) {
+int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable, char *cheats) {
 
 	int ret = 0;
 	static int time = 0;
@@ -73,20 +79,30 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 
 	//Mouseover
 	for (int i = 0; i < BUTTON_NUM; i++) {
-		buttons[i].click = 0;
+		char first = 0;
+		
 		if ((i == 1 && enable==0)) {
 			buttons[i].state = 2;
+			buttons[i].click = 0;
 		} else if ((mouse_x > buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1)) && (mouse_x < (buttons[i].xPos + buttons[i].offset*(BUTTON_SCALE - 1) + (BUTTON_W - 2 * buttons[i].offset)*BUTTON_SCALE)) && (mouse_y > buttons[i].yPos) && (mouse_y < buttons[i].yPos + BUTTON_H * BUTTON_SCALE)) {
-			if (buttons[i].state == 0) OverButtonSound();
+			if (buttons[i].state == 0 && i!=6) OverButtonSound();
 			buttons[i].state = 1;
+			if (buttons[i].click == 0) first = 1;
 			buttons[i].click = mouse_press%8;
-			if (buttons[i].click) {
-				ret = i + 1;
-				ClickButtonSound();
+			if (buttons[i].click && first) {
+				if (i == 6) {
+					*cheats = (*cheats+1)%2;
+					if (*cheats) SecretSound();
+					else ClickButtonSound();
+				} else {
+					ret = i + 1;
+					ClickButtonSound();
+				}
 			}
 		}
 		else {
 			buttons[i].state = 0;
+			buttons[i].click = 0;
 		}
 	}
 
@@ -105,7 +121,7 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 	SDL_RenderFillRect(renderer, &bg);
 
 	//Draw buttons
-	for (int i = 0; i<BUTTON_NUM; i++) {
+	for (int i = 0; i<BUTTON_NUM-1; i++) {
 		SDL_Rect location = { buttons[i].xPos+ buttons[i].offset*(BUTTON_SCALE-1)- buttons[i].click, buttons[i].yPos - buttons[i].click, (BUTTON_W-2* buttons[i].offset)*BUTTON_SCALE + 2* buttons[i].click, BUTTON_H*BUTTON_SCALE + 2 * buttons[i].click };
 		SDL_Rect sprite_loc = { 0 + buttons[i].offset + buttons[i].state*BUTTON_W, 256 + i* BUTTON_H, BUTTON_W - 2 * buttons[i].offset, BUTTON_H };
 		SDL_RenderCopy(renderer, sprites, &sprite_loc, &location);
@@ -117,8 +133,8 @@ int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char
 	return ret;
 }
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable) {
-	Button *buttons = malloc(6 * sizeof(Button));
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable, char *cheats) {
+	Button *buttons = malloc(7 * sizeof(Button));
 	LoadMenu(buttons);
 	SDL_Event event;
 	int ret = 0;
@@ -142,7 +158,7 @@ int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, ch
 				break;
 			}
 		}
-		ret = MainMenu(renderer, sprites, buttons, enable);
+		ret = MainMenu(renderer, sprites, buttons, enable, cheats);
 		SDL_Delay(1. / FPS * 1000);
 	}
 	if (ret ==1 || ret == 2 || ret == 6) PlayMenuMusic();
@@ -344,16 +360,29 @@ void Highscore(SDL_Window* window, SDL_Renderer* renderer, SDL_Texture *sprites)
 
 	struct score** list;
 	list = read_score();
+	
+	if (TTF_Init() < 0) {
+		return 0;
+	}
 
-	if (TTF_Init() < 0) return 0;
-	
-	
+	//SDL_Renderer* renderer = NULL;
 	SDL_Texture	*text = NULL;
 	TTF_Font* font = NULL;
-	
 	font = TTF_OpenFont("resursi\\RosesareFF0000.ttf", 40);
-	SDL_Color foreground = { 0, 0, 0 };
+	SDL_Color foreground = { 255,255, 255 };
 	SDL_Rect dest;
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
+	SDL_Surface* text_surf = TTF_RenderText_Solid(font, "Highscores:", foreground);
+	text = SDL_CreateTextureFromSurface(renderer, text_surf);
+	dest.x = 10;// - (text_surf->w / 2.0f);
+	dest.y = 10;
+	dest.w = text_surf->w;
+	dest.h = text_surf->h;
+	SDL_RenderCopy(renderer, text, NULL, &dest);
+
+
+
 	//set the drawing color to blue
 	SDL_SetRenderDrawColor(renderer, 65, 106, 204, 0);
 

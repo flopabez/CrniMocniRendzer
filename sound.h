@@ -10,3 +10,4 @@ void ClickButtonSound();
 void BaseBoomSound();
 void PickUpSound();
 void FailSound();
+void SecretSound();

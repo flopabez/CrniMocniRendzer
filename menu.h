@@ -2,7 +2,7 @@
 
 #include "graphics.h"
 
-#define BUTTON_NUM 6
+#define BUTTON_NUM 7
 #define BUTTON_SCALE 4
 #define BUTTON_W 76
 #define BUTTON_H 13
