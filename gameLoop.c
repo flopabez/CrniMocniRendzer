@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
 		updatePowerUps(state); //regulise pravila pickup-ova
 		hitDetection(state); //kolizija metkova sa okolinom
 		updateBullets(state); //kretanje metkova
-		doRender(state, renderer, sprites); //renderovanje
+		
 		if (state->playerTanks->data == 0 || baseHitDetection(state)) {
 			//ovde treba render gameOver
 			if (baseHitDetection(state)) BaseBoomSound();
@@ -247,7 +247,7 @@ int main(int argc, char *argv[]) {
 			done = 0;
 		}
 		//provera za game over
-
+		doRender(state, renderer, sprites); //renderovanje
 
 		struct Tank* check = 0;
 		if (!(state->killCount <= botCount(state) || state->killCount == 0 || spawnDelay || state->timeStop || botCount(state) > maxOnscreen))
