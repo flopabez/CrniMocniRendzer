@@ -37,10 +37,11 @@ int main() {
 
 	struct Tank* player = 0;
 	struct movementWrapper* wrap = 0;
+	char cheats = 0;
 
 	char done = 0;
 	while (done != 1) {
-		done = doMenu(window, renderer, sprites, state != 0);
+		done = doMenu(window, renderer, sprites, state != 0, &cheats);
 		switch (done) {
 		case 1:;
 			freeGame(state);
@@ -94,7 +95,7 @@ int main() {
 			PlayMenuMusic();
 			while (done != 1) {
 
-				done = doMenu(window, renderer, sprites, state != 0);
+				done = doMenu(window, renderer, sprites, state != 0, &cheats);
 
 				switch (done) {
 				case 1:;
@@ -136,7 +137,7 @@ int main() {
 			done = 0;
 		}
 		//hvatanje inputa i paljenje menija
-
+		if(cheats)
 		switch (done) {
 		case 'y':;
 			spawnDelay = 0;
@@ -201,7 +202,7 @@ int main() {
 			PlayMenuMusic();
 			while (done != 1) {
 
-				done = doMenu(window, renderer, sprites, state != 0);
+				done = doMenu(window, renderer, sprites, state != 0, &cheats);
 
 				switch (done) {
 				case 1:;
