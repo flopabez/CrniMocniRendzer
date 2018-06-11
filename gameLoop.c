@@ -257,11 +257,14 @@ int main() {
 			NextStage(state, renderer);
 			state->stage++;
 			//freeMap(state);
+			while (state->enemyBullets->next) removeNode(state->enemyBullets);
+			while (state->playerBullets->next) removeNode(state->playerBullets);
 			free(state->pickup);
 			state->pickup = 0;
 			state->terrain = get_map(state->stage, settings->height, settings->width);
 			player->yPos = (state->height - 10)*MAP_SCALE;
 			player->xPos = (state->width / 2 - 2)* MAP_SCALE;
+			player->inAir = 0;
 			state->killCount = 20;
 		}
 		//prelazenje mape
