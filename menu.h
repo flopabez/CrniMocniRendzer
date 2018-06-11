@@ -29,9 +29,9 @@ typedef struct optionsReturnStructure {
 
 void LoadMenu(Button *buttons);
 
-int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable);
+int MainMenu(SDL_Renderer *renderer, SDL_Texture *sprites, Button *buttons, char enable, char *cheats);
 
-int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable);
+int doMenu(SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites, char enable, char *cheats);
 
 void doOptions(OptionsReturnStructure* ret, SDL_Window * window, SDL_Renderer *renderer, SDL_Texture *sprites);
 
